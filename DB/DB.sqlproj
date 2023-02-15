@@ -1,0 +1,167 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>DB</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{9f056a32-1f75-4336-a475-5eb12c872c5e}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql130DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath>
+    </RootPath>
+    <RootNamespace>DB</RootNamespace>
+    <AssemblyName>DB</AssemblyName>
+    <ModelCollation>1033, CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
+    <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
+    <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Condition="'$(SQLDBExtensionsRefPath)' != ''" Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <ItemGroup>
+    <Folder Include="Properties" />
+    <Folder Include="rep\" />
+    <Folder Include="rep\Tables\" />
+    <Folder Include="bld\" />
+    <Folder Include="bld\Tables\" />
+    <Folder Include="aud\" />
+    <Folder Include="aud\Tables\" />
+    <Folder Include="rep\Views\" />
+    <Folder Include="bld\Views\" />
+    <Folder Include="Security\" />
+    <Folder Include="dbo\" />
+    <Folder Include="dbo\Functions\" />
+    <Folder Include="dbo\Stored Procedures\" />
+    <Folder Include="rep\Stored Procedures\" />
+    <Folder Include="bld\Stored Procedures\" />
+    <Folder Include="aud\Stored Procedures\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="rep\Tables\DataTypeMapping.sql" />
+    <Build Include="rep\Tables\RefType.sql" />
+    <Build Include="rep\Tables\LinkedService.sql" />
+    <Build Include="rep\Tables\Layer.sql" />
+    <Build Include="rep\Tables\DatasetTrn.sql" />
+    <Build Include="rep\Tables\DataSource.sql" />
+    <Build Include="rep\Tables\AliasViews.sql" />
+    <Build Include="rep\Tables\DatasetSrcAttribute.sql" />
+    <Build Include="rep\Tables\MtaAttribute.sql" />
+    <Build Include="rep\Tables\Schedule.sql" />
+    <Build Include="rep\Tables\Schema.sql" />
+    <Build Include="rep\Tables\Template.sql" />
+    <Build Include="rep\Tables\XlsTabsToLoad.sql" />
+    <Build Include="rep\Tables\Schedules.sql" />
+    <Build Include="rep\Tables\Setting.sql" />
+    <Build Include="rep\Tables\DatasetSrc.sql" />
+    <Build Include="rep\Tables\LinkedServiceProperties.sql" />
+    <Build Include="rep\Tables\Flow.sql" />
+    <Build Include="rep\Tables\DataSourceProperties.sql" />
+    <Build Include="rep\Tables\FlowLayer.sql" />
+    <Build Include="rep\Tables\DatasetSrcFileProperties.sql" />
+    <Build Include="rep\Tables\DefaultDatasetView.sql" />
+    <Build Include="rep\Tables\DatasetSrcFileFormat.sql" />
+    <Build Include="rep\Tables\Group.sql" />
+    <Build Include="rep\Tables\DatasetTrnAttribute.sql" />
+    <Build Include="rep\Tables\Marker.sql" />
+    <Build Include="bld\Tables\Dataset.sql" />
+    <Build Include="bld\Tables\Attribute.sql" />
+    <Build Include="aud\Tables\Log_Procedure.sql" />
+    <Build Include="rep\Views\vw_Template.sql" />
+    <Build Include="rep\Views\vw_Setting.sql" />
+    <Build Include="rep\Views\vw_Schema.sql" />
+    <Build Include="rep\Views\vw_Schedules.sql" />
+    <Build Include="rep\Views\vw_Schedule.sql" />
+    <Build Include="rep\Views\vw_RefType.sql" />
+    <Build Include="rep\Views\vw_MtaAttribute.sql" />
+    <Build Include="rep\Views\vw_Marker.sql" />
+    <Build Include="rep\Views\vw_LinkedServiceProperties.sql" />
+    <Build Include="rep\Views\vw_LinkedService.sql" />
+    <Build Include="rep\Views\vw_Layer.sql" />
+    <Build Include="rep\Views\vw_Group.sql" />
+    <Build Include="rep\Views\vw_FlowLayer.sql" />
+    <Build Include="rep\Views\vw_Flow.sql" />
+    <Build Include="rep\Views\vw_DefaultDatasetView.sql" />
+    <Build Include="rep\Views\vw_DataTypeMapping.sql" />
+    <Build Include="rep\Views\vw_DataSourceProperties.sql" />
+    <Build Include="rep\Views\vw_DataSource.sql" />
+    <Build Include="rep\Views\vw_DatasetTrnAttribute.sql" />
+    <Build Include="rep\Views\vw_DatasetTrn.sql" />
+    <Build Include="rep\Views\vw_DatasetSrcFileProperties.sql" />
+    <Build Include="rep\Views\vw_DatasetSrcFileFormat.sql" />
+    <Build Include="rep\Views\vw_DatasetSrcAttribute.sql" />
+    <Build Include="rep\Views\vw_DatasetSrc.sql" />
+    <Build Include="rep\Views\vw_AliasViews.sql" />
+    <Build Include="bld\Views\tr_200_Attribute_020_DatasetTrnAttributes.sql" />
+    <Build Include="bld\Views\tr_100_Dataset_035_CustomStagingViews.sql" />
+    <Build Include="bld\Views\tr_100_Dataset_030_AddDefaultViews.sql" />
+    <Build Include="bld\Views\tr_100_Dataset_021_DatasetTrnFlowDatasets.sql" />
+    <Build Include="bld\Views\tr_100_Dataset_011_DatasetSrcFlowDatasets.sql" />
+    <Build Include="bld\Views\tr_100_Dataset_020_DatasetTrn.sql" />
+    <Build Include="bld\Views\tr_100_Dataset_010_DatasetSrc.sql" />
+    <Build Include="bld\Views\vw_Dataset.sql" />
+    <Build Include="bld\Views\vw_Attribute.sql" />
+    <Build Include="bld\Views\tr_200_Attribute_010_DatasetSrcAttributes.sql" />
+    <Build Include="Security\adfwhsmetro.sql" />
+    <Build Include="Security\adfwhsdev.sql" />
+    <Build Include="Security\RoleMemberships.sql" />
+    <Build Include="dbo\Functions\GetRidOfQuotation.sql" />
+    <Build Include="dbo\Functions\GetNamePart.sql" />
+    <Build Include="dbo\Stored Procedures\Helper_RefreshMetroViews.sql" />
+    <Build Include="dbo\Stored Procedures\Helper_LongPrint.sql" />
+    <Build Include="dbo\Stored Procedures\Helper_IsValidSQL.sql" />
+    <Build Include="rep\Stored Procedures\Step010_rebuild_repviews.sql" />
+    <Build Include="bld\Stored Procedures\Step002_Recreate_BuildTables.sql" />
+    <Build Include="bld\Stored Procedures\Step005_Recreate_CurrentViews.sql" />
+    <Build Include="bld\Stored Procedures\Step007_Recreate_LoadProcs.sql" />
+    <Build Include="bld\Stored Procedures\Step010_Dataset.sql" />
+    <Build Include="bld\Stored Procedures\load_200_Attribute_020_DatasetTrnAttributes.sql" />
+    <Build Include="bld\Stored Procedures\load_200_Attribute_010_DatasetSrcAttributes.sql" />
+    <Build Include="bld\Stored Procedures\load_100_Dataset_035_CustomStagingViews.sql" />
+    <Build Include="bld\Stored Procedures\load_100_Dataset_030_AddDefaultViews.sql" />
+    <Build Include="bld\Stored Procedures\load_100_Dataset_021_DatasetTrnFlowDatasets.sql" />
+    <Build Include="bld\Stored Procedures\load_100_Dataset_020_DatasetTrn.sql" />
+    <Build Include="bld\Stored Procedures\load_100_Dataset_011_DatasetSrcFlowDatasets.sql" />
+    <Build Include="bld\Stored Procedures\load_100_Dataset_010_DatasetSrc.sql" />
+    <Build Include="aud\Stored Procedures\proc_Log_Procedure.sql" />
+    <Build Include="Security\rep.sql" />
+    <Build Include="Security\bld.sql" />
+    <Build Include="Security\aud.sql" />
+    <Build Include="Security\adf.sql" />
+  </ItemGroup>
+</Project>
