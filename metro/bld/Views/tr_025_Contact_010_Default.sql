@@ -1,83 +1,57 @@
 ﻿
-CREATE VIEW [bld].[tr_025_contact_010_default] AS /*
+
+
+
+
+
+CREATE view [bld].[tr_025_Contact_010_Default] as
+/* 
 === Comments =========================================
 
 Description:
 	 List of Contact Persons
-
+	
 Changelog:
 Date		time		Author					Description
 20241004	1603		K. Vermeij				Initial
 =======================================================
-*/ WITH contactroles AS
+*/
+with ContactRoles as (
+select [BK]
+      ,[Code]
+      ,[Name]
+     
+      ,[Description]
+      ,[RefType]
+      ,[RefTypeAbbr]
+      ,[SortOrder]
+from [rep].[vw_RefType]
+where [RefTypeAbbr] = 'CR'
 
-        (SELECT [bk] ,
 
-               [code] ,
-
-               [name] ,
-
-               [description] ,
-
-               [reftype] ,
-
-               [reftypeabbr] ,
-
-               [sortorder]
-
-          FROM [rep].[vw_reftype]
-
-         WHERE [reftypeabbr] = 'CR'
-       ),
-
-       FINAL AS
-
-        (SELECT src.bk ,
-
-               src.code ,
-
-               src.bk_contactgroup ,
-
-               contactgroup = cg.[name] ,
-
-               contactrole = cr.[name] ,
-
-               main_contact = src.main_contact ,
-
-               alert_contact = src.alert_contact ,
-
-               contactperson_name = cp.[contact_name] ,
-
-               contactperson_department = cp.[contact_department] ,
-
-               contacperson_phonenumber = cp.[contact_phone_number] ,
-
-               contactperson_mailadress = cp.[contact_mail_address] ,
-
-               contactperson_active = cp.[active] ,
-
-               rn_contact = row_number() OVER (PARTITION BY src.bk
-                                          ORDER BY src.bk ASC) -- select *
-
-          FROM [rep].[vw_contact] src
-
-          JOIN rep.vw_contactgroup cg
-            ON src.bk_contactgroup = cg.bk
-
-          LEFT JOIN [rep].[vw_contactperson] cp
-            ON src.bk_contactperson = cp.bk
-
-          LEFT JOIN contactroles cr
-            ON src.bk_contactrole = cr.bk
-
-         WHERE 1 = 1
-
-           AND isnull(src.active, '1') = 1
-
-           AND src.bk IS NOT NULL
-       )
-SELECT *
-
-  FROM FINAL
-
- WHERE rn_contact = 1
+)
+, final as (
+select 
+	src.bk
+	, src.code
+	, src.bk_contactgroup
+	, contactgroup						= cg.[name]
+	, contactrole						= cr.[name]
+	, main_contact						= src.main_contact
+	, alert_contact						= src.alert_contact
+	, contactperson_name				= cp.[contact_name]
+	, contactperson_department			= cp.[contact_department]
+	, contacperson_phonenumber			= cp.[contact_phone_number]
+	, contactperson_mailadress			= cp.[contact_mail_address]
+	, contactperson_active				= cp.[Active]
+	, rn_contact						= row_number() over (partition by src.bk order by src.bk asc)
+	-- select *
+from [rep].[vw_Contact] src
+join rep.vw_contactgroup cg on src.bk_contactgroup = cg.bk
+left join [rep].[vw_ContactPerson] cp on src.bk_contactperson = cp.bk
+left join ContactRoles cr on src.bk_contactrole = cr.bk
+Where 1=1
+  and isnull( src.Active,'1')=1
+  and src.bk is not null
+  )
+  select * from final where rn_contact = 1

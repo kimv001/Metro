@@ -19,16 +19,14 @@ jobs:
       with:
         python-version: '3.x'
 
-    - name: Install SQL formatter
-      run: pip install sqlparse
+    - name: Install SQLFluff
+      run: pip install sqlfluff
 
     - name: Find and clean SQL files
       run: |
         find . -name "*.sql" | while read sqlfile; do
           echo "Cleaning $sqlfile"
-          sqlformat -r -k upper -i lower -a -s "$sqlfile" -o "$sqlfile"
-          # Remove consecutive empty lines
-          awk 'NF || !blank {print} {blank = NF == 0}' "$sqlfile" > tmp && mv tmp "$sqlfile"
+          sqlfluff fix "$sqlfile" --force
         done
 
     - name: Commit changes
@@ -36,7 +34,7 @@ jobs:
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git add .
-        git commit -m "Automated SQL formatting and empty line removal"
+        git commit -m "Automated SQL formatting with SQLFluff"
         git push
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
