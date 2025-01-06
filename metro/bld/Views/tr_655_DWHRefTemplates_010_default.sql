@@ -1,43 +1,53 @@
 ﻿
+CREATE VIEW [bld].[tr_655_dwhreftemplates_010_default] AS WITH templates AS
 
+        (SELECT bk_template = t.bk ,
 
+               t.bk ,
 
+               t.code ,
 
+               templatetype = 'Create' ,
 
+               templatesource = rt_target.[name] ,
 
+               templateorder = rt_objecttype.sortorder ,
 
+               t.bk_reftype_objecttype ,
 
+               templatescript = t.script ,
 
-CREATE view [bld].[tr_655_DWHRefTemplates_010_default] as
-With Templates as (
-select 
-			BK_Template		= t.BK
-		  , t.BK
-		  , T.Code
-		  , TemplateType	= 'Create'
-		  , TemplateSource	= rt_Target.[Name]
-		  , TemplateOrder	= rt_ObjectType.SortOrder
-		  , t.BK_RefType_ObjectType
-		  , TemplateScript	= T.Script
-		  , TemplateVersion	= t.TemplateVersion
-		  , RowNum			= Row_Number() over (order by cast(rt_ObjectType.SortOrder as int) asc)
-from bld.vw_Template t
-join bld.vw_RefType rt_Target		on t.BK_RefType_TemplateType	= rt_Target.BK
-join bld.vw_RefType rt_ObjectType	on t.BK_RefType_ObjectType		= rt_ObjectType.BK
-where rt_Target.bk = 'TT|DWHR|DWH_Ref'
+               templateversion = t.templateversion , RowNum = row_number() OVER (
+                                                                            ORDER BY cast(rt_objecttype.sortorder AS int) ASC)
 
-)
-Select
-	BK
-	, Code
-	, BK_Template
-	, BK_Dataset				= ''
-	, TemplateType
-	, TemplateSource
-	, BK_RefType_ObjectType
-	, TemplateScript			= TemplateScript
-	, TemplateVersion
-	, RowNum
+          FROM bld.vw_template t
 
-From Templates
-Where 1=1
+          JOIN bld.vw_reftype rt_target
+            ON t.bk_reftype_templatetype = rt_target.bk
+
+          JOIN bld.vw_reftype rt_objecttype
+            ON t.bk_reftype_objecttype = rt_objecttype.bk
+
+         WHERE rt_target.bk = 'TT|DWHR|DWH_Ref'
+       )
+SELECT bk ,
+
+       code ,
+
+       bk_template ,
+
+       bk_dataset = '' ,
+
+       templatetype ,
+
+       templatesource ,
+
+       bk_reftype_objecttype ,
+
+       templatescript = templatescript ,
+
+       templateversion , RowNum
+
+  FROM templates
+
+ WHERE 1 = 1

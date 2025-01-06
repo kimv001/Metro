@@ -1,10 +1,10 @@
 ﻿
 CREATE VIEW [adf].[vw_sdtap] AS
-SELECT bk_repositorystatus = bk ,
+SELECT bk_repositorystatus = bk,
 
-       repositorystatus = rt.[name] ,
+       repositorystatus = rt.[name],
 
-       environment = rt.[name] ,
+       environment = rt.[name],
 
        repositorystatuscode = CASE
                                   WHEN isnumeric(rt.code) = 1 THEN cast(rt.code AS int)

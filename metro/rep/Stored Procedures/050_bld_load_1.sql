@@ -1,60 +1,47 @@
 ﻿
-
-CREATE procedure [rep].[050_bld_load]
-as
-/*
+CREATE PROCEDURE [rep].[050_bld_load] AS /*
 Developed by:			metro
 Description:			Load all bld tables
 
 Change log:
 Date					Author				Description
 20220916 20:15			K. Vermeij			Initial version
-*/
-if Object_id('tempdb..#tbl') is not null
-	drop table #tbl;
+*/ IF object_id('tempdb..#tbl') IS NOT NULL
+DROP TABLE #tbl;
+SELECT table_catalog = t.[table_catalog] ,
 
-select table_catalog = t.[TABLE_CATALOG]
-	,src_table_schema = t.[TABLE_SCHEMA]
-	,src_table_name = t.[TABLE_NAME]
-	,src_table_type = t.[TABLE_TYPE]
-	,tgt_table_name = [rep].[GetNamePart](replace(t.[TABLE_NAME], 'tr_', ''), 2)
-	,sql_code = 'Exec bld.load_' + Replace(t.[TABLE_NAME], 'tr_', '')
-	,Sequence = ROW_Number() over (
-		order by t.[TABLE_NAME]
-		)
-into #tbl
-from [INFORMATION_SCHEMA].[TABLES] t
-where 1 = 1
-	and TABLE_TYPE = 'VIEW'
-	and left(t.[TABLE_NAME], 3) = 'tr_'
+       src_table_schema = t.[table_schema] ,
 
-print 'load set defined!'
-print 'Start loading ...'
+       src_table_name = t.[table_name] ,
 
-declare @nbr_statements int = (
-		select COUNT(*)
-		from #tbl
-		)
-	,@i int = 1;
+       src_table_type = t.[table_type] ,
 
-while @i <= @nbr_statements
-begin
-	declare @sql_code nvarchar(4000) = (
-			select sql_code
-			from #tbl
-			where Sequence = @i
-			);
+       tgt_table_name = [rep].[getnamepart](replace(t.[table_name], 'tr_', ''), 2) ,
 
-	print (@sql_code)
+       sql_code = 'Exec bld.load_' + replace(t.[table_name], 'tr_', '') ,
 
-	exec sp_executesql @sql_code;
+       SEQUENCE = row_number() OVER (
+                                     ORDER BY t.[table_name]) INTO #tbl
 
-	print char(10) + char(9) + char(10) + char(9) + char(10) + char(9)
+  FROM [information_schema].[tables] t
 
-	set @i += 1;
-end
+ WHERE 1 = 1
 
-drop table #tbl;
+   AND table_type = 'VIEW'
 
+   AND left(t.[table_name], 3) = 'tr_' PRINT 'load set defined!' PRINT 'Start loading ...' DECLARE @nbr_statements int =
 
-exec [rep].[069_bld_CreateDeployScripts]
+        (SELECT count(*)
+
+          FROM #tbl
+       ) , @ i int = 1;WHILE @ i <= @nbr_statements BEGIN DECLARE @sql_code nvarchar(4000) =
+
+        (SELECT sql_code
+
+          FROM #tbl
+
+         WHERE SEQUENCE = @ i
+       );PRINT (@sql_code) EXEC sp_executesql @sql_code;PRINT char(10) + char(9) + char(10) + char(9) + char(10) + char(9)
+
+   SET @ i + = 1;END
+DROP TABLE #tbl;EXEC [rep].[069_bld_createdeployscripts]

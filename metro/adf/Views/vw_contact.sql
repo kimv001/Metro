@@ -1,32 +1,32 @@
 ﻿
 CREATE VIEW [adf].[vw_contact] AS
-SELECT src.[contactid] ,
+SELECT src.[contactid],
 
-       src.[bk] ,
+       src.[bk],
 
-       src.[code] ,
+       src.[code],
 
-       src.[bk_contactgroup] ,
+       src.[bk_contactgroup],
 
-       src.[contactgroup] ,
+       src.[contactgroup],
 
-       src.[contactrole] ,
+       src.[contactrole],
 
-       src.[main_contact] ,
+       src.[main_contact],
 
-       src.[contactperson_name] ,
+       src.[contactperson_name],
 
-       src.[contactperson_department] ,
+       src.[contactperson_department],
 
-       src.[contacperson_phonenumber] ,
+       src.[contacperson_phonenumber],
 
-       src.[contactperson_mailadress] ,
+       src.[contactperson_mailadress],
 
-       src.[contactperson_active] ,
+       src.[contactperson_active],
 
-       repositorystatusname = sdtap.repositorystatus ,
+       repositorystatusname = sdtap.repositorystatus,
 
-       repositorystatuscode = sdtap.repositorystatuscode ,
+       repositorystatuscode = sdtap.repositorystatuscode,
 
        environment = sdtap.repositorystatus
 

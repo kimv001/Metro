@@ -1,38 +1,31 @@
-﻿CREATE TABLE [bld].[LoadDependency] (
-    [LoadDependencyId]  INT           IDENTITY (1, 1) NOT NULL,
-    [BK]                VARCHAR (255) NULL,
-    [Code]              VARCHAR (255) NULL,
-    [BK_Target]         VARCHAR (255) NULL,
-    [TGT_Layer]         VARCHAR (255) NULL,
-    [TGT_Schema]        VARCHAR (255) NULL,
-    [TGT_Group]         VARCHAR (255) NULL,
-    [TGT_ShortName]     VARCHAR (255) NULL,
-    [TGT_Code]          VARCHAR (255) NULL,
-    [TGT_DatasetName]   VARCHAR (255) NULL,
-    [BK_Source]         VARCHAR (255) NULL,
-    [SRC_Layer]         VARCHAR (255) NULL,
-    [SRC_Schema]        VARCHAR (255) NULL,
-    [SRC_Group]         VARCHAR (255) NULL,
-    [SRC_ShortName]     VARCHAR (255) NULL,
-    [SRC_Code]          VARCHAR (255) NULL,
-    [SRC_DatasetName]   VARCHAR (255) NULL,
-    [DependencyType]    VARCHAR (255) NULL,
-    [Generation_Number] VARCHAR (255) NULL,
-    [mta_Createdate]    DATETIME2 (7) DEFAULT (getdate()) NULL,
-    [mta_RecType]       SMALLINT      DEFAULT ((1)) NULL,
-    [mta_BK]            CHAR (255)    NULL,
-    [mta_BKH]           CHAR (128)    NULL,
-    [mta_RH]            CHAR (128)    NULL,
-    [mta_Source]        VARCHAR (255) NULL
-);
-
-
-GO
-CREATE UNIQUE NONCLUSTERED INDEX [Uix_bld_LoadDependency]
-    ON [bld].[LoadDependency]([mta_BKH] DESC, [mta_RH] DESC, [mta_Createdate] DESC);
-
-
-GO
-CREATE CLUSTERED INDEX [Cix_bld_LoadDependency]
-    ON [bld].[LoadDependency]([BK] ASC, [mta_BKH] ASC, [Code] ASC, [mta_RH] ASC, [mta_Createdate] DESC);
-
+﻿
+CREATE TABLE [bld].[loaddependency] ([loaddependencyid] INT IDENTITY (1,
+                                                                      1) NOT NULL,
+                                                                         [bk] VARCHAR (255) NULL,
+                                                                                            [code] VARCHAR (255) NULL,
+                                                                                                                 [bk_target] VARCHAR (255) NULL,
+                                                                                                                                           [tgt_layer] VARCHAR (255) NULL,
+                                                                                                                                                                     [tgt_schema] VARCHAR (255) NULL,
+                                                                                                                                                                                                [tgt_group] VARCHAR (255) NULL,
+                                                                                                                                                                                                                          [tgt_shortname] VARCHAR (255) NULL,
+                                                                                                                                                                                                                                                        [tgt_code] VARCHAR (255) NULL,
+                                                                                                                                                                                                                                                                                 [tgt_datasetname] VARCHAR (255) NULL,
+                                                                                                                                                                                                                                                                                                                 [bk_source] VARCHAR (255) NULL,
+                                                                                                                                                                                                                                                                                                                                           [src_layer] VARCHAR (255) NULL,
+                                                                                                                                                                                                                                                                                                                                                                     [src_schema] VARCHAR (255) NULL,
+                                                                                                                                                                                                                                                                                                                                                                                                [src_group] VARCHAR (255) NULL,
+                                                                                                                                                                                                                                                                                                                                                                                                                          [src_shortname] VARCHAR (255) NULL,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        [src_code] VARCHAR (255) NULL,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 [src_datasetname] VARCHAR (255) NULL,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 [dependencytype] VARCHAR (255) NULL,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                [generation_number] VARCHAR (255) NULL,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  [mta_createdate] datetime2 (7) DEFAULT (getdate()) NULL,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     [mta_rectype] SMALLINT DEFAULT ((1)) NULL,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          [mta_bk] CHAR (255) NULL,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              [mta_bkh] CHAR (128) NULL,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   [mta_rh] CHAR (128) NULL,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       [mta_source] VARCHAR (255) NULL);GO
+CREATE UNIQUE nonclustered INDEX [uix_bld_loaddependency]
+    ON [bld].[loaddependency]([mta_bkh] DESC, [mta_rh] DESC, [mta_createdate] DESC);GO
+CREATE clustered INDEX [cix_bld_loaddependency]
+    ON [bld].[loaddependency]([bk] ASC, [mta_bkh] ASC, [code] ASC, [mta_rh] ASC, [mta_createdate] DESC);

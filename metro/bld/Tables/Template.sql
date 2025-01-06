@@ -1,36 +1,29 @@
-﻿CREATE TABLE [bld].[Template] (
-    [TemplateId]                    INT           IDENTITY (1, 1) NOT NULL,
-    [BK]                            VARCHAR (255) NULL,
-    [Code]                          VARCHAR (255) NULL,
-    [TemplateName]                  VARCHAR (255) NULL,
-    [TemplateType]                  VARCHAR (255) NULL,
-    [TemplateDecription]            VARCHAR (255) NULL,
-    [ObjectType]                    VARCHAR (255) NULL,
-    [ObjectTypeDeployOrder]         VARCHAR (255) NULL,
-    [Script]                        VARCHAR (MAX) NULL,
-    [ScriptLanguageCode]            VARCHAR (255) NULL,
-    [ScriptLanguage]                VARCHAR (255) NULL,
-    [ObjectName]                    VARCHAR (255) NULL,
-    [BK_RefType_TemplateType]       VARCHAR (255) NULL,
-    [BK_RefType_ObjectType]         VARCHAR (255) NULL,
-    [BK_RefType_ObjectType_BasedOn] VARCHAR (255) NULL,
-    [BK_RefType_ScriptLanguage]     VARCHAR (255) NULL,
-    [TemplateVersion]               VARCHAR (255) NULL,
-    [mta_Createdate]                DATETIME2 (7) DEFAULT (getdate()) NULL,
-    [mta_RecType]                   SMALLINT      DEFAULT ((1)) NULL,
-    [mta_BK]                        CHAR (255)    NULL,
-    [mta_BKH]                       CHAR (128)    NULL,
-    [mta_RH]                        CHAR (128)    NULL,
-    [mta_Source]                    VARCHAR (255) NULL
-);
-
-
-GO
-CREATE UNIQUE NONCLUSTERED INDEX [Uix_bld_Template]
-    ON [bld].[Template]([mta_BKH] DESC, [mta_RH] DESC, [mta_Createdate] DESC);
-
-
-GO
-CREATE CLUSTERED INDEX [Cix_bld_Template]
-    ON [bld].[Template]([BK] ASC, [mta_BKH] ASC, [Code] ASC, [mta_RH] ASC, [mta_Createdate] DESC);
-
+﻿
+CREATE TABLE [bld].[template] ([templateid] INT IDENTITY (1,
+                                                          1) NOT NULL,
+                                                             [bk] VARCHAR (255) NULL,
+                                                                                [code] VARCHAR (255) NULL,
+                                                                                                     [templatename] VARCHAR (255) NULL,
+                                                                                                                                  [templatetype] VARCHAR (255) NULL,
+                                                                                                                                                               [templatedecription] VARCHAR (255) NULL,
+                                                                                                                                                                                                  [objecttype] VARCHAR (255) NULL,
+                                                                                                                                                                                                                             [objecttypedeployorder] VARCHAR (255) NULL,
+                                                                                                                                                                                                                                                                   [script] VARCHAR (MAX) NULL,
+                                                                                                                                                                                                                                                                                          [scriptlanguagecode] VARCHAR (255) NULL,
+                                                                                                                                                                                                                                                                                                                             [scriptlanguage] VARCHAR (255) NULL,
+                                                                                                                                                                                                                                                                                                                                                            [objectname] VARCHAR (255) NULL,
+                                                                                                                                                                                                                                                                                                                                                                                       [bk_reftype_templatetype] VARCHAR (255) NULL,
+                                                                                                                                                                                                                                                                                                                                                                                                                               [bk_reftype_objecttype] VARCHAR (255) NULL,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                     [bk_reftype_objecttype_basedon] VARCHAR (255) NULL,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   [bk_reftype_scriptlanguage] VARCHAR (255) NULL,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             [templateversion] VARCHAR (255) NULL,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             [mta_createdate] datetime2 (7) DEFAULT (getdate()) NULL,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                [mta_rectype] SMALLINT DEFAULT ((1)) NULL,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     [mta_bk] CHAR (255) NULL,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         [mta_bkh] CHAR (128) NULL,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              [mta_rh] CHAR (128) NULL,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  [mta_source] VARCHAR (255) NULL);GO
+CREATE UNIQUE nonclustered INDEX [uix_bld_template]
+    ON [bld].[template]([mta_bkh] DESC, [mta_rh] DESC, [mta_createdate] DESC);GO
+CREATE clustered INDEX [cix_bld_template]
+    ON [bld].[template]([bk] ASC, [mta_bkh] ASC, [code] ASC, [mta_rh] ASC, [mta_createdate] DESC);

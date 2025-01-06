@@ -1,29 +1,29 @@
 ﻿
 CREATE VIEW [adf].[vw_tgt_group_from_src] AS WITH base AS
 
-        (SELECT tgt = src.tgt_datasetname ,
+        (SELECT tgt = src.tgt_datasetname,
 
-               tgt_bk_dataset = src.bk_target ,
+               tgt_bk_dataset = src.bk_target,
 
-               tgt_group ,
+               tgt_group,
 
-               tgt_schema ,
+               tgt_schema,
 
-               tgt_layer ,
+               tgt_layer,
 
-               tgt_dwh = 'All' ,
+               tgt_dwh = 'All',
 
-               src_bk_dataset = src.bk_source ,
+               src_bk_dataset = src.bk_source,
 
-               src_dataset = src.src_datasetname ,
+               src_dataset = src.src_datasetname,
 
-               src_shortname ,
+               src_shortname,
 
-               src_group ,
+               src_group,
 
-               src_schema ,
+               src_schema,
 
-               src_layer ,
+               src_layer,
 
                [generation_number]
 
@@ -34,19 +34,19 @@ CREATE VIEW [adf].[vw_tgt_group_from_src] AS WITH base AS
 
        groupme AS
 
-        (SELECT DISTINCT [tgt_group] ,
+        (SELECT DISTINCT [tgt_group],
 
-               [src_bk_dataset] ,
+               [src_bk_dataset],
 
-               [src_dataset] ,
+               [src_dataset],
 
-               [src_shortname] ,
+               [src_shortname],
 
-               [src_group] ,
+               [src_group],
 
-               [src_schema] ,
+               [src_schema],
 
-               [src_layer] ,
+               [src_layer],
 
                [generation_number] = min([generation_number])
 
@@ -54,48 +54,48 @@ CREATE VIEW [adf].[vw_tgt_group_from_src] AS WITH base AS
 
          WHERE 1 = 1
 
-         GROUP BY [tgt_group] ,
+         GROUP BY [tgt_group],
 
-                  src_bk_dataset ,
+                  src_bk_dataset,
 
-                  [src_dataset] ,
+                  [src_dataset],
 
-                  [src_shortname] ,
+                  [src_shortname],
 
-                  [src_group] ,
+                  [src_group],
 
-                  [src_schema] ,
+                  [src_schema],
 
                   [src_layer]
        )
-SELECT DISTINCT [tgt_group] ,
+SELECT DISTINCT [tgt_group],
 
-       [tgt] = [tgt_group] ,
+       [tgt] = [tgt_group],
 
-       src_bk_dataset ,
+       src_bk_dataset,
 
-       src.[src_dataset] ,
+       src.[src_dataset],
 
-       src.[src_shortname] ,
+       src.[src_shortname],
 
-       src_sourcename = src.src_group + '_' + iif(src.src_schema = 'stg', d.src_shortname, src.src_shortname) ,
+       src_sourcename = src.src_group + '_' + iif(src.src_schema = 'stg', d.src_shortname, src.src_shortname),
 
-       src_datasettype = d.src_objecttype ,
+       src_datasettype = d.src_objecttype,
 
-       tgt_datasettype = d.tgt_objecttype ,
+       tgt_datasettype = d.tgt_objecttype,
 
-       [src_group] ,
+       [src_group],
 
-       [src_schema] ,
+       [src_schema],
 
-       [src_layer] ,
+       [src_layer],
 
        generation_number = dense_rank() over(PARTITION BY [tgt_group]
-                                                      ORDER BY [generation_number]) ,
+                                                      ORDER BY [generation_number]),
 
-       dependencytype = 'Group' ,
+       dependencytype = 'Group',
 
-       [repositorystatusname] = d.repositorystatusname ,
+       [repositorystatusname] = d.repositorystatusname,
 
        [repositorystatuscode] = d.repositorystatuscode
 

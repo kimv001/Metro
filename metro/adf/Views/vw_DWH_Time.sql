@@ -1,25 +1,23 @@
 ﻿
-
-
-
-
-CREATE view [adf].[vw_DWH_Time] as
-
-/* 
+CREATE VIEW [adf].[vw_dwh_time] AS /*
 Description:
 	Time Table in HH:MM
 
 *Note
 	SS and MS came along, but always 0
 */
+SELECT src.* ,
 
-select
-	src.* 
+       repositorystatusname = sdtap.repositorystatus ,
 
-	, RepositoryStatusName	= SDTAP.RepositoryStatus
-	, RepositoryStatusCode	= SDTAP.RepositoryStatusCode 
-	, Environment			= SDTAP.RepositoryStatus
-from  [adf].[DWH_Time]   src
-Cross join [adf].[vw_SDTAP] SDTAP
-where 1=1
-and SDTAP.RepositoryStatusCode > -2
+       repositorystatuscode = sdtap.repositorystatuscode ,
+
+       environment = sdtap.repositorystatus
+
+  FROM [adf].[dwh_time] src
+
+ CROSS JOIN [adf].[vw_sdtap] sdtap
+
+ WHERE 1 = 1
+
+   AND sdtap.repositorystatuscode > -2

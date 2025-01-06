@@ -1,57 +1,40 @@
 ﻿
-CREATE procedure rep.[999_adf_DWH_Time] as
-/* 
+CREATE PROCEDURE rep.[999_adf_dwh_time] AS /*
 === Comments =========================================
 
 Description:
 	creates a time table
-	
+
 Changelog:
 Date		time		Author					Description
 20220804	0000		K. Vermeij				Initial
 =======================================================
-*/
+*/ IF NOT EXISTS
 
-iF not EXISTS (	Select 1 
-				From INFORMATION_SCHEMA.TABLES 
-				Where TABLE_TYPE='BASE TABLE' AND TABLE_NAME='DWH_Time') 
+        (SELECT 1
 
-Create table [adf].[DWH_Time](
-						[Time_HH_MM_SS] [time](7) NULL,
-						[Time_Int] [int] NULL
-					) ON [PRIMARY]
-;
+          FROM information_schema.tables
 
+         WHERE table_type = 'BASE TABLE'
 
-truncate table [adf].[DWH_Time]
+           AND TABLE_NAME = 'DWH_Time'
+       )
+CREATE TABLE [adf].[dwh_time]([time_hh_mm_ss] [time](7) NULL, [time_int] [int] NULL)
+    ON [primary] ;
+TRUNCATE TABLE [adf].[dwh_time] ;WITH hours AS
 
-;
+        (SELECT dateadd(dd, 0, datediff(dd, 0, getdate())) AS dthr
 
+     UNION ALL SELECT dateadd (MINUTE, 1, dthr)
 
-  with Hours as
-  (
-       select DATEADD(
-        dd, 0, DATEDIFF(
-              dd, 0,  getDate() )
-      ) as dtHr
-    union all
-      select  DATEADD (minute , 1 , dtHr ) 
-        from Hours
-		
-        where dtHr < DATEADD(
-            dd, 0, DATEDIFF(
-                  dd, 0, DATEADD (
-                        d , 1 , getDate() 
-                      )
-                )
-        )
-  )  
-  
-  INSERT INTO [adf].[DWH_Time]
-           ([Time_HH_MM_SS]
-           ,[Time_Int])
-     
-  
-  select distinct cast(dtHr as time) Time_HH_MM_SS , (DATEPART(hour, cast(dtHr as time)) * 60) + (DATEPART(minute, cast(dtHr as time)) ) Time_Int
+          FROM hours
 
-  from Hours option (maxrecursion 0)
+         WHERE dthr < dateadd(dd, 0, datediff(dd, 0, dateadd (d, 1, getdate())))
+       )
+INSERT INTO [adf].[dwh_time] ([time_hh_mm_ss] , [time_int])
+SELECT DISTINCT cast(dthr AS TIME) time_hh_mm_ss,
+
+       (datepart(HOUR, cast(dthr AS TIME)) * 60) + (datepart(MINUTE, cast(dthr AS TIME))) time_int
+
+  FROM hours
+OPTION (maxrecursion 0)

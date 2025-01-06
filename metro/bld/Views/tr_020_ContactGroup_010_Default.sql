@@ -1,26 +1,29 @@
 ﻿
-
-
-
-CREATE view [bld].[tr_020_ContactGroup_010_Default] as
-/* 
+CREATE VIEW [bld].[tr_020_contactgroup_010_default] AS /*
 === Comments =========================================
 
 Description:
 	 List of Contact Groups
-	
+
 Changelog:
 Date		time		Author					Description
 20241004	1603		K. Vermeij				Initial
 =======================================================
 */
-select 
-	 src.[BK]
-	,src.[Code]
-	,src.[Name]
-	,src.[Description]
-	,src.[Active]
-from [rep].[vw_ContactGroup] src
-Where 1=1
-  and isnull( src.Active,'1')=1
-  and src.bk is not null
+SELECT src.[bk] ,
+
+       src.[code] ,
+
+       src.[name] ,
+
+       src.[description] ,
+
+       src.[active]
+
+  FROM [rep].[vw_contactgroup] src
+
+ WHERE 1 = 1
+
+   AND isnull(src.active, '1') = 1
+
+   AND src.bk IS NOT NULL

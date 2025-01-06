@@ -1,28 +1,21 @@
 ﻿
-
-
-
-
-
-
-
-
-CREATE view [adf].[vw_DWH_Date] as
-
-/* 
+CREATE VIEW [adf].[vw_dwh_date] AS /*
 Description:
 	Date Table from 2010-01-01 till 2039-12-31
 
-
 */
+SELECT src.* ,
 
-select
-	 src.* 
+       repositorystatusname = sdtap.repositorystatus ,
 
-	, RepositoryStatusName	= SDTAP.RepositoryStatus
-	, RepositoryStatusCode	= SDTAP.RepositoryStatusCode 
-	, Environment			= SDTAP.RepositoryStatus
-from  [adf].[DWH_Date]   src
-Cross join [adf].[vw_SDTAP] SDTAP
-where 1=1
-and SDTAP.RepositoryStatusCode > -2
+       repositorystatuscode = sdtap.repositorystatuscode ,
+
+       environment = sdtap.repositorystatus
+
+  FROM [adf].[dwh_date] src
+
+ CROSS JOIN [adf].[vw_sdtap] sdtap
+
+ WHERE 1 = 1
+
+   AND sdtap.repositorystatuscode > -2

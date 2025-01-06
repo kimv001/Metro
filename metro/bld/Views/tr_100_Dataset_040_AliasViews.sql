@@ -1,117 +1,208 @@
 ﻿
-
-
-CREATE view [bld].[tr_100_Dataset_040_AliasViews] as 
-/* 
+CREATE VIEW [bld].[tr_100_dataset_040_aliasviews] AS /*
 === Comments =========================================
 
 Description:
 	generates alias views, can be used for dimension aliases like dim.common_Date with aliases dim.vw_common_StartDatde, dim.vw_common_EndDate
 
-	
-	
 Changelog:
 Date		time		Author					Description
 20220804	0000		K. Vermeij				Initial
 20230406	1023		K. Vermeij				Added "ToDeploy	= 1", it will be used to determine if a deployscript has to be generated
 =======================================================
-*/
-WITH  AliasViews as (
-	SELECT 
-		  BK							= a.bk
-		, Code							= d.code 
-		, DatasetName					= Quotename(s.SchemaName)+'.'+Quotename(isnull(a.Prefix+'_','')+a.SRC_GroupName+'_'+a.TGT_ShortName+isnull('_'+a.postfix,''))
+*/ WITH aliasviews AS
 
-		, SchemaName					= s.SchemaName
-		, LayerName						= s.LayerName
-		, LayerOrder					= s.LayerOrder
-		, DataSource					= d.DataSource
-		, BK_Schema						= s.BK
-		, BK_Group						= d.BK_Group
-		, Shortname						= d.ShortName
-		, dwhTargetShortName			= a.TGT_ShortName
-		, Prefix						= a.Prefix
-		, Postfix						= a.Postfix
-		, Description					= d.Description
-		, BK_Flow						= d.BK_Flow
-		, TimeStamp						= d.TimeStamp
-		, BusinessDate					= null
-		, WhereFilter					= d.WhereFilter
-		, PartitionStatement			= d.PartitionStatement
-		, [BK_RefType_ObjectType]		= (select BK from rep.vw_Reftype where RefType='ObjectType' and [Name] = 'View')
-		, FullLoad						= null
-		, InsertOnly					= null
-		, BigData						= null
-		, BK_Template_Load				= null
-		, BK_Template_Create			= a.BK_Template_Create
-		, CustomStagingView				= null
-		, ReplaceAttributeNames			= a.ReplaceAttributeNames
-		, BK_RefType_RepositoryStatus	= a.BK_RefType_RepositoryStatus
-		, IsSystem						= d.IsSystem
-		, s.isDWH								
-		, s.isSRC								
-		, s.isTGT
-		, s.IsRep
-		, mta_RowNum					= Row_Number() over (order by d.BK)
+        (SELECT bk = a.bk ,
 
-	FROM rep.vw_AliasViews a
-	join [bld].[vw_Dataset] D on d.bk			=  a.BK_DatasetTrn
+               code = d.code ,
 
-	Join bld.vw_Schema		S	on S.bk			= d.BK_Schema
-	join rep.vw_RefType		RT	on RT.BK		= D.[BK_RefType_ObjectType]
-	WHERE 1 = 1
+               datasetname = quotename(s.schemaname) + '.' + quotename(isnull(a.prefix + '_', '') + a.src_groupname + '_' + a.tgt_shortname + isnull('_' + a.postfix, '')) ,
 
+               schemaname = s.schemaname ,
 
-			)
-Select 
-	  src.[BK]
-	, src.[Code]
-	, src.[DatasetName]
-	, src.[SchemaName]
-	, src.[DataSource]
-	, ss.BK_LinkedService
-	, LinkedServiceName					= ss.LinkedServiceName
-	, ss.BK_DataSource
-	, ss.BK_Layer
-	, src.LayerName
-	, src.[BK_Schema]
-	, src.[BK_Group]
-	, src.[Shortname]
-	, src.[dwhTargetShortName]
-	, [Prefix]							= src.Prefix
-	, [PostFix]							= src.Postfix
-	, src.[Description]
-	, src.[BK_Flow]
-	, FlowOrder							= cast(isnull(src.LayerOrder,0) as int) + ((fl.SortOrder * 10) + 5) -- (src.LayerOrder + ((fl.SortOrder * 100) + 2))
-	, src.[TimeStamp]
-	, src.[BusinessDate]
-	, src.[WhereFilter]
-	, src.[PartitionStatement]
-	, src.[BK_RefType_ObjectType]
-	, src.[FullLoad]
-	, src.[InsertOnly]
-	, src.[BigData]
-	, src.[BK_Template_Load]
-	, src.[BK_Template_Create]
-	, src.[CustomStagingView]
-	, src.ReplaceAttributeNames
-	, src.[BK_RefType_RepositoryStatus]
-	, src.IsSystem
-	, src.isDWH								
-	, src.isSRC								
-	, src.isTGT
-	, src.IsRep
-	, FirstDefaultDWHView				= 0
-	, ObjectType						= rtOT.[Name]
-	, RepositoryStatusName				= rtRS.[Name]
-	, RepositoryStatusCode				= rtRS.Code
-	, ToDeploy							= 1
-from AliasViews src
-left join bld.vw_Schema			ss		on ss.BK			= src.BK_Schema
+               layername = s.layername ,
 
-left join rep.vw_FlowLayer		fl		on fl.BK_Flow		= src.BK_Flow 
-											and fl.BK_Layer = ss.BK_Layer 
-											and (src.BK_Schema = fl.BK_Schema  OR fl.BK_Schema is null) 
-join rep.vw_RefType				rtOT	on rtOT.BK			= src.BK_RefType_ObjectType
-join rep.vw_RefType				rtRS	on rtRS.BK			= src.BK_RefType_RepositoryStatus
-where 1=1
+               layerorder = s.layerorder ,
+
+               datasource = d.datasource ,
+
+               bk_schema = s.bk ,
+
+               bk_group = d.bk_group ,
+
+               shortname = d.shortname ,
+
+               dwhtargetshortname = a.tgt_shortname ,
+
+               PREFIX = a.prefix ,
+
+               POSTFIX = a.postfix ,
+
+               description = d.description ,
+
+               bk_flow = d.bk_flow , TimeStamp = d.timestamp ,
+
+               businessdate = NULL ,
+
+               wherefilter = d.wherefilter ,
+
+               partitionstatement = d.partitionstatement ,
+
+               [bk_reftype_objecttype] =
+
+                (SELECT bk
+
+                  FROM rep.vw_reftype
+
+                 WHERE reftype = 'ObjectType'
+
+                   AND [name] = 'View'
+               ) ,
+
+               fullload = NULL ,
+
+               insertonly = NULL ,
+
+               bigdata = NULL ,
+
+               bk_template_load = NULL ,
+
+               bk_template_create = a.bk_template_create ,
+
+               customstagingview = NULL ,
+
+               replaceattributenames = a.replaceattributenames ,
+
+               bk_reftype_repositorystatus = a.bk_reftype_repositorystatus ,
+
+               issystem = d.issystem ,
+
+               s.isdwh ,
+
+               s.issrc ,
+
+               s.istgt ,
+
+               s.isrep ,
+
+               mta_rownum = row_number() OVER (
+                                                                                               ORDER BY d.bk)
+
+          FROM rep.vw_aliasviews a
+
+          JOIN [bld].[vw_dataset] d
+            ON d.bk = a.bk_datasettrn
+
+          JOIN bld.vw_schema s
+            ON s.bk = d.bk_schema
+
+          JOIN rep.vw_reftype rt
+            ON rt.bk = d.[bk_reftype_objecttype]
+
+         WHERE 1 = 1
+       )
+SELECT src.[bk] ,
+
+       src.[code] ,
+
+       src.[datasetname] ,
+
+       src.[schemaname] ,
+
+       src.[datasource] ,
+
+       ss.bk_linkedservice ,
+
+       linkedservicename = ss.linkedservicename ,
+
+       ss.bk_datasource ,
+
+       ss.bk_layer ,
+
+       src.layername ,
+
+       src.[bk_schema] ,
+
+       src.[bk_group] ,
+
+       src.[shortname] ,
+
+       src.[dwhtargetshortname] ,
+
+       [prefix] = src.prefix ,
+
+       [postfix] = src.postfix ,
+
+       src.[description] ,
+
+       src.[bk_flow] ,
+
+       floworder = cast(isnull(src.layerorder, 0) AS int) + ((fl.sortorder * 10) + 5) -- (src.LayerOrder + ((fl.SortOrder * 100) + 2))
+,
+
+       src.[timestamp] ,
+
+       src.[businessdate] ,
+
+       src.[wherefilter] ,
+
+       src.[partitionstatement] ,
+
+       src.[bk_reftype_objecttype] ,
+
+       src.[fullload] ,
+
+       src.[insertonly] ,
+
+       src.[bigdata] ,
+
+       src.[bk_template_load] ,
+
+       src.[bk_template_create] ,
+
+       src.[customstagingview] ,
+
+       src.replaceattributenames ,
+
+       src.[bk_reftype_repositorystatus] ,
+
+       src.issystem ,
+
+       src.isdwh ,
+
+       src.issrc ,
+
+       src.istgt ,
+
+       src.isrep ,
+
+       firstdefaultdwhview = 0 ,
+
+       objecttype = rtot.[name] ,
+
+       repositorystatusname = rtrs.[name] ,
+
+       repositorystatuscode = rtrs.code ,
+
+       todeploy = 1
+
+  FROM aliasviews src
+
+  LEFT JOIN bld.vw_schema ss
+    ON ss.bk = src.bk_schema
+
+  LEFT JOIN rep.vw_flowlayer fl
+    ON fl.bk_flow = src.bk_flow
+
+   AND fl.bk_layer = ss.bk_layer
+
+   AND (src.bk_schema = fl.bk_schema
+     OR fl.bk_schema IS NULL)
+
+  JOIN rep.vw_reftype rtot
+    ON rtot.bk = src.bk_reftype_objecttype
+
+  JOIN rep.vw_reftype rtrs
+    ON rtrs.bk = src.bk_reftype_repositorystatus
+
+ WHERE 1 = 1

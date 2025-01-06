@@ -1,11 +1,11 @@
 ﻿
 CREATE VIEW [adf].[getalljobparameterstable] AS WITH allparameters AS
 
-        (SELECT [jobs].[jobid] ,
+        (SELECT [jobs].[jobid],
 
-               [projects].[projectparametername] AS parametername ,
+               [projects].[projectparametername] AS parametername,
 
-               [projects].[projectparametervalue] AS parametervalue ,
+               [projects].[projectparametervalue] AS parametervalue,
 
                2 AS ordervalue
 
@@ -22,11 +22,11 @@ CREATE VIEW [adf].[getalljobparameterstable] AS WITH allparameters AS
 
            AND [flows].[projectid] = [projects].[projectid]
 
-         UNION SELECT [jobparameters2].[jobid] ,
+         UNION SELECT [jobparameters2].[jobid],
 
-               [jobparameters2].[jobparametername] AS parametername ,
+               [jobparameters2].[jobparametername] AS parametername,
 
-               [jobparameters2].[jobparametervalue] AS parametervalue ,
+               [jobparameters2].[jobparametervalue] AS parametervalue,
 
                1 AS ordervalue
 
@@ -35,20 +35,20 @@ CREATE VIEW [adf].[getalljobparameterstable] AS WITH allparameters AS
 
        allparameterswithduplicatecount AS
 
-        (SELECT [jobid] ,
+        (SELECT [jobid],
 
-               [parametername] ,
+               [parametername],
 
-               [parametervalue] ,
+               [parametervalue],
 
                row_number() over(PARTITION BY [jobid], [parametername]
                             ORDER BY [ordervalue] ASC) AS duplicatecount
 
           FROM [allparameters]
        )
-SELECT [jobid] ,
+SELECT [jobid],
 
-       [parametername] ,
+       [parametername],
 
        [parametervalue]
 

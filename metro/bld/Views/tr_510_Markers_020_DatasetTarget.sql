@@ -1,15 +1,10 @@
 ﻿
-
-
-
-CREATE view [bld].[tr_510_Markers_020_DatasetTarget] as 
-/* 
+CREATE VIEW [bld].[tr_510_markers_020_datasettarget] AS /*
 === Comments =========================================
 
 Description:
 	creates dataset markers
-	
-	
+
 Changelog:
 Date		time		Author					Description
 20220804	0000		K. Vermeij				Initial
@@ -20,247 +15,328 @@ Date		time		Author					Description
 20230701	0818		K. Vermeij				Added marker <!<tgt_recordsrcdate>>
 20230727	1704		K. Vermeij				added marker <!<tgt_PartitionStatement>>
 =======================================================
-*/
+*/ WITH base AS
 
-With base as (
+        (SELECT DISTINCT bk = tgt.bk ,
 
-		select distinct
-			 BK							= tgt.BK
-			, BKBase					= base.bk
-			, dd.Code 
-			, BKSource					= src.BK
-			, BKTarget					= tgt.BK
+               bkbase = base.bk ,
 
-			, src_dataset				= cast(src.DatasetName					as varchar(max))
-			, src_datasetschema			= cast(src.SchemaName					as varchar(max))
-			, tgt_businessdate			= cast(isnull(base.BusinessDate,'NULL') as varchar(max))
-			, tgt_recordsrcdate			= cast(coalesce(base.RecordSrcDate,fp.DateInFileNameExpression,'mta_loaddate') as varchar(max))
-			, tgt_dataset				= cast(tgt.DatasetName					as varchar(max))
-			, tgt_datasetgroupname		= cast(tgt.BK_Group						as varchar(max))
-			, tgt_datasetschema			= cast(tgt.SchemaName					as varchar(max))
-			, tgt_datasetshortname		= cast(iif(isnull(base.dwhTargetShortName,'')='', base.ShortName, base.dwhTargetShortName) as varchar(max))
-			, tgt_datasetshortnamesrc	= cast(base.ShortName					as varchar(max))
-			, tgt_FullLoad				= cast(base.FullLoad					as varchar(max))
-			, tgt_insertonly			= cast(base.InsertOnly					as varchar(max))
-			, tgt_insertnocheck			= cast(base.insertnocheck				as varchar(max))
-			, tgt_wherefilter			= cast(base.WhereFilter					as varchar(max))
-			, tgt_TimestampExpression	= cast(base.[timestamp]					as varchar(max))
-			, tgt_PartitionStatement	= cast(base.PartitionStatement			as varchar(max))
-			, DistinctValues			= cast(iif(isnull(base.DistinctValues,0) = 0,'', 'Distinct') as varchar(max))
-			, SCD						= cast(base.SCD							as varchar(max))
-			, mta_RecType				= diff.RecType
-			, BK_RefType_ObjectType		= base.BK_RefType_ObjectType
-			, ObjectTypeCode			= rto.Code
+               dd.code ,
 
-		from   bld.vw_Dataset base
-		join bld.vw_MarkersSmartLoad	Diff on Diff.Code  =  base.code
-		join bld.vw_DatasetDependency	DD	on base.code		= dd.code
-		join bld.vw_Dataset				src on src.BK		= dd.BK_Parent
-		join bld.vw_Dataset				tgt on tgt.BK		= dd.BK_Child
-		join bld.vw_RefType				rto on rto.BK		= tgt.BK_RefType_ObjectType
-		left join bld.vw_FileProperties	fp	on fp.bk		= base.bk
-		where 1=1
-			and dd.DependencyType = 'srcTotgt'
-			and dd.mta_Source != '[bld].[tr_400_DatasetDependency_030_TransformationViewsDWH]'
-			and dd.BK_Parent != 'src'
-			and base.code=base.bk 
-			and cast(diff.RecType as int) > -99
+               bksource = src.bk ,
 
-)
-, MarkerBuild as (
-	Select
-		  src.BK		
-		, src.Code
-		, Marker				= '<!<tgt_Dataset>>'
-		, MarkerValue			= src.tgt_Dataset
-		, MarkerDescription		= 'The name of the target dataset. Example: "[dim].[Common_Asset]"'
-	From Base src
+               bktarget = tgt.bk ,
 
-	union all
+               src_dataset = cast(src.datasetname AS varchar(MAX)) ,
 
-	Select
-		  src.BK		
-		, src.Code
-		, Marker				= '<!<tgt_DatasetGroupName>>'
-		, MarkerValue			= src.tgt_DatasetGroupName
-		, MarkerDescription		= 'Groupname of a dataset. Example "Common"'
-	From Base src
+               src_datasetschema = cast(src.schemaname AS varchar(MAX)) ,
 
+               tgt_businessdate = cast(isnull(base.businessdate, 'NULL') AS varchar(MAX)) ,
 
-	union all
+               tgt_recordsrcdate = cast(coalesce(base.recordsrcdate, fp.dateinfilenameexpression, 'mta_loaddate') AS varchar(MAX)) ,
 
-	Select
-		  src.BK		
-		, src.Code
-		, Marker				= '<!<tgt_DatasetSchema>>'
-		, MarkerValue			= src.tgt_DatasetSchema
-		, MarkerDescription		= ''
-	From Base src
+               tgt_dataset = cast(tgt.datasetname AS varchar(MAX)) ,
 
-	union all
+               tgt_datasetgroupname = cast(tgt.bk_group AS varchar(MAX)) ,
 
-	Select
-		  src.BK		
-		, src.Code
-		, Marker				= '<!<src_datasetschema>>'
-		, MarkerValue			= src.src_DatasetSchema
-		, MarkerDescription		= ''
-	From Base src
+               tgt_datasetschema = cast(tgt.schemaname AS varchar(MAX)) ,
 
+               tgt_datasetshortname = cast(iif(isnull(base.dwhtargetshortname, '') = '', base.shortname, base.dwhtargetshortname) AS varchar(MAX)) ,
 
-	union all
+               tgt_datasetshortnamesrc = cast(base.shortname AS varchar(MAX)) ,
 
-	Select
-		  src.BK		
-		, src.Code
-		, Marker				= '<!<tgt_datasetshortname>>'
-		, MarkerValue			= src.tgt_DatasetShortName
-		, MarkerDescription		= ''
-	From Base src
+               tgt_fullload = cast(base.fullload AS varchar(MAX)) ,
 
-	union all
+               tgt_insertonly = cast(base.insertonly AS varchar(MAX)) ,
 
-	Select
-		  src.BK		
-		, src.Code
-		, Marker				= '<!<tgt_datasetshortnamesrc>>'
-		, MarkerValue			= src.tgt_DatasetShortNamesrc
-		, MarkerDescription		= ''
-	From Base src
-	--where src.DatasetShortNamesrc is not null
+               tgt_insertnocheck = cast(base.insertnocheck AS varchar(MAX)) ,
 
-	union all
+               tgt_wherefilter = cast(base.wherefilter AS varchar(MAX)) ,
 
-	Select
-		  src.BK		
-		, src.Code
-		, Marker				= '<!<src_dataset>>'
-		, MarkerValue			= src.src_Dataset
-		, MarkerDescription		= ''
-	From Base src
+               tgt_timestampexpression = cast(base.[timestamp] AS varchar(MAX)) ,
 
-	union all
+               tgt_partitionstatement = cast(base.partitionstatement AS varchar(MAX)) ,
 
-	Select
-		  src.BK		
-		, src.Code
-		, Marker				= '<!<tgt_businessdate>>'
-		, MarkerValue			= src.tgt_BusinessDate
-		, MarkerDescription		= ''
-	From Base src
-	--where src.DatasetBusinessDate is not null
+               distinctvalues = cast(iif(isnull(base.distinctvalues, 0) = 0, '', 'Distinct') AS varchar(MAX)) ,
 
-	union all
+               scd = cast(base.scd AS varchar(MAX)) ,
 
-	Select
-		  src.BK		
-		, src.Code
-		, Marker				= '<!<tgt_recordsourcedate>>'
-		, MarkerValue			= src.tgt_recordsrcdate
-		, MarkerDescription		= ''
-	From Base src
+               mta_rectype = diff.rectype ,
 
-	union all
+               bk_reftype_objecttype = base.bk_reftype_objecttype ,
 
-	Select
-		  src.BK		
-		, src.Code
-		, Marker				= '<!<scd>>'
-		, MarkerValue			= src.SCD
-		, MarkerDescription		= ''
-	From Base src
+               objecttypecode = rto.code
 
-	union all
+          FROM bld.vw_dataset base
 
-	Select
-		  src.BK		
-		, src.Code
-		, Marker				= '<!<distinct>>'
-		, MarkerValue			= src.DistinctValues
-		, MarkerDescription		= 'In Some cases the dataset delivered isn unique'
-	From Base src
-	
-	union all
+          JOIN bld.vw_markerssmartload diff
+            ON diff.code = base.code
 
-	Select
-		  src.BK		
-		, src.Code
-		, Marker				= '<!<tgt_wherefilter>>'
-		, MarkerValue			= 'and '+src.tgt_WhereFilter
-		, MarkerDescription		= ''
-	From Base src
-	--where src.DatasetWhereFilter is not null
+          JOIN bld.vw_datasetdependency dd
+            ON base.code = dd.code
 
-	union all
+          JOIN bld.vw_dataset src
+            ON src.bk = dd.bk_parent
 
-	Select
-		  src.BK		
-		, src.Code
-		, Marker				= '<!<tgt_PartitionStatement>>'
-		, MarkerValue			=  case when isnull(ltrim(rtrim(src.tgt_PartitionStatement)),'')='' then '' else  ',PARTITION('+src.tgt_PartitionStatement+')' end
-		, MarkerDescription		= ''
-	From Base src
-	--where isnull(ltrim(rtrim(src.tgt_PartitionStatement)),'')!='' and src.ObjectTypeCode = 'T'
+          JOIN bld.vw_dataset tgt
+            ON tgt.bk = dd.bk_child
 
-	union all
+          JOIN bld.vw_reftype rto
+            ON rto.bk = tgt.bk_reftype_objecttype
 
-	Select
-		  src.BK		
-		, src.Code
-		, Marker				= '<!<tgt_TimestampExpression>>'
-		, MarkerValue			= isnull(src.tgt_TimestampExpression,'null')
-		, MarkerDescription		= ''
-	From Base src
-	--where src.DatasetWhereFilter is not null
+          LEFT JOIN bld.vw_fileproperties fp
+            ON fp.bk = base.bk
 
+         WHERE 1 = 1
 
-	union all
+           AND dd.dependencytype = 'srcTotgt'
 
-	Select
-		  src.BK		
-		, src.Code
-		, Marker				= '<!<tgt_insertonly>>'
-		, MarkerValue			= isnull(src.tgt_insertOnly,0)
-		, MarkerDescription		= ''
-	From Base src
-	--where src.DatasetInsertOnly is not null
+           AND dd.mta_source != '[bld].[tr_400_DatasetDependency_030_TransformationViewsDWH]'
 
-	union all
+           AND dd.bk_parent != 'src'
 
-	Select
-		  src.BK		
-		, src.Code
-		, Marker				= '<!<tgt_insertnocheck>>'
-		, MarkerValue			= isnull(src.tgt_insertnocheck,0)
-		, MarkerDescription		= ''
-	From Base src
-	
+           AND base.code = base.bk
 
-	union all
+           AND cast(diff.rectype AS int) > -99
+       ),
 
-	Select
-		  src.BK		
-		, src.Code
-		, Marker				= '<!<tgt_fullload>>'
-		, MarkerValue			= src.tgt_FullLoad
-		, MarkerDescription		= ''
-	From Base src
-	--where src.DatasetFullLoad is not null
+       markerbuild AS
 
-	)
-select
-	BK					= Left(Concat( mb.bk,'|',MB.Marker) ,255)
-	, BK_Dataset		=  MB.bk
-	, Code				= mb.code
-	, MarkerType		= 'Dynamic'
-	, MarkerDescription
-	, MB.Marker
-	, MarkerValue		= isnull(MB.MarkerValue,'/* Marker: '+replace(replace(MB.Marker,'<!<','>!>'),'>>','<<')+' not used */')
-	, [Pre]				= 0
-	, [Post]			= 0
-	, mta_RecType		= diff.RecType
-From MarkerBuild MB
---join bld.vw_dataset tgt on MB.BK_Dataset_Code = tgt.Code
-left join [bld].[vw_MarkersSmartLoad] Diff on Diff.Code  =  MB.code and diff.BK = mb.bk
-where 1=1
---and marker = '<!<tgt_PartitionStatement>>'
+        (SELECT src.bk ,
+
+               src.code ,
+
+               marker = '<!<tgt_Dataset>>' ,
+
+               markervalue = src.tgt_dataset ,
+
+               markerdescription = 'The name of the target dataset. Example: "[dim].[Common_Asset]"'
+
+          FROM base src
+
+     UNION ALL SELECT src.bk ,
+
+               src.code ,
+
+               marker = '<!<tgt_DatasetGroupName>>' ,
+
+               markervalue = src.tgt_datasetgroupname ,
+
+               markerdescription = 'Groupname of a dataset. Example "Common"'
+
+          FROM base src
+
+     UNION ALL SELECT src.bk ,
+
+               src.code ,
+
+               marker = '<!<tgt_DatasetSchema>>' ,
+
+               markervalue = src.tgt_datasetschema ,
+
+               markerdescription = ''
+
+          FROM base src
+
+     UNION ALL SELECT src.bk ,
+
+               src.code ,
+
+               marker = '<!<src_datasetschema>>' ,
+
+               markervalue = src.src_datasetschema ,
+
+               markerdescription = ''
+
+          FROM base src
+
+     UNION ALL SELECT src.bk ,
+
+               src.code ,
+
+               marker = '<!<tgt_datasetshortname>>' ,
+
+               markervalue = src.tgt_datasetshortname ,
+
+               markerdescription = ''
+
+          FROM base src
+
+     UNION ALL SELECT src.bk ,
+
+               src.code ,
+
+               marker = '<!<tgt_datasetshortnamesrc>>' ,
+
+               markervalue = src.tgt_datasetshortnamesrc ,
+
+               markerdescription = ''
+
+          FROM base src --where src.DatasetShortNamesrc is not null
+
+     UNION ALL SELECT src.bk ,
+
+               src.code ,
+
+               marker = '<!<src_dataset>>' ,
+
+               markervalue = src.src_dataset ,
+
+               markerdescription = ''
+
+          FROM base src
+
+     UNION ALL SELECT src.bk ,
+
+               src.code ,
+
+               marker = '<!<tgt_businessdate>>' ,
+
+               markervalue = src.tgt_businessdate ,
+
+               markerdescription = ''
+
+          FROM base src --where src.DatasetBusinessDate is not null
+
+     UNION ALL SELECT src.bk ,
+
+               src.code ,
+
+               marker = '<!<tgt_recordsourcedate>>' ,
+
+               markervalue = src.tgt_recordsrcdate ,
+
+               markerdescription = ''
+
+          FROM base src
+
+     UNION ALL SELECT src.bk ,
+
+               src.code ,
+
+               marker = '<!<scd>>' ,
+
+               markervalue = src.scd ,
+
+               markerdescription = ''
+
+          FROM base src
+
+     UNION ALL SELECT src.bk ,
+
+               src.code ,
+
+               marker = '<!<distinct>>' ,
+
+               markervalue = src.distinctvalues ,
+
+               markerdescription = 'In Some cases the dataset delivered isn unique'
+
+          FROM base src
+
+     UNION ALL SELECT src.bk ,
+
+               src.code ,
+
+               marker = '<!<tgt_wherefilter>>' ,
+
+               markervalue = 'and ' + src.tgt_wherefilter ,
+
+               markerdescription = ''
+
+          FROM base src --where src.DatasetWhereFilter is not null
+
+     UNION ALL SELECT src.bk ,
+
+               src.code ,
+
+               marker = '<!<tgt_PartitionStatement>>' ,
+
+               markervalue = CASE
+                                      WHEN isnull(ltrim(rtrim(src.tgt_partitionstatement)), '') = '' THEN ''
+
+                    ELSE ',PARTITION(' + src.tgt_partitionstatement + ')'
+
+                     END ,
+
+               markerdescription = ''
+
+          FROM base src --where isnull(ltrim(rtrim(src.tgt_PartitionStatement)),'')!='' and src.ObjectTypeCode = 'T'
+
+     UNION ALL SELECT src.bk ,
+
+               src.code ,
+
+               marker = '<!<tgt_TimestampExpression>>' ,
+
+               markervalue = isnull(src.tgt_timestampexpression, 'null') ,
+
+               markerdescription = ''
+
+          FROM base src --where src.DatasetWhereFilter is not null
+
+     UNION ALL SELECT src.bk ,
+
+               src.code ,
+
+               marker = '<!<tgt_insertonly>>' ,
+
+               markervalue = isnull(src.tgt_insertonly, 0) ,
+
+               markerdescription = ''
+
+          FROM base src --where src.DatasetInsertOnly is not null
+
+     UNION ALL SELECT src.bk ,
+
+               src.code ,
+
+               marker = '<!<tgt_insertnocheck>>' ,
+
+               markervalue = isnull(src.tgt_insertnocheck, 0) ,
+
+               markerdescription = ''
+
+          FROM base src
+
+     UNION ALL SELECT src.bk ,
+
+               src.code ,
+
+               marker = '<!<tgt_fullload>>' ,
+
+               markervalue = src.tgt_fullload ,
+
+               markerdescription = ''
+
+          FROM base src --where src.DatasetFullLoad is not null
+
+       )
+SELECT bk = left(concat(mb.bk, '|', mb.marker), 255) ,
+
+       bk_dataset = mb.bk ,
+
+       code = mb.code ,
+
+       markertype = 'Dynamic' ,
+
+       markerdescription ,
+
+       mb.marker ,
+
+       markervalue = isnull(mb.markervalue, '/* Marker: ' + replace(replace(mb.marker, '<!<', '>!>'), '>>', '<<') + ' not used */') ,
+
+       [pre] = 0 ,
+
+       [post] = 0 ,
+
+       mta_rectype = diff.rectype
+
+  FROM markerbuild mb --join bld.vw_dataset tgt on MB.BK_Dataset_Code = tgt.Code
+
+  LEFT JOIN [bld].[vw_markerssmartload] diff
+    ON diff.code = mb.code
+
+   AND diff.bk = mb.bk
+
+ WHERE 1 = 1 --and marker = '<!<tgt_PartitionStatement>>'

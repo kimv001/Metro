@@ -1,7 +1,6 @@
-﻿
-/* BEGIN COMMENT-->
+﻿ /* BEGIN COMMENT-->
 {
-  "Description": 
+  "Description":
 	[
     "Create DataType syntax for table creation - redesigned from 2011",
 	"First parameter is the AttributeID, the second paramter @GetIsNullable gives the option to get Nullbale information, Default set to 1 (give nullable information)",
@@ -14,102 +13,95 @@
     {"Change date": "20211205", "Author":"Kim Vermeij"          , "Description":"Code Review"}
     ]
 }
-select 
+select
 STRING_AGG(
 										CONVERT(VARCHAR(max),
 											[rep].[GetDummyValueByAttributeBK](a.BK,'-1', '<Empty>','1900-01-01') +' AS '+ QUOTENAME(A.AttributeName)
-										) 
-									
-									,',' ) WITHIN GROUP (ORDER BY  cast(a.OrdinalPosition as int))	
+										)
+
+									,',' ) WITHIN GROUP (ORDER BY  cast(a.OrdinalPosition as int))
 <--END COMMENT */
-
-
-CREATE FUNCTION [rep].[GetDummyValueByAttributeBK]
-(      
-       @AttributeBK varchar(255)
-	   , @DummyType varchar(2)		= '-1' --/ -2
-	   , @DummyString10 varchar(10) = '<EMPTY>' --/ '<UNKNOWN>'
-	   , @DummyDate varchar(10)		= '1900-01-01'
-	   
-	 
-)
-RETURNS varchar(255)
-AS
-BEGIN
---;
+CREATE
+FUNCTION [rep].[getdummyvaluebyattributebk] (@attributebk varchar(255) , @dummytype varchar(2) = '-1' --/ -2
+ , @dummystring10 varchar(10) = '<EMPTY>' --/ '<UNKNOWN>'
+ , @dummydate varchar(10) = '1900-01-01') RETURNS varchar(255) AS BEGIN --;
 --with dummy_list as ( select reftype from bld.vw_RefType RT where 1=1 and rt.RefTypeAbbr = 'DUM' and [Name] = @DummyType )
---select 
+--select
 --	  DummyDate			= [Code]
---	, DummyValue		= [Name] 
+--	, DummyValue		= [Name]
 --from   bld.vw_RefType RT
 --join dummy_list dl on rt.reftype = dl.reftype
+  DECLARE @datatype varchar(20),
 
-	DECLARE @DataType varchar(20), @MaxLength varchar(10), @DummyStringShort varchar(2)
-	SET @DummyStringShort = cast(@DummyType as varchar(2))
+       @maxlength varchar(10),
 
-	   BEGIN
-		
-	   
-			SELECT 
-				  @DataType		= A.DataType
-				, @MaxLength	= 
-									--cast(A.MaximumLength as int)
+       @dummystringshort varchar(2)
 
-								cast(
-									case
-										when A.MaximumLength = 'max' then '-1'
-									    else A.MaximumLength
-										end
-								   as int)
+   SET @dummystringshort = cast(@dummytype AS varchar(2)) BEGIN
+SELECT @datatype = a.datatype ,
 
-								--cast(
-								--	case
-								--		--when A.MaximumLength = 'max' then '-1'
-								--	    when A.MaximumLength = '-1'
-								--								then case 
-								--										when A.DataType = 'varchar'
-								--											then '8000'
-								--											else '4000'
-								--										end
-					
-								--		else A.MaximumLength
-								--		end
-								--   as int)
+       @maxlength = --cast(A.MaximumLength as int)
+  cast(CASE
+           WHEN a.maximumlength = 'max' THEN '-1'
+           ELSE a.maximumlength
+       END AS int) --cast(
+ --	case
+ --		--when A.MaximumLength = 'max' then '-1'
+ --	    when A.MaximumLength = '-1'
+ --								then case
+ --										when A.DataType = 'varchar'
+ --											then '8000'
+ --											else '4000'
+ --										end
+ --		else A.MaximumLength
+ --		end
+ --   as int)
 
+  FROM bld.vw_attribute a
 
-			FROM bld.vw_Attribute A
-			WHERE A.BK = @AttributeBK
-		
-		
+ WHERE a.bk = @attributebk if(@datatype IS NULL) BEGIN RETURN 'DATATYPE NOT FOUND'; END -- Declare the return variable here
+ DECLARE @result varchar(255)
 
-		IF(@DataType IS NULL)
-			BEGIN
-				RETURN 'DATATYPE NOT FOUND';
-			END
-		-- Declare the return variable here
-       DECLARE @Result varchar(255)
-       
-       SET @Result = 'ERROR';
-       
-       SELECT @Result = 
-		CASE 
-			WHEN @DataType IN ('nchar', 'nvarchar', 'char', 'varchar') AND (@MaxLength > 9 or @MaxLength =-1) THEN +''''+@DummyString10+''''
-			WHEN @DataType IN ('nchar', 'nvarchar', 'char', 'varchar') AND @MaxLength between 2 AND 9 THEN ''''+@DummyStringShort+''''
-			WHEN @DataType IN ('nchar', 'nvarchar', 'char', 'varchar') AND @MaxLength =1 THEN ''''+'-'+''''
-             
+   SET @result = 'ERROR';
+  SELECT @result = CASE
+                       WHEN @datatype IN ('nchar',
+                                          'nvarchar',
+                                          'char',
+                                          'varchar')
+                            AND (@maxlength > 9
+                                 OR @maxlength = -1)                                   THEN + '''' +@ dummystring10 + ''''
 
+            WHEN @datatype IN ('nchar',
+                                          'nvarchar',
+                                          'char',
+                                          'varchar')
+                            AND @maxlength BETWEEN 2 AND 9                                                                             THEN '''' +@ dummystringshort + ''''
 
-			WHEN @DataType IN ('smallint', 'int','bigint', 'tinyint', 'numeric', 'decimal') THEN @DummyType
-			WHEN @DataType IN ('uniqueidentifier', 'xml', 'bit', 'varbinary') THEN ''''+ '0' +''''
-			WHEN @DataType IN ('date','datetime','datetime2' ) THEN ''''+ @DummyDate+''''
-			WHEN @DataType IN ('time' ) THEN ''''+ '00:00:00' +''''
-		END
+            WHEN @datatype IN ('nchar',
+                                          'nvarchar',
+                                          'char',
+                                          'varchar')
+                            AND @maxlength = 1                                                                                         THEN '''' + '-' + ''''
 
-	  -- Set @Result = iif(@AddAs=1, 'AS '+@Result,@Result)
-		   IF(@Result = '')
-			   BEGIN 
-					 SET @Result = 'ERRORR'
-			   END
-       RETURN @Result
-END
-END
+            WHEN @datatype IN ('smallint',
+                                          'int',
+                                          'bigint',
+                                          'tinyint',
+                                          'numeric',
+                                          'decimal') THEN @dummytype
+
+            WHEN @datatype IN ('uniqueidentifier',
+                                          'xml',
+                                          'bit',
+                                          'varbinary')                                                                                                     THEN '''' + '0' + ''''
+
+            WHEN @datatype IN ('date',
+                                          'datetime',
+                                          'datetime2')                                                                                                                                                                THEN '''' + @dummydate + ''''
+
+            WHEN @datatype IN ('time')                                                                                                                                                                                                                                                                             THEN '''' + '00:00:00' + ''''
+
+             END -- Set @Result = iif(@AddAs=1, 'AS '+@Result,@Result)
+ if(@result = '') BEGIN
+
+   SET @result = 'ERRORR' END RETURN @result END END

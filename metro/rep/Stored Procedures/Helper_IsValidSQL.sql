@@ -12,8 +12,6 @@ exec  rep.Helper_IsValidSQL @sql=@sqlnew, @exec=0
 
 NOK:
 
-
-
 Changelog:
 Date		time		Author					Description
 20220804	0000		K. Vermeij				Initial

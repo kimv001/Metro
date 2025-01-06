@@ -1,69 +1,69 @@
 ﻿
 CREATE VIEW [adf].[vw_schedule] AS
-SELECT bk ,
+SELECT bk,
 
-       code ,
+       code,
 
-       schedulename ,
+       schedulename,
 
-       scheduledesc ,
+       scheduledesc,
 
-       startdate = TRY_CAST (iif(isnull([startdate], '') = '', '1900-01-01', [startdate]) AS date) , enddate = TRY_CAST (iif(isnull(enddate, '') = '', '9999-12-31', enddate) AS date) , starttime ,
+       startdate = TRY_CAST (iif(isnull([startdate], '') = '', '1900-01-01', [startdate]) AS date) , enddate = TRY_CAST (iif(isnull(enddate, '') = '', '9999-12-31', enddate) AS date) , starttime,
 
-       endtime ,
+       endtime,
 
-       bk_scheduletype ,
+       bk_scheduletype,
 
-       scheduletypecode ,
+       scheduletypecode,
 
-       scheduletypename ,
+       scheduletypename,
 
-       bk_schedulefrequency ,
+       bk_schedulefrequency,
 
-       schedulefrequencycode ,
+       schedulefrequencycode,
 
-       schedulefrequencyname ,
+       schedulefrequencyname,
 
-       bk_scheduledailyinterval ,
+       bk_scheduledailyinterval,
 
-       scheduledailyintervalcode ,
+       scheduledailyintervalcode,
 
-       scheduledailyintervalname ,
+       scheduledailyintervalname,
 
-       bk_scheduleweeklyinterval ,
+       bk_scheduleweeklyinterval,
 
-       scheduleweeklyintervalcode ,
+       scheduleweeklyintervalcode,
 
-       scheduleweeklyintervalname ,
+       scheduleweeklyintervalname,
 
-       bk_schedulemonthlyinterval ,
+       bk_schedulemonthlyinterval,
 
-       schedulemonthlyintervalcode ,
+       schedulemonthlyintervalcode,
 
-       schedulemonthlyintervalname ,
+       schedulemonthlyintervalname,
 
-       bk_schedulequarterlyinterval ,
+       bk_schedulequarterlyinterval,
 
-       schedulequarterlyintervalcode ,
+       schedulequarterlyintervalcode,
 
-       schedulequarterlyintervalname ,
+       schedulequarterlyintervalname,
 
-       bk_scheduleyearlyinterval ,
+       bk_scheduleyearlyinterval,
 
-       scheduleyearlyintervalcode ,
+       scheduleyearlyintervalcode,
 
-       scheduleyearlyintervalname ,
+       scheduleyearlyintervalname,
 
-       bk_schedulespecials ,
+       bk_schedulespecials,
 
-       schedulespecialscode ,
+       schedulespecialscode,
 
        schedulespecialsname --, CRON
 ,
 
-       repositorystatusname = sdtap.repositorystatus ,
+       repositorystatusname = sdtap.repositorystatus,
 
-       repositorystatuscode = sdtap.repositorystatuscode ,
+       repositorystatuscode = sdtap.repositorystatuscode,
 
        environment = sdtap.repositorystatus
 
