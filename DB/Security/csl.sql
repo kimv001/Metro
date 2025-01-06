@@ -1,3 +1,0 @@
-﻿CREATE SCHEMA [csl]
-    AUTHORIZATION [dbo];
-
