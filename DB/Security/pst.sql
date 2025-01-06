@@ -1,0 +1,3 @@
+﻿CREATE SCHEMA [pst]
+    AUTHORIZATION [dbo];
+
