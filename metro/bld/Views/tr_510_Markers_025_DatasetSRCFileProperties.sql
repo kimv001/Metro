@@ -1,360 +1,294 @@
 ﻿
-CREATE VIEW [bld].[tr_510_markers_025_datasetsrcfileproperties] AS /*
+
+
+
+
+
+
+
+
+CREATE view [bld].[tr_510_Markers_025_DatasetSRCFileProperties] as 
+/* 
 === Comments =========================================
 
 Description:
 	creates dataset markers
-
+	
+	
 Changelog:
 Date		time		Author					Description
 20220804	0000		K. Vermeij				Initial
 20230226	1400		K. Vermeij				Added column [mta_rectype] to Activate SmartLoad
 20230403	1944		K. Vermeij				If ROWTERMINATOR is empty in excel no line will be added. So synapse will take the default
 =======================================================
-*/ WITH base AS
+*/
+
+With base as (
+
+	select distinct
+		 BK							= tgt.BK
+		, BKBase					= base.bk
+		, dd.Code 
+		, BKSource					= src.BK
+		, BKTarget					= tgt.BK
+
+		-- File Properties
+		, DateInFileNameFormat		= cast(fp.DateInFileNameFormat														as varchar(max))
+		, DateinFileNameLength		= cast(isnull(fp.DateinFileNameLength	,'Marker not defined in the repository...')	as varchar(max))
+		, DateInFileNameStartPos	= cast(isnull(fp.DateInFileNameStartPos	,'Marker not defined in the repository...')	as varchar(max))
+		, DateInFileNameExpression	= cast(isnull(iif(fp.DateInFileNameExpression='',null,fp.DateInFileNameExpression), '[mta_DateInFileName]')	as varchar(max))
+								  
+		, [Filename]				= cast(fp.[Filename]																as varchar(max))
+		, FileMask					= cast(fp.FileMask																	as varchar(max))
+		, FileSystem				= cast(fp.FileSystem																as varchar(max))
+		, Folder					= cast(fp.Folder																	as varchar(max))
+
+		, FileFormat				= cast(fp.FF_FileFormat																as varchar(max))			  
+		, FileColumnDelimiter		= cast(fp.FF_ColumnDelimiter														as varchar(max))
+		, FileRowDelimiter			= cast(isnull(fp.ff_RowDelimiter,'')												as varchar(max))
+		, FileQuoteCharacter		= cast(fp.FF_QuoteCharacter															as varchar(max))
+		, FileCompressionLevel		= cast(fp.FF_CompressionLevel														as varchar(max))
+		, FileCompressionType		= cast(fp.FF_CompressionType														as varchar(max))
+		, FileEnableCDC				= cast(fp.FF_EnableCDC																as varchar(max))
+		, FileEscapeCharacter		= cast(fp.FF_EscapeCharacter														as varchar(max))
+		, FileFileEncoding			= cast(fp.FF_FileEncoding															as varchar(max))
+		, FileFirstRow				= cast(fp.FF_FirstRow																as varchar(max))
+		, FileFirstRowAsHeader		= cast(fp.FF_FirstRowAsHeader														as varchar(max))
+		, mta_RecType				= diff.RecType
+	from   bld.Dataset base
+	join bld.vw_MarkersSmartLoad	Diff on Diff.Code  =  base.code
+	join bld.vw_DatasetDependency	DD	on base.code		= dd.code
+	join bld.vw_Dataset				src on src.BK		= dd.BK_Parent
+	join bld.vw_Dataset				tgt on tgt.BK		= dd.BK_Child
+	left join bld.vw_FileProperties	fp	on fp.bk		= base.bk
+	where 1=1
+	--and tgt.bk = 'DWH|pst|vw|WMIA|IncidentReport|cur'
+		and dd.DependencyType = 'SrcToTgt'
+		and dd.mta_Source != '[bld].[tr_400_DatasetDependency_030_TransformationViewsDWH]'
+		and dd.BK_Parent != 'src'
+		and base.code=base.bk
+		and base.DatasetType = 'SRC'
+		and cast(diff.RecType as int) > -99
+)
+, MarkerBuild as (
+	
+
+	Select
+		  src.BK		
+		, src.Code
+		, Marker				= '<!<DateInFileNameLength>>'
+		, MarkerValue			= src.DateInFileNameLength
+		, MarkerDescription		= ''
+	From Base src
+
+	union all
+
+	Select
+		  src.BK		
+		, src.Code
+		, Marker				= '<!<DateInFileNameFormat>>'
+		, MarkerValue			= src.DateInFileNameFormat
+		, MarkerDescription		= ''
+	From Base src
+
+	union all
+
+	Select
+		  src.BK		
+		, src.Code
+		, Marker				= '<!<DateInFileNameStartPos>>'
+		, MarkerValue			= src.DateInFileNameStartPos
+		, MarkerDescription		= ''
+	From Base src
+
+	
+	union all
+
+	Select
+		  src.BK		
+		, src.Code
+		, Marker				= '<!<DateInFileNameExpression>>'
+		, MarkerValue			= src.DateInFileNameExpression
+		, MarkerDescription		= ''
+	From Base src
+
+	union all
+
+	Select
+		  src.BK		
+		, src.Code
+		, Marker				= '<!<Filename>>'
+		, MarkerValue			= src.[Filename]
+		, MarkerDescription		= ''
+	From Base src
+
+	union all
 
-        (SELECT DISTINCT bk = tgt.bk ,
+	Select
+		  src.BK		
+		, src.Code
+		, Marker				= '<!<FileMask>>'
+		, MarkerValue			= src.FileMask
+		, MarkerDescription		= ''
+	From Base src
 
-               bkbase = base.bk ,
 
-               dd.code ,
+	union all
 
-               bksource = src.bk ,
+	Select
+		  src.BK		
+		, src.Code
+		, Marker				= '<!<FileSystem>>'
+		, MarkerValue			= src.FileSystem
+		, MarkerDescription		= ''
+	From Base src
 
-               bktarget = tgt.bk -- File Properties
- ,
 
-               dateinfilenameformat = cast(fp.dateinfilenameformat AS varchar(MAX)) ,
+	union all
 
-               dateinfilenamelength = cast(isnull(fp.dateinfilenamelength, 'Marker not defined in the repository...') AS varchar(MAX)) ,
+	Select
+		  src.BK		
+		, src.Code
+		, Marker				= '<!<Folder>>'
+		, MarkerValue			= src.Folder
+		, MarkerDescription		= ''
+	From Base src
 
-               dateinfilenamestartpos = cast(isnull(fp.dateinfilenamestartpos, 'Marker not defined in the repository...') AS varchar(MAX)) ,
+	union all
 
-               dateinfilenameexpression = cast(isnull(iif(fp.dateinfilenameexpression = '', NULL, fp.dateinfilenameexpression), '[mta_DateInFileName]') AS varchar(MAX)) ,
+	Select
+		  src.BK		
+		, src.Code
+		, Marker				= '<!<FileFormat>>'
+		, MarkerValue			= src.FileFormat
+		, MarkerDescription		= ''
+	From Base src
 
-               [filename] = cast(fp.[filename] AS varchar(MAX)) ,
 
-               filemask = cast(fp.filemask AS varchar(MAX)) ,
+	union all
 
-               filesystem = cast(fp.filesystem AS varchar(MAX)) ,
+	Select
+		  src.BK		
+		, src.Code
+		, Marker				= '<!<FileColumnDelimiter>>'
+		, MarkerValue			= src.FileColumnDelimiter
+		, MarkerDescription		= ''
+	From Base src
 
-               folder = cast(fp.folder AS varchar(MAX)) ,
 
-               fileformat = cast(fp.ff_fileformat AS varchar(MAX)) ,
+	union all
 
-               filecolumndelimiter = cast(fp.ff_columndelimiter AS varchar(MAX)) ,
-
-               filerowdelimiter = cast(isnull(fp.ff_rowdelimiter, '') AS varchar(MAX)) ,
-
-               filequotecharacter = cast(fp.ff_quotecharacter AS varchar(MAX)) ,
-
-               filecompressionlevel = cast(fp.ff_compressionlevel AS varchar(MAX)) ,
-
-               filecompressiontype = cast(fp.ff_compressiontype AS varchar(MAX)) ,
-
-               fileenablecdc = cast(fp.ff_enablecdc AS varchar(MAX)) ,
-
-               fileescapecharacter = cast(fp.ff_escapecharacter AS varchar(MAX)) ,
-
-               filefileencoding = cast(fp.ff_fileencoding AS varchar(MAX)) ,
-
-               filefirstrow = cast(fp.ff_firstrow AS varchar(MAX)) ,
-
-               filefirstrowasheader = cast(fp.ff_firstrowasheader AS varchar(MAX)) ,
-
-               mta_rectype = diff.rectype
-
-          FROM bld.dataset base
-
-          JOIN bld.vw_markerssmartload diff
-            ON diff.code = base.code
-
-          JOIN bld.vw_datasetdependency dd
-            ON base.code = dd.code
-
-          JOIN bld.vw_dataset src
-            ON src.bk = dd.bk_parent
-
-          JOIN bld.vw_dataset tgt
-            ON tgt.bk = dd.bk_child
-
-          LEFT JOIN bld.vw_fileproperties fp
-            ON fp.bk = base.bk
-
-         WHERE 1 = 1 --and tgt.bk = 'DWH|pst|vw|WMIA|IncidentReport|cur'
-
-           AND dd.dependencytype = 'SrcToTgt'
-
-           AND dd.mta_source != '[bld].[tr_400_DatasetDependency_030_TransformationViewsDWH]'
-
-           AND dd.bk_parent != 'src'
-
-           AND base.code = base.bk
-
-           AND base.datasettype = 'SRC'
-
-           AND cast(diff.rectype AS int) > -99
-       ),
-
-       markerbuild AS
-
-        (SELECT src.bk ,
-
-               src.code ,
-
-               marker = '<!<DateInFileNameLength>>' ,
-
-               markervalue = src.dateinfilenamelength ,
-
-               markerdescription = ''
-
-          FROM base src
-
-     UNION ALL SELECT src.bk ,
-
-               src.code ,
-
-               marker = '<!<DateInFileNameFormat>>' ,
-
-               markervalue = src.dateinfilenameformat ,
-
-               markerdescription = ''
-
-          FROM base src
-
-     UNION ALL SELECT src.bk ,
-
-               src.code ,
-
-               marker = '<!<DateInFileNameStartPos>>' ,
-
-               markervalue = src.dateinfilenamestartpos ,
-
-               markerdescription = ''
-
-          FROM base src
-
-     UNION ALL SELECT src.bk ,
-
-               src.code ,
-
-               marker = '<!<DateInFileNameExpression>>' ,
-
-               markervalue = src.dateinfilenameexpression ,
-
-               markerdescription = ''
-
-          FROM base src
-
-     UNION ALL SELECT src.bk ,
-
-               src.code ,
-
-               marker = '<!<Filename>>' ,
-
-               markervalue = src.[filename] ,
-
-               markerdescription = ''
-
-          FROM base src
-
-     UNION ALL SELECT src.bk ,
-
-               src.code ,
-
-               marker = '<!<FileMask>>' ,
-
-               markervalue = src.filemask ,
-
-               markerdescription = ''
-
-          FROM base src
-
-     UNION ALL SELECT src.bk ,
-
-               src.code ,
-
-               marker = '<!<FileSystem>>' ,
-
-               markervalue = src.filesystem ,
-
-               markerdescription = ''
-
-          FROM base src
-
-     UNION ALL SELECT src.bk ,
-
-               src.code ,
-
-               marker = '<!<Folder>>' ,
-
-               markervalue = src.folder ,
-
-               markerdescription = ''
-
-          FROM base src
-
-     UNION ALL SELECT src.bk ,
-
-               src.code ,
-
-               marker = '<!<FileFormat>>' ,
-
-               markervalue = src.fileformat ,
-
-               markerdescription = ''
-
-          FROM base src
-
-     UNION ALL SELECT src.bk ,
-
-               src.code ,
-
-               marker = '<!<FileColumnDelimiter>>' ,
-
-               markervalue = src.filecolumndelimiter ,
-
-               markerdescription = ''
-
-          FROM base src
-
-     UNION ALL SELECT src.bk ,
-
-               src.code ,
-
-               marker = '<!<FileRowDelimiter>>' ,
-
-               markervalue = CASE
-                                      WHEN src.filerowdelimiter = '' THEN ''
-
-                    ELSE ',ROWTERMINATOR			= ''''' + src.filerowdelimiter + ''''''
-
-                     END ,
-
-               markerdescription = ''
-
-          FROM base src
-
-     UNION ALL SELECT src.bk ,
-
-               src.code ,
-
-               marker = '<!<FileCompressionLevel>>' ,
-
-               markervalue = src.filecompressionlevel ,
-
-               markerdescription = ''
-
-          FROM base src
-
-     UNION ALL SELECT src.bk ,
-
-               src.code ,
-
-               marker = '<!<FileCompressionType>>' ,
-
-               markervalue = src.filecompressiontype ,
-
-               markerdescription = ''
-
-          FROM base src
-
-     UNION ALL SELECT src.bk ,
-
-               src.code ,
-
-               marker = '<!<FileEnableCDC>>' ,
-
-               markervalue = src.fileenablecdc ,
-
-               markerdescription = ''
-
-          FROM base src
-
-     UNION ALL SELECT src.bk ,
-
-               src.code ,
-
-               marker = '<!<FileEscapeCharacter>>' ,
-
-               markervalue = src.fileescapecharacter ,
-
-               markerdescription = ''
-
-          FROM base src
-
-     UNION ALL SELECT src.bk ,
-
-               src.code ,
-
-               marker = '<!<FileEncoding>>' ,
-
-               markervalue = src.filefileencoding ,
-
-               markerdescription = ''
-
-          FROM base src
-
-     UNION ALL SELECT src.bk ,
-
-               src.code ,
-
-               marker = '<!<FileFirstRow>>' ,
-
-               markervalue = src.filefirstrow ,
-
-               markerdescription = ''
-
-          FROM base src
-
-     UNION ALL SELECT src.bk ,
-
-               src.code ,
-
-               marker = '<!<FileFirstRowAsHeader>>' ,
-
-               markervalue = src.filefirstrowasheader ,
-
-               markerdescription = ''
-
-          FROM base src
-
-     UNION ALL SELECT src.bk ,
-
-               src.code ,
-
-               marker = '<!<FileQuoteCharacter>>' ,
-
-               markervalue = src.filequotecharacter ,
-
-               markerdescription = ''
-
-          FROM base src
-       )
-SELECT bk = left(concat(mb.bk, '|', mb.marker), 255) ,
-
-       bk_dataset = mb.bk ,
-
-       code = mb.code ,
-
-       markertype = 'Dynamic' ,
-
-       markerdescription ,
-
-       mb.marker ,
-
-       markervalue = cast(isnull(mb.markervalue, '') AS varchar(MAX)) ,
-
-       [pre] = 0 ,
-
-       [post] = 0 ,
-
-       mta_rectype = diff.rectype
-
-  FROM markerbuild mb
-
-  LEFT JOIN [bld].[vw_markerssmartload] diff
-    ON diff.code = mb.code
-
- WHERE 1 = 1 --and marker = '<!<DateInFileNameLength>>'
+	Select
+		  src.BK		
+		, src.Code
+		, Marker				= '<!<FileRowDelimiter>>'
+		, MarkerValue			= case when src.FileRowDelimiter = ''
+									then ''
+									else ',ROWTERMINATOR			= '''''+src.FileRowDelimiter+''''''
+									end
+		, MarkerDescription		= ''
+	From Base src
+
+
+	union all
+
+	Select
+		  src.BK		
+		, src.Code
+		, Marker				= '<!<FileCompressionLevel>>'
+		, MarkerValue			= src.FileCompressionLevel
+		, MarkerDescription		= ''
+	From Base src
+
+
+	union all
+
+	Select
+		  src.BK		
+		, src.Code
+		, Marker				= '<!<FileCompressionType>>'
+		, MarkerValue			= src.FileCompressionType
+		, MarkerDescription		= ''
+	From Base src
+
+
+	union all
+
+	Select
+		  src.BK		
+		, src.Code
+		, Marker				= '<!<FileEnableCDC>>'
+		, MarkerValue			= src.FileEnableCDC
+		, MarkerDescription		= ''
+	From Base src
+
+
+	union all
+
+	Select
+		  src.BK		
+		, src.Code
+		, Marker				= '<!<FileEscapeCharacter>>'
+		, MarkerValue			= src.FileEscapeCharacter
+		, MarkerDescription		= ''
+	From Base src
+
+
+	union all
+
+	Select
+		  src.BK		
+		, src.Code
+		, Marker				= '<!<FileEncoding>>'
+		, MarkerValue			= src.FileFileEncoding
+		, MarkerDescription		= ''
+	From Base src
+
+
+	union all
+
+	Select
+		  src.BK		
+		, src.Code
+		, Marker				= '<!<FileFirstRow>>'
+		, MarkerValue			= src.FileFirstRow
+		, MarkerDescription		= ''
+	From Base src
+
+	union all
+
+	Select
+		  src.BK		
+		, src.Code
+		, Marker				= '<!<FileFirstRowAsHeader>>'
+		, MarkerValue			= src.FileFirstRowAsHeader
+		, MarkerDescription		= ''
+	From Base src
+
+
+	union all
+
+	Select
+		  src.BK		
+		, src.Code
+		, Marker				= '<!<FileQuoteCharacter>>'
+		, MarkerValue			= src.FileQuoteCharacter
+		, MarkerDescription		= ''
+	From Base src
+	)
+select
+	BK					= left(Concat( mb.bk,'|',MB.Marker),255)
+	, BK_Dataset		= MB.bk		
+	, Code				= mb.code
+	, MarkerType		= 'Dynamic'
+	, MarkerDescription
+	, MB.Marker
+	, MarkerValue		= cast(isnull(MB.MarkerValue,'') as varchar(max))
+	, [Pre]				= 0
+	, [Post]			= 0
+	, mta_RecType		= diff.RecType
+From MarkerBuild MB
+left join [bld].[vw_MarkersSmartLoad] Diff on Diff.Code  =  MB.code
+where 1=1
+--and marker = '<!<DateInFileNameLength>>'
 --and  left(Concat( mb.bk,'|',MB.Marker),255) = 'DWH|pst|vw|WMIA|IncidentReport|cur|<!<DateInFileNameLength>>'
