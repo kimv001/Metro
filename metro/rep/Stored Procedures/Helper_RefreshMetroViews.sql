@@ -1,9 +1,5 @@
 ﻿
-
-
-CREATE procedure [rep].[Helper_RefreshMetroViews] as
-
-/* 
+CREATE PROCEDURE [rep].[helper_refreshmetroviews] AS /*
 === Comments =========================================
 
 Description:
@@ -21,16 +17,13 @@ Changelog:
 Date		time		Author					Description
 20220804	0000		K. Vermeij				Initial
 =======================================================
-*/
+*/  DECLARE @sqlcmd nvarchar(MAX) = ''
+SELECT @sqlcmd = @sqlcmd + 'EXEC sp_refreshview ''' + schema_name(so.schema_id) + '.' + name + ''';
+'
 
-	DECLARE @sqlcmd NVARCHAR(MAX) = ''
-SELECT @sqlcmd = @sqlcmd +  'EXEC sp_refreshview '''+schema_name(so.schema_id)+'.' +  name + ''';
-' 
-FROM sys.objects AS so   
-INNER JOIN sys.sql_expression_dependencies AS sed   
-    ON so.object_id = sed.referencing_id   
-	WHERE so.type = 'V'
+  FROM sys.objects AS so
 
-print (@sqlcmd)
+ INNER JOIN sys.sql_expression_dependencies AS sed
+    ON so.object_id = sed.referencing_id
 
-EXEC(@sqlcmd)
+ WHERE so.type = 'V' PRINT (@sqlcmd) exec(@sqlcmd)

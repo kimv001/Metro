@@ -1,10 +1,15 @@
-﻿create view adf.vw_jobdependencies as 
+﻿
+CREATE VIEW adf.vw_jobdependencies AS
+SELECT [dependingjobid] = src.[dependingjobid],
 
-select 
-	[dependingjobid]			= src.[DependingJobId],
-    [prerequisitejobid]			= src.[PrerequisiteJobId],
-    [jobdependencytype]			= src.[JobDependencyType],
-    [jobdependecydescription]	= src.[JobDependecyDescription],
-	environment					= env.Environment
-from [adf].[JobDependencies]   src
-Cross join [adf].[vw_SDTAP]  env
+       [prerequisitejobid] = src.[prerequisitejobid],
+
+       [jobdependencytype] = src.[jobdependencytype],
+
+       [jobdependecydescription] = src.[jobdependecydescription],
+
+       environment = env.environment
+
+  FROM [adf].[jobdependencies] src
+
+ CROSS JOIN [adf].[vw_sdtap] env

@@ -1,70 +1,107 @@
 ﻿
+CREATE VIEW [adf].[vw_tgt_group_from_src] AS WITH base AS
 
+        (SELECT tgt = src.tgt_datasetname ,
 
+               tgt_bk_dataset = src.bk_target ,
 
+               tgt_group ,
 
+               tgt_schema ,
 
+               tgt_layer ,
 
+               tgt_dwh = 'All' ,
 
+               src_bk_dataset = src.bk_source ,
 
+               src_dataset = src.src_datasetname ,
 
-CREATE view [adf].[vw_TGT_Group_from_SRC] as
-With base as (
-		Select 
-		  TGT				= src.TGT_DatasetName
-		, TGT_BK_Dataset	= src.BK_Target	
-		, TGT_Group
-		, TGT_Schema
-		, TGT_Layer
-		, TGT_DWH			= 'All'
-		, SRC_BK_DataSet	= src.BK_Source
-		, SRC_DataSet		= src.SRC_DatasetName
-		, SRC_ShortName
-		, SRC_Group
-		, SRC_Schema
-		, SRC_Layer
-		, [generation_number]
-		FROM bld.vw_LoadDependency src
-		where DependencyType = 'TgtFromSrc'
-)
-, GroupMe as (
-	select distinct 
-		  [TGT_Group]
-     	, [SRC_BK_DataSet]
-		, [SRC_DataSet]
-		, [SRC_ShortName]
-		, [SRC_Group]
-		, [SRC_Schema]
-		, [SRC_Layer]
-		, [generation_number] =min([generation_number])
-	from base b
-	where 1=1
-	Group by
-		  [TGT_Group]
-		, SRC_BK_DataSet
-		, [SRC_DataSet]
-		, [SRC_ShortName]
-		, [SRC_Group]
-		, [SRC_Schema]
-		, [SRC_Layer]
-	)
-select distinct 
-	  [TGT_Group]
-	, [TGT]						= [TGT_Group]
-	, SRC_BK_DataSet
-	, src.[SRC_DataSet]
-	, src.[SRC_ShortName]
-	, SRC_SourceName			= src.SRC_Group + '_' + iif(src.SRC_Schema = 'stg',d.SRC_ShortName, src.SRC_ShortName)
-	, SRC_DatasetType			= D.SRC_ObjectType
-	, TGT_DatasetType			= D.TGT_ObjectType
-	, [SRC_Group]
-	, [SRC_Schema]
-	, [SRC_Layer] 
-	, generation_number			=  DENSE_RANK() over(partition by [TGT_Group] order by [generation_number])
-	, DependencyType			= 'Group'
-	, [RepositoryStatusName]    = d.RepositoryStatusName
-	, [RepositoryStatusCode]	= d.RepositoryStatusCode
-from GroupMe src
-join bld.vw_Dataset d on src.SRC_BK_DataSet = d.BK
-where 1=1
---and src.TGT_Group = 'WES'
+               src_shortname ,
+
+               src_group ,
+
+               src_schema ,
+
+               src_layer ,
+
+               [generation_number]
+
+          FROM bld.vw_loaddependency src
+
+         WHERE dependencytype = 'TgtFromSrc'
+       ),
+
+       groupme AS
+
+        (SELECT DISTINCT [tgt_group] ,
+
+               [src_bk_dataset] ,
+
+               [src_dataset] ,
+
+               [src_shortname] ,
+
+               [src_group] ,
+
+               [src_schema] ,
+
+               [src_layer] ,
+
+               [generation_number] = min([generation_number])
+
+          FROM base b
+
+         WHERE 1 = 1
+
+         GROUP BY [tgt_group] ,
+
+                  src_bk_dataset ,
+
+                  [src_dataset] ,
+
+                  [src_shortname] ,
+
+                  [src_group] ,
+
+                  [src_schema] ,
+
+                  [src_layer]
+       )
+SELECT DISTINCT [tgt_group] ,
+
+       [tgt] = [tgt_group] ,
+
+       src_bk_dataset ,
+
+       src.[src_dataset] ,
+
+       src.[src_shortname] ,
+
+       src_sourcename = src.src_group + '_' + iif(src.src_schema = 'stg', d.src_shortname, src.src_shortname) ,
+
+       src_datasettype = d.src_objecttype ,
+
+       tgt_datasettype = d.tgt_objecttype ,
+
+       [src_group] ,
+
+       [src_schema] ,
+
+       [src_layer] ,
+
+       generation_number = dense_rank() over(PARTITION BY [tgt_group]
+                                                      ORDER BY [generation_number]) ,
+
+       dependencytype = 'Group' ,
+
+       [repositorystatusname] = d.repositorystatusname ,
+
+       [repositorystatuscode] = d.repositorystatuscode
+
+  FROM groupme src
+
+  JOIN bld.vw_dataset d
+    ON src.src_bk_dataset = d.bk
+
+ WHERE 1 = 1 --and src.TGT_Group = 'WES'

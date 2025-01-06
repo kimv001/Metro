@@ -1,12 +1,5 @@
 ﻿
-
-create PROCEDURE rep.[Helper_LongPrint]
-      @String VARCHAR(MAX)
-
-AS
-
-
-/* 
+CREATE PROCEDURE rep.[helper_longprint] @string varchar(MAX) AS /*
 === Comments =========================================
 
 Description:
@@ -43,43 +36,23 @@ Changelog:
 Date		time		Author					Description
 20220804	0000		K. Vermeij				Initial
 =======================================================
-*/
-/*
+*/ /*
 Example:
 
 
 
-*/
+*/ /*
+ */ DECLARE @currentend BIGINT, /* track the length of the next substring */  @offset tinyint /*tracks the amount of offset needed */
 
-/* 
- */
+   SET @string = replace(replace(@string, char(13) + char(10), char(10)) , char(13), char(10)) WHILE len(@string) > 1 BEGIN IF charindex(char(10), @string) BETWEEN 1 AND 8000 BEGIN
 
-DECLARE
-               @CurrentEnd BIGINT, /* track the length of the next substring */
-               @offset tinyint /*tracks the amount of offset needed */
+   SET @currentend = charindex(char(10), @string) -1
 
+   SET @offset = 2 END ELSE BEGIN
 
-set @string = replace(  replace(@string, char(13) + char(10), char(10))   , char(13), char(10))
+   SET @currentend = 8000
 
-WHILE LEN(@String) > 1
-BEGIN
+   SET @offset = 1 END PRINT substring(@string, 1, @currentend)
 
-              
-    IF CHARINDEX(CHAR(10), @String) between 1 AND 8000
-    BEGIN
-
-           SET @CurrentEnd =  CHARINDEX(char(10), @String) -1
-           set @offset = 2
-    END
-    ELSE
-    BEGIN
-           SET @CurrentEnd = 8000
-            set @offset = 1
-    END   
-   
-
-    PRINT SUBSTRING(@String, 1, @CurrentEnd) 
-                                                 
-    set @string = SUBSTRING(@String, @CurrentEnd+@offset, 1073741822)   
-              
-END /*End While loop*/
+   SET @string = substring(@string, @currentend +@
+                        OFFSET, 1073741822) END /*End While loop*/

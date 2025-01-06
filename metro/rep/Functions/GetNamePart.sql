@@ -1,14 +1,6 @@
 ﻿
-
-
-
-CREATE FUNCTION rep.[GetNamePart]
-(
-       @Name nvarchar(255),
-	   @Position int
-)
-
-/* 
+CREATE
+FUNCTION rep.[getnamepart] (@name nvarchar(255), @position int) /*
 === Comments =========================================
 
 Description:
@@ -30,21 +22,8 @@ Changelog:
 Date		time		Author					Description
 20220804	0000		K. Vermeij				Initial
 =======================================================
-*/
+*/ RETURNS nvarchar(255) AS BEGIN DECLARE @result nvarchar(255)
 
-RETURNS nvarchar(255)
-AS
-BEGIN
-       DECLARE @Result nvarchar(255)
-            
-       
-set  @Result=  reverse(parsename(replace(reverse(@Name), '_', '.'), @Position)) 
+   SET @result = reverse(parsename(replace(reverse(@name), '_', '.'), @position)) if(@result = '') BEGIN
 
-IF(@Result = '')
-       BEGIN 
-             SET @Result = 'ERRORR'
-       END
-       
-       RETURN @Result
-       
-END
+   SET @result = 'ERRORR' END RETURN @result END

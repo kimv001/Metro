@@ -1,77 +1,120 @@
 ﻿
+CREATE VIEW [adf].[vw_tgt_schema_from_src] AS WITH base AS
 
+        (SELECT tgt = src.tgt_datasetname ,
 
+               tgt_bk_dataset = src.bk_target ,
 
+               tgt_group ,
 
+               tgt_schema ,
 
+               tgt_bk_schema = td.bk_schema ,
 
+               tgt_layer ,
 
+               tgt_dwh = 'All' ,
 
+               src_bk_dataset = src.bk_source ,
 
-CREATE view [adf].[vw_TGT_Schema_from_SRC] as
-With base as (
-		Select 
-		  TGT				= src.TGT_DatasetName
-		, TGT_BK_Dataset	= src.BK_Target	
-		, TGT_Group
-		, TGT_Schema
-		, TGT_BK_Schema		= TD.BK_Schema
-		, TGT_Layer
-		, TGT_DWH			= 'All'
-		, SRC_BK_DataSet	= src.BK_Source
-		, SRC_DataSet		= src.SRC_DatasetName
-		, SRC_ShortName		= src.SRC_ShortName
-		, SRC_Group			= src.SRC_Group
-		, SRC_Schema		= src.SRC_Schema
-		, SRC_Layer			= src.SRC_Layer
-		  
-		,[generation_number]
-		FROM bld.vw_LoadDependency	src
-		join bld.vw_Dataset			TD	on src.BK_Target = TD.BK
-		where DependencyType = 'TgtFromSrc'
-)
-, SchemaMe as (
-	select distinct 
-		  TGT_BK_Schema
-		, TGT_Layer
-		, TGT_DWH			= 'All'
-		, SRC_BK_DataSet
-		, [SRC_DataSet]
-		, [SRC_ShortName]
-		, [SRC_Group]
-		, [SRC_Schema]
-		, [SRC_Layer]
-		, [generation_number] =min([generation_number])
-	from base b
-	where 1=1
-	Group by
-		  TGT_BK_Schema
-		  , TGT_Layer
-		, SRC_BK_DataSet
-		, [SRC_DataSet]
-		, [SRC_ShortName]
-		, [SRC_Group]
-		, [SRC_Schema]
-		, [SRC_Layer]
-	)
-select distinct 
-	  [TGT_Schema]				= src.TGT_BK_Schema
-	  , TGT_Layer				= src.TGT_Layer
-	, [TGT]						= src.TGT_BK_Schema
-	, SRC_BK_DataSet
-	, [SRC_DataSet]
-	, src.[SRC_ShortName]
-		, SRC_SourceName			= src.SRC_Group + '_' + iif(src.SRC_Schema = 'stg',d.SRC_ShortName, src.SRC_ShortName)
-	, SRC_DatasetType			= D.SRC_ObjectType
-	, TGT_DatasetType			= D.TGT_ObjectType
-	, [SRC_Group]
-	, [SRC_Schema]
-	, [SRC_Layer] 
-	, generation_number			=  DENSE_RANK() over(partition by src.TGT_BK_Schema order by [generation_number])
-	, DependencyType			= 'Schema'
-	, [RepositoryStatusName]    = d.RepositoryStatusName
-	, [RepositoryStatusCode]	= d.RepositoryStatusCode
-from SchemaMe src
-join bld.vw_Dataset d on src.SRC_BK_DataSet = d.BK
-where 1=1
---and src.TGT_Schema = 'dim'
+               src_dataset = src.src_datasetname ,
+
+               src_shortname = src.src_shortname ,
+
+               src_group = src.src_group ,
+
+               src_schema = src.src_schema ,
+
+               src_layer = src.src_layer ,
+
+               [generation_number]
+
+          FROM bld.vw_loaddependency src
+
+          JOIN bld.vw_dataset td
+            ON src.bk_target = td.bk
+
+         WHERE dependencytype = 'TgtFromSrc'
+       ),
+
+       schemame AS
+
+        (SELECT DISTINCT tgt_bk_schema ,
+
+               tgt_layer ,
+
+               tgt_dwh = 'All' ,
+
+               src_bk_dataset ,
+
+               [src_dataset] ,
+
+               [src_shortname] ,
+
+               [src_group] ,
+
+               [src_schema] ,
+
+               [src_layer] ,
+
+               [generation_number] = min([generation_number])
+
+          FROM base b
+
+         WHERE 1 = 1
+
+         GROUP BY tgt_bk_schema ,
+
+                  tgt_layer ,
+
+                  src_bk_dataset ,
+
+                  [src_dataset] ,
+
+                  [src_shortname] ,
+
+                  [src_group] ,
+
+                  [src_schema] ,
+
+                  [src_layer]
+       )
+SELECT DISTINCT [tgt_schema] = src.tgt_bk_schema ,
+
+       tgt_layer = src.tgt_layer ,
+
+       [tgt] = src.tgt_bk_schema ,
+
+       src_bk_dataset ,
+
+       [src_dataset] ,
+
+       src.[src_shortname] ,
+
+       src_sourcename = src.src_group + '_' + iif(src.src_schema = 'stg', d.src_shortname, src.src_shortname) ,
+
+       src_datasettype = d.src_objecttype ,
+
+       tgt_datasettype = d.tgt_objecttype ,
+
+       [src_group] ,
+
+       [src_schema] ,
+
+       [src_layer] ,
+
+       generation_number = dense_rank() over(PARTITION BY src.tgt_bk_schema
+                                                      ORDER BY [generation_number]) ,
+
+       dependencytype = 'Schema' ,
+
+       [repositorystatusname] = d.repositorystatusname ,
+
+       [repositorystatuscode] = d.repositorystatuscode
+
+  FROM schemame src
+
+  JOIN bld.vw_dataset d
+    ON src.src_bk_dataset = d.bk
+
+ WHERE 1 = 1 --and src.TGT_Schema = 'dim'

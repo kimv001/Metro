@@ -1,16 +1,16 @@
-﻿CREATE TABLE [adf].[Jobs] (
-    [JobId]           AS             (CONVERT([nvarchar](900),concat_ws('|',[FlowId],[JobName]))) PERSISTED NOT NULL,
-    [JobName]         NVARCHAR (280) NOT NULL,
-    [JobDescription]  NVARCHAR (MAX) NOT NULL,
-    [FlowId]          NVARCHAR (900) NOT NULL,
-    [JobType]         NVARCHAR (MAX) NOT NULL,
-    [JobGroup]        NVARCHAR (MAX) NOT NULL,
-    [JobOrder]        INT            NOT NULL,
-    [LastRunDuration] INT            NULL,
-    [LastRunStart]    DATETIME2 (7)  NULL,
-    [LastRunStatus]   NVARCHAR (10)  NULL,
-    [CheckPoint]      DATETIME2 (7)  NULL,
-    CONSTRAINT [PK_JobId] PRIMARY KEY CLUSTERED ([JobId] ASC),
-    CONSTRAINT [FK_Jobs_FlowId] FOREIGN KEY ([FlowId]) REFERENCES [adf].[Flows] ([FlowId]) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
+﻿
+CREATE TABLE [adf].[jobs]
+  ([jobid] AS (convert([nvarchar](900), concat_ws('|', [flowid], [jobname]))) persisted NOT NULL,
+                                                                                        [jobname] NVARCHAR (280) NOT NULL,
+                                                                                                                 [jobdescription] NVARCHAR (MAX) NOT NULL,
+                                                                                                                                                 [flowid] NVARCHAR (900) NOT NULL,
+                                                                                                                                                                         [jobtype] NVARCHAR (MAX) NOT NULL,
+                                                                                                                                                                                                  [jobgroup] NVARCHAR (MAX) NOT NULL,
+                                                                                                                                                                                                                            [joborder] INT NOT NULL,
+                                                                                                                                                                                                                                           [lastrunduration] INT NULL,
+                                                                                                                                                                                                                                                                 [lastrunstart] datetime2 (7) NULL,
+                                                                                                                                                                                                                                                                                              [lastrunstatus] NVARCHAR (10) NULL,
+                                                                                                                                                                                                                                                                                                                            [checkpoint] datetime2 (7) NULL,
+                                                                                                                                                                                                                                                                                                                                                       CONSTRAINT [pk_jobid] PRIMARY KEY clustered ([jobid] ASC),
+                                                                                                                                                                                                                                                                                                                                                                                         CONSTRAINT [fk_jobs_flowid]
+   FOREIGN KEY ([flowid]) REFERENCES [adf].[flows] ([flowid]) ON DELETE CASCADE ON UPDATE CASCADE);

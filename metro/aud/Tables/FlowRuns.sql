@@ -1,12 +1,10 @@
-﻿CREATE TABLE [aud].[FlowRuns] (
-    [ProjectId]   NVARCHAR (900) NOT NULL,
-    [FlowId]      NVARCHAR (900) NOT NULL,
-    [FlowName]    NVARCHAR (280) NOT NULL,
-    [FlowRunGUID] NVARCHAR (36)  NOT NULL,
-    [RunStart]    DATETIME2 (7)  NULL,
-    [RunEnd]      DATETIME2 (7)  NULL,
-    [RunDuration] INT            NULL,
-    [RunStatus]   NVARCHAR (10)  NULL,
-    [LogDateTime] DATETIME2 (7)  NULL
-);
-
+﻿
+CREATE TABLE [aud].[flowruns] ([projectid] NVARCHAR (900) NOT NULL,
+                                                          [flowid] NVARCHAR (900) NOT NULL,
+                                                                                  [flowname] NVARCHAR (280) NOT NULL,
+                                                                                                            [flowrunguid] NVARCHAR (36) NOT NULL,
+                                                                                                                                        [runstart] datetime2 (7) NULL,
+                                                                                                                                                                 [runend] datetime2 (7) NULL,
+                                                                                                                                                                                        [runduration] INT NULL,
+                                                                                                                                                                                                          [runstatus] NVARCHAR (10) NULL,
+                                                                                                                                                                                                                                    [logdatetime] datetime2 (7) NULL);

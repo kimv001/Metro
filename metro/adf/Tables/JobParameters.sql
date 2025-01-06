@@ -1,10 +1,10 @@
-﻿CREATE TABLE [adf].[JobParameters] (
-    [JobParameterId]          AS             (CONVERT([nvarchar](900),concat_ws('|',[JobId],[JobParameterName]))) PERSISTED NOT NULL,
-    [JobParameterName]        NVARCHAR (280) NOT NULL,
-    [JobParameterValue]       NVARCHAR (MAX) NOT NULL,
-    [JobParameterDescription] NVARCHAR (MAX) NULL,
-    [JobId]                   NVARCHAR (900) NOT NULL,
-    CONSTRAINT [PK_JobParameters] PRIMARY KEY CLUSTERED ([JobParameterId] ASC),
-    CONSTRAINT [FK_JobParameters_JobId] FOREIGN KEY ([JobId]) REFERENCES [adf].[Jobs] ([JobId]) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
+﻿
+CREATE TABLE [adf].[jobparameters]
+  ([jobparameterid] AS (convert([nvarchar](900), concat_ws('|', [jobid], [jobparametername]))) persisted NOT NULL,
+                                                                                                         [jobparametername] NVARCHAR (280) NOT NULL,
+                                                                                                                                           [jobparametervalue] NVARCHAR (MAX) NOT NULL,
+                                                                                                                                                                              [jobparameterdescription] NVARCHAR (MAX) NULL,
+                                                                                                                                                                                                                       [jobid] NVARCHAR (900) NOT NULL,
+                                                                                                                                                                                                                                              CONSTRAINT [pk_jobparameters] PRIMARY KEY clustered ([jobparameterid] ASC),
+                                                                                                                                                                                                                                                                                        CONSTRAINT [fk_jobparameters_jobid]
+   FOREIGN KEY ([jobid]) REFERENCES [adf].[jobs] ([jobid]) ON DELETE CASCADE ON UPDATE CASCADE);

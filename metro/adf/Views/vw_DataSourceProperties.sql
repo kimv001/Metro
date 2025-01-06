@@ -1,7 +1,5 @@
 ﻿
-Create view [adf].[vw_DataSourceProperties] as
-
-/*
+CREATE VIEW [adf].[vw_datasourceproperties] AS /*
 Developed by:			metro
 Description:			Generic transformationview to pivot all DataSourceProperties to DTAP environment values
 
@@ -9,46 +7,75 @@ Change log:
 Date					Author				Description
 20220915 00:00			K. Vermeij			Initial version
 */
+SELECT bk_datasource ,
 
-select 
-	  BK_Datasource
-	, DataSourceName
-	, BK_LinkedService
-	, DataSourcePropertiesName
-	, CurrentEnvironment					= CASE WHEN right(CAST(SERVERPROPERTY( 'ServerName' ) as varchar),3)='ROD' THEN 'PRD' ELSE right(CAST(SERVERPROPERTY( 'ServerName' ) as varchar),3) END
-	, DataSourcePropertiesCurrentValue		= CASE 
-												WHEN right(CAST(SERVERPROPERTY( 'ServerName' ) as varchar),3)='dev' then ISNULL([D],[X])
-												WHEN right(CAST(SERVERPROPERTY( 'ServerName' ) as varchar),3)='tst' then ISNULL([T],[X])
-												WHEN right(CAST(SERVERPROPERTY( 'ServerName' ) as varchar),3)='acc' then ISNULL([A],[X])
-												WHEN right(CAST(SERVERPROPERTY( 'ServerName' ) as varchar),3)='rod' then ISNULL([P],[X])
-												WHEN right(CAST(SERVERPROPERTY( 'ServerName' ) as varchar),3)='box' then ISNULL([S],[X])
-												ELSE 'Unknown'
-												END
-	
+       datasourcename ,
 
-	, D = ISNULL([D],[X])
-	, T = ISNULL([T],[X])
-	, A = ISNULL([A],[X])
-	, P = ISNULL([P],[X])
-	, X = [X] -- default value for all DTAP
-	, S = ISNULL([S],[X]) -- Sandbox environment
-	
-	from (
+       bk_linkedservice ,
 
-			Select 
-				BK_Datasource						= ds.bk
-				, BK_LinkedService					= ds.BK_LinkedService
-				, DataSourceName					= ds.[Name]
-				, DataSourcePropertiesName			= src.DataSourcePropertiesName
-				, DataSourcePropertiesValue			= src.DataSourcePropertiesValue
-				, DataSourcePropertiesEnvironment	= rt.code
-			  From  rep.vw_DataSource				ds
-			  join rep.vw_DataSourceProperties		src	on src.BK_Datasource	= ds.bk
-			  join rep.vw_refType					rt	on rt.bk				= src.bk_RefType_Environment
-			  ) dsp
-Pivot (
-									max([DataSourcePropertiesValue])
-							
-for [DataSourcePropertiesEnvironment] IN 
-			([D],[T],[A],[P],[X], [S])
-		)	as pivot_table
+       datasourcepropertiesname ,
+
+       currentenvironment = CASE
+                                WHEN right(cast(serverproperty('ServerName') AS varchar), 3) = 'ROD' THEN 'PRD'
+
+            ELSE right(cast(serverproperty('ServerName') AS varchar), 3)
+
+             END ,
+
+       datasourcepropertiescurrentvalue = CASE
+                                                                   WHEN right(cast(serverproperty('ServerName') AS varchar), 3) = 'dev' THEN isnull([d], [x])
+
+            WHEN right(cast(serverproperty('ServerName') AS varchar), 3) = 'tst' THEN isnull([t], [x])
+
+            WHEN right(cast(serverproperty('ServerName') AS varchar), 3) = 'acc' THEN isnull([a], [x])
+
+            WHEN right(cast(serverproperty('ServerName') AS varchar), 3) = 'rod' THEN isnull([p], [x])
+
+            WHEN right(cast(serverproperty('ServerName') AS varchar), 3) = 'box' THEN isnull([s], [x])
+
+            ELSE 'Unknown'
+
+             END ,
+
+       d = isnull([d], [x]) ,
+
+       t = isnull([t], [x]) ,
+
+       a = isnull([a], [x]) ,
+
+       p = isnull([p], [x]) ,
+
+       x = [x] -- default value for all DTAP
+,
+
+       s = isnull([s], [x]) -- Sandbox environment
+
+
+  FROM
+
+        (SELECT bk_datasource = ds.bk ,
+
+               bk_linkedservice = ds.bk_linkedservice ,
+
+               datasourcename = ds.[name] ,
+
+               datasourcepropertiesname = src.datasourcepropertiesname ,
+
+               datasourcepropertiesvalue = src.datasourcepropertiesvalue ,
+
+               datasourcepropertiesenvironment = rt.code
+
+          FROM rep.vw_datasource ds
+
+          JOIN rep.vw_datasourceproperties src
+            ON src.bk_datasource = ds.bk
+
+          JOIN rep.vw_reftype rt
+            ON rt.bk = src.bk_reftype_environment
+       ) dsp PIVOT (max([datasourcepropertiesvalue])
+                                                                            FOR [datasourcepropertiesenvironment] IN ([d],
+                                                                                                                      [t],
+                                                                                                                      [a],
+                                                                                                                      [p],
+                                                                                                                      [x],
+                                                                                                                      [s])) AS pivot_table

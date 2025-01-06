@@ -1,25 +1,29 @@
-﻿CREATE VIEW [adf].[GetJobDependencies]
+﻿
+CREATE VIEW [adf].[getjobdependencies] AS
+SELECT [projects].[projectname],
 
-AS
+       [flows].[flowname],
 
-SELECT	[Projects].[ProjectName],
-		[Flows].[FlowName],
-		[Jobs].*,
-		[JobDependencies].[PrerequisiteJobId],
-		[PrerequisiteJobs].[JobName] AS [PrerequisiteJobName],
-		[PrerequisiteJobs].[LastRunStatus] AS [PrerequisiteJobStatus],
-		[PrerequisiteJobs].[LastRunStart] AS [PrerequisiteJobLastRunStart]
+       [jobs].*,
 
-FROM	[adf].[Jobs] AS Jobs
+       [jobdependencies].[prerequisitejobid],
 
-INNER JOIN [adf].[Flows] AS Flows
-	ON [Jobs].[FlowId] = [Flows].[FlowId]
+       [prerequisitejobs].[jobname] AS [prerequisitejobname],
 
-INNER JOIN [adf].[Projects] AS Projects
-	ON [Flows].[ProjectId] = [Projects].[ProjectId]
+       [prerequisitejobs].[lastrunstatus] AS [prerequisitejobstatus],
 
-INNER JOIN [adf].[JobDependencies] as JobDependencies
-	ON [Jobs].[JobId] = [JobDependencies].[DependingJobId]
+       [prerequisitejobs].[lastrunstart] AS [prerequisitejoblastrunstart]
 
-LEFT JOIN [adf].[Jobs] as PrerequisiteJobs
-    ON [JobDependencies].[PrerequisiteJobId] = [PrerequisiteJobs].[JobId]
+  FROM [adf].[jobs] AS jobs
+
+ INNER JOIN [adf].[flows] AS flows
+    ON [jobs].[flowid] = [flows].[flowid]
+
+ INNER JOIN [adf].[projects] AS projects
+    ON [flows].[projectid] = [projects].[projectid]
+
+ INNER JOIN [adf].[jobdependencies] AS jobdependencies
+    ON [jobs].[jobid] = [jobdependencies].[dependingjobid]
+
+  LEFT JOIN [adf].[jobs] AS prerequisitejobs
+    ON [jobdependencies].[prerequisitejobid] = [prerequisitejobs].[jobid]

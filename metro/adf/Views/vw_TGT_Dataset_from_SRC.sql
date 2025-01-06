@@ -1,51 +1,77 @@
 ﻿
+CREATE VIEW [adf].[vw_tgt_dataset_from_src] AS WITH base AS
 
+        (SELECT tgt = src.tgt_datasetname ,
 
+               tgt_bk_dataset = src.bk_target ,
 
+               tgt_group ,
 
+               tgt_schema ,
 
+               tgt_layer ,
 
-CREATE view [adf].[vw_TGT_Dataset_from_SRC] as
-With base as (
-	Select 
-		  TGT				= src.TGT_DatasetName
-		, TGT_BK_Dataset	= src.BK_Target	
-		, TGT_Group
-		, TGT_Schema
-		, TGT_Layer
-		, TGT_DWH			= 'All'
-		, SRC_BK_DataSet	= src.BK_Source
-		, SRC_DataSet		= src.SRC_DatasetName
-		, SRC_ShortName
-		, SRC_Group
-		, SRC_Schema
-		, SRC_Layer
-		, DependencyType  
-		,[generation_number]
-	From bld.vw_LoadDependency src
-	where DependencyType = 'TgtFromSrc'
-	  
-)
+               tgt_dwh = 'All' ,
 
-select distinct 
-	  TGT_Dataset				= b.TGT
-	, TGT_BK_Dataset			= b.TGT_BK_Dataset
-	, TGT						= b.TGT
-	, TGT_Group
-	, TGT_Schema
-	, TGT_Layer
-	, SRC_BK_DataSet			= b.SRC_BK_DataSet
-	, SRC_DataSet				= b.SRC_DataSet
-	, SRC_ShortName				= b.SRC_ShortName
-	, SRC_Group					= b.SRC_Group
-	, SRC_Schema				= b.SRC_Schema
-	, SRC_Layer					= b.SRC_Layer
-	, SRC_SourceName			= b.SRC_Group + '_' + iif(b.SRC_Schema = 'stg',d.SRC_ShortName, b.SRC_ShortName)
-	, SRC_DatasetType			= D.SRC_ObjectType
-	, TGT_DatasetType			= D.TGT_ObjectType
-	, generation_number			= b.Generation_Number
-	, DependencyType			= 'Dataset'
-	, RepositoryStatusName		= d.RepositoryStatusName
-	, RepositoryStatusCode		= d.RepositoryStatusCode
-from base b
-join bld.vw_Dataset d on b.SRC_BK_DataSet = d.BK
+               src_bk_dataset = src.bk_source ,
+
+               src_dataset = src.src_datasetname ,
+
+               src_shortname ,
+
+               src_group ,
+
+               src_schema ,
+
+               src_layer ,
+
+               dependencytype ,
+
+               [generation_number]
+
+          FROM bld.vw_loaddependency src
+
+         WHERE dependencytype = 'TgtFromSrc'
+       )
+SELECT DISTINCT tgt_dataset = b.tgt ,
+
+       tgt_bk_dataset = b.tgt_bk_dataset ,
+
+       tgt = b.tgt ,
+
+       tgt_group ,
+
+       tgt_schema ,
+
+       tgt_layer ,
+
+       src_bk_dataset = b.src_bk_dataset ,
+
+       src_dataset = b.src_dataset ,
+
+       src_shortname = b.src_shortname ,
+
+       src_group = b.src_group ,
+
+       src_schema = b.src_schema ,
+
+       src_layer = b.src_layer ,
+
+       src_sourcename = b.src_group + '_' + iif(b.src_schema = 'stg', d.src_shortname, b.src_shortname) ,
+
+       src_datasettype = d.src_objecttype ,
+
+       tgt_datasettype = d.tgt_objecttype ,
+
+       generation_number = b.generation_number ,
+
+       dependencytype = 'Dataset' ,
+
+       repositorystatusname = d.repositorystatusname ,
+
+       repositorystatuscode = d.repositorystatuscode
+
+  FROM base b
+
+  JOIN bld.vw_dataset d
+    ON b.src_bk_dataset = d.bk
