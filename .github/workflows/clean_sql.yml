@@ -1,3 +1,7 @@
+permissions:
+  contents: write
+  actions: read
+
 name: Clean SQL Files
 
 on: [push, pull_request]
