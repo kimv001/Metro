@@ -13,7 +13,7 @@ CREATE PROCEDURE [rep].[021_bld_recreate_buildtables] @table_name varchar(255) =
     Change log:
     Date                    Author              Description
     20220916 20:15          K. Vermeij          Initial version
-    */  DECLARE @logprocname varchar(255) = '[bld].[021_bld_Recreate_BuildTables]' DECLARE @logsql varchar(255) DECLARE @srcschema varchar(255) = 'bld' DECLARE @tgtschema varchar(255) = 'bld' DECLARE @counternr INT DECLARE @maxnr INT DECLARE @sqldrop nvarchar(MAX) DECLARE @sqlcreate nvarchar(MAX) DECLARE @tablename varchar(255) DECLARE @msg varchar(255) DECLARE @columnlist nvarchar(MAX) DECLARE @src_table_name varchar(255) BEGIN try -- Drop temporary table if it exists
+    */ DECLARE @logprocname varchar(255) = '[bld].[021_bld_Recreate_BuildTables]' DECLARE @logsql varchar(255) DECLARE @srcschema varchar(255) = 'bld' DECLARE @tgtschema varchar(255) = 'bld' DECLARE @counternr INT DECLARE @maxnr INT DECLARE @sqldrop nvarchar(MAX) DECLARE @sqlcreate nvarchar(MAX) DECLARE @tablename varchar(255) DECLARE @msg varchar(255) DECLARE @columnlist nvarchar(MAX) DECLARE @src_table_name varchar(255) BEGIN try -- Drop temporary table if it exists
  IF object_id('tempdb..#BuildTables') IS NOT NULL
 DROP TABLE #buildtables; -- Create temporary table with row numbers
  ;WITH base AS
@@ -112,13 +112,10 @@ SELECT *,
 
    AND left(c.[column_name], 3) != 'mta' -- Replace placeholders in the table template
 
-
    SET @sqlcreate = replace(replace(replace(replace(@tabletemplate, '{TgtSchema}', @tgtschema), '{tgt_table_name}', @tgt_table_name), '{ColumnList}', @columnlist), '{GeneratedAt}', convert(VARCHAR, getdate(), 120)) -- Execute the table creation script
  PRINT @sqlcreate EXEC sp_executesql @sqlcreate -- Move to the next row
 
-
    SET @counternr = @counternr + 1 END -- Log the procedure execution
-
 
    SET @logsql = 'exec ' + @tgtschema + '.' + @logprocname EXEC [aud].[proc_log_procedure] @logaction = 'INFO',
 

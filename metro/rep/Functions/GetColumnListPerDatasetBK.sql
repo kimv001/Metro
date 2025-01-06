@@ -9,7 +9,7 @@ SELECT @result = @prefixds + stuff(
                                      (SELECT @seperator + char(10) + isnull(@prefixa + isnull(CASE
                                                                                                   WHEN @useexpression = 1 THEN isnull(cast(a.expression AS varchar(MAX)), quotename(a.attributename))
                                                                                                   WHEN @useexpression = 0 THEN quotename(a.attributename)
-                                                                                              END , '') +@ postfixa, 'N/A')
+                                                                                              END, '') +@ postfixa, 'N/A')
                                       FROM bld.vw_attribute a
                                       WHERE 1 = 1
                                         AND a.bk_dataset = @datasetbk
@@ -106,7 +106,7 @@ SELECT @result = replace(replace(@prefixds + stuff(
                                                                    WHEN @type = 'bk' THEN (isnull(cast(a.businesskey AS int), 100) * 1000) + cast(a.ordinalposition AS int)
                                                                    ELSE cast(a.ordinalposition AS int)
                                                                END ASC
-                                                      FOR XML path(''), TYPE).value('.', 'VARCHAR(MAX)'), 1, @lenseperator, '') + @postfixds , '&lt;', '<'), '&gt;', '>') IF @option = -8 --- Empty Unknown
+                                                      FOR XML path(''), TYPE).value('.', 'VARCHAR(MAX)'), 1, @lenseperator, '') + @postfixds, '&lt;', '<'), '&gt;', '>') IF @option = -8 --- Empty Unknown
 
 SELECT @result = replace(replace(@prefixds + stuff(
                                                      (SELECT @seperator + isnull(@prefixa + [rep].[getdummyvaluebyattributebk](a.bk, '-2', '<Unknown>', '1900-01-01') + ' AS ' + quotename(a.attributename) +@ postfixa, '')
@@ -131,5 +131,5 @@ SELECT @result = replace(replace(@prefixds + stuff(
                                                                    WHEN @type = 'bk' THEN (isnull(cast(a.businesskey AS int), 100) * 1000) + cast(a.ordinalposition AS int)
                                                                    ELSE cast(a.ordinalposition AS int)
                                                                END ASC
-                                                      FOR XML path(''), TYPE).value('.', 'VARCHAR(MAX)'), 1, @lenseperator, '') + @postfixds , '&lt;', '<'), '&gt;', '>') -- Return the result of the function
+                                                      FOR XML path(''), TYPE).value('.', 'VARCHAR(MAX)'), 1, @lenseperator, '') + @postfixds, '&lt;', '<'), '&gt;', '>') -- Return the result of the function
  RETURN @result END

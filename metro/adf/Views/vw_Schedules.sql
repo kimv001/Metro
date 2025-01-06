@@ -1,19 +1,19 @@
 ﻿
 CREATE VIEW [adf].[vw_schedules] AS
-SELECT src.bk ,
+SELECT src.bk,
 
-       src.code ,
+       src.code,
 
-       src.bk_schedule ,
+       src.bk_schedule,
 
-       src.targettoload ,
+       src.targettoload,
 
        src.scheduletype --, src.ReloadIfAlreadyLoaded
- ,
+,
 
-       repositorystatusname = sdtap.repositorystatus ,
+       repositorystatusname = sdtap.repositorystatus,
 
-       repositorystatuscode = sdtap.repositorystatuscode ,
+       repositorystatuscode = sdtap.repositorystatuscode,
 
        environment = sdtap.environment
 

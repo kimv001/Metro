@@ -3,13 +3,12 @@ CREATE VIEW [adf].[vw_dwh_date] AS /*
 Description:
 	Date Table from 2010-01-01 till 2039-12-31
 
-
 */
-SELECT src.* ,
+SELECT src.*,
 
-       repositorystatusname = sdtap.repositorystatus ,
+       repositorystatusname = sdtap.repositorystatus,
 
-       repositorystatuscode = sdtap.repositorystatuscode ,
+       repositorystatuscode = sdtap.repositorystatuscode,
 
        environment = sdtap.repositorystatus
 

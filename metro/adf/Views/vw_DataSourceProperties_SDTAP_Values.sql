@@ -20,24 +20,24 @@ Date					Author				Description
                bk AS bk_datasource
 
           FROM rep.vw_datasource
-       ) ,
+       ),
 
        cte_datasourcepropertiesvalues AS
 
         (-- SaNDbox
- SELECT src.bk_datasource ,
+ SELECT src.bk_datasource,
 
-               src.isdwh ,
+               src.isdwh,
 
-               src.isrep ,
+               src.isrep,
 
-               datasourceserver = isnull(servername.s, servername.x) ,
+               datasourceserver = isnull(servername.s, servername.x),
 
-               datasourcedatabase = isnull(databasename.s, databasename.x) ,
+               datasourcedatabase = isnull(databasename.s, databasename.x),
 
-               datasourceurl = isnull(environmenturl.s, environmenturl.x) ,
+               datasourceurl = isnull(environmenturl.s, environmenturl.x),
 
-               datasourceusr = isnull(datasourceusr.s, datasourceusr.x) ,
+               datasourceusr = isnull(datasourceusr.s, datasourceusr.x),
 
                environment = 'SND'
 
@@ -64,19 +64,19 @@ Date					Author				Description
            AND datasourceusr.[datasourcepropertiesname] = 'DataSourceUSR'
 
      UNION ALL --DEVelopment
- SELECT src.bk_datasource ,
+ SELECT src.bk_datasource,
 
-               src.isdwh ,
+               src.isdwh,
 
-               src.isrep ,
+               src.isrep,
 
-               datasourceserver = isnull(servername.d, servername.x) ,
+               datasourceserver = isnull(servername.d, servername.x),
 
-               databasename = isnull(databasename.d, databasename.x) ,
+               databasename = isnull(databasename.d, databasename.x),
 
-               environmenturl = isnull(environmenturl.d, environmenturl.x) ,
+               environmenturl = isnull(environmenturl.d, environmenturl.x),
 
-               datasourceusr = isnull(datasourceusr.d, datasourceusr.x) ,
+               datasourceusr = isnull(datasourceusr.d, datasourceusr.x),
 
                environment = 'DEV'
 
@@ -103,19 +103,19 @@ Date					Author				Description
            AND datasourceusr.[datasourcepropertiesname] = 'DataSourceUSR'
 
      UNION ALL --TeST
- SELECT src.bk_datasource ,
+ SELECT src.bk_datasource,
 
-               src.isdwh ,
+               src.isdwh,
 
-               src.isrep ,
+               src.isrep,
 
-               datasourceserver = isnull(servername.t, servername.x) ,
+               datasourceserver = isnull(servername.t, servername.x),
 
-               datasourcedatabase = isnull(databasename.t, databasename.x) ,
+               datasourcedatabase = isnull(databasename.t, databasename.x),
 
-               environmenturl = isnull(environmenturl.t, environmenturl.x) ,
+               environmenturl = isnull(environmenturl.t, environmenturl.x),
 
-               datasourceusr = isnull(datasourceusr.t, datasourceusr.x) ,
+               datasourceusr = isnull(datasourceusr.t, datasourceusr.x),
 
                environment = 'TST'
 
@@ -142,19 +142,19 @@ Date					Author				Description
            AND datasourceusr.[datasourcepropertiesname] = 'DataSourceUSR'
 
      UNION ALL -- ACCeptance
- SELECT src.bk_datasource ,
+ SELECT src.bk_datasource,
 
-               src.isdwh ,
+               src.isdwh,
 
-               src.isrep ,
+               src.isrep,
 
-               datasourceserver = isnull(servername.a, servername.x) ,
+               datasourceserver = isnull(servername.a, servername.x),
 
-               databasename = isnull(databasename.a, databasename.x) ,
+               databasename = isnull(databasename.a, databasename.x),
 
-               environmenturl = isnull(environmenturl.a, environmenturl.x) ,
+               environmenturl = isnull(environmenturl.a, environmenturl.x),
 
-               datasourceusr = isnull(datasourceusr.a, datasourceusr.x) ,
+               datasourceusr = isnull(datasourceusr.a, datasourceusr.x),
 
                environment = 'ACC'
 
@@ -181,19 +181,19 @@ Date					Author				Description
            AND datasourceusr.[datasourcepropertiesname] = 'DataSourceUSR'
 
      UNION ALL -- PRoDuction
- SELECT src.bk_datasource ,
+ SELECT src.bk_datasource,
 
-               src.isdwh ,
+               src.isdwh,
 
-               src.isrep ,
+               src.isrep,
 
-               datasourceserver = isnull(servername.p, servername.x) ,
+               datasourceserver = isnull(servername.p, servername.x),
 
-               databasename = isnull(databasename.p, databasename.x) ,
+               databasename = isnull(databasename.p, databasename.x),
 
-               environmenturl = isnull(environmenturl.p, environmenturl.x) ,
+               environmenturl = isnull(environmenturl.p, environmenturl.x),
 
-               datasourceusr = isnull(datasourceusr.p, datasourceusr.x) ,
+               datasourceusr = isnull(datasourceusr.p, datasourceusr.x),
 
                environment = 'PRD'
 
@@ -219,19 +219,19 @@ Date					Author				Description
 
            AND datasourceusr.[datasourcepropertiesname] = 'DataSourceUSR'
        )
-SELECT src.bk_datasource ,
+SELECT src.bk_datasource,
 
-       src.isdwh ,
+       src.isdwh,
 
-       src.isrep ,
+       src.isrep,
 
-       src.datasourceserver ,
+       src.datasourceserver,
 
-       src.datasourcedatabase ,
+       src.datasourcedatabase,
 
-       src.datasourceurl ,
+       src.datasourceurl,
 
-       src.datasourceusr ,
+       src.datasourceusr,
 
        src.environment
 

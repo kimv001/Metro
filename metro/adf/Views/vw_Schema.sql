@@ -1,60 +1,60 @@
 ﻿
 CREATE VIEW [adf].[vw_schema] AS
-SELECT src.bk ,
+SELECT src.bk,
 
-       src.code ,
+       src.code,
 
-       src.name ,
+       src.name,
 
-       src.bk_schema ,
+       src.bk_schema,
 
-       src.bk_layer ,
+       src.bk_layer,
 
-       src.bk_datasource ,
+       src.bk_datasource,
 
-       src.bk_linkedservice ,
+       src.bk_linkedservice,
 
-       src.schemacode ,
+       src.schemacode,
 
-       src.schemaname ,
+       src.schemaname,
 
-       src.datasourcecode ,
+       src.datasourcecode,
 
-       src.datasourcename ,
+       src.datasourcename,
 
-       src.bk_datasourcetype ,
+       src.bk_datasourcetype,
 
-       src.datasourcetypecode ,
+       src.datasourcetypecode,
 
-       src.datasourcetypename ,
+       src.datasourcetypename,
 
-       src.layercode ,
+       src.layercode,
 
-       src.layername ,
+       src.layername,
 
-       src.layerorder ,
+       src.layerorder,
 
-       src.isdwh ,
+       src.isdwh,
 
-       src.issrc ,
+       src.issrc,
 
-       src.istgt ,
+       src.istgt,
 
-       src.isrep ,
+       src.isrep,
 
-       src.linkedservicecode ,
+       src.linkedservicecode,
 
-       src.linkedservicename ,
+       src.linkedservicename,
 
-       src.bk_template_create ,
+       src.bk_template_create,
 
-       src.bk_template_load ,
+       src.bk_template_load,
 
-       src.bk_reftype_tochar ,
+       src.bk_reftype_tochar,
 
-       repositorystatusname = env.repositorystatus ,
+       repositorystatusname = env.repositorystatus,
 
-       repositorystatuscode = env.repositorystatuscode ,
+       repositorystatuscode = env.repositorystatuscode,
 
        environment = env.environment
 

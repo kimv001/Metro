@@ -1,31 +1,31 @@
 ﻿
 CREATE VIEW [adf].[vw_tgt_dataset_from_src] AS WITH base AS
 
-        (SELECT tgt = src.tgt_datasetname ,
+        (SELECT tgt = src.tgt_datasetname,
 
-               tgt_bk_dataset = src.bk_target ,
+               tgt_bk_dataset = src.bk_target,
 
-               tgt_group ,
+               tgt_group,
 
-               tgt_schema ,
+               tgt_schema,
 
-               tgt_layer ,
+               tgt_layer,
 
-               tgt_dwh = 'All' ,
+               tgt_dwh = 'All',
 
-               src_bk_dataset = src.bk_source ,
+               src_bk_dataset = src.bk_source,
 
-               src_dataset = src.src_datasetname ,
+               src_dataset = src.src_datasetname,
 
-               src_shortname ,
+               src_shortname,
 
-               src_group ,
+               src_group,
 
-               src_schema ,
+               src_schema,
 
-               src_layer ,
+               src_layer,
 
-               dependencytype ,
+               dependencytype,
 
                [generation_number]
 
@@ -33,41 +33,41 @@ CREATE VIEW [adf].[vw_tgt_dataset_from_src] AS WITH base AS
 
          WHERE dependencytype = 'TgtFromSrc'
        )
-SELECT DISTINCT tgt_dataset = b.tgt ,
+SELECT DISTINCT tgt_dataset = b.tgt,
 
-       tgt_bk_dataset = b.tgt_bk_dataset ,
+       tgt_bk_dataset = b.tgt_bk_dataset,
 
-       tgt = b.tgt ,
+       tgt = b.tgt,
 
-       tgt_group ,
+       tgt_group,
 
-       tgt_schema ,
+       tgt_schema,
 
-       tgt_layer ,
+       tgt_layer,
 
-       src_bk_dataset = b.src_bk_dataset ,
+       src_bk_dataset = b.src_bk_dataset,
 
-       src_dataset = b.src_dataset ,
+       src_dataset = b.src_dataset,
 
-       src_shortname = b.src_shortname ,
+       src_shortname = b.src_shortname,
 
-       src_group = b.src_group ,
+       src_group = b.src_group,
 
-       src_schema = b.src_schema ,
+       src_schema = b.src_schema,
 
-       src_layer = b.src_layer ,
+       src_layer = b.src_layer,
 
-       src_sourcename = b.src_group + '_' + iif(b.src_schema = 'stg', d.src_shortname, b.src_shortname) ,
+       src_sourcename = b.src_group + '_' + iif(b.src_schema = 'stg', d.src_shortname, b.src_shortname),
 
-       src_datasettype = d.src_objecttype ,
+       src_datasettype = d.src_objecttype,
 
-       tgt_datasettype = d.tgt_objecttype ,
+       tgt_datasettype = d.tgt_objecttype,
 
-       generation_number = b.generation_number ,
+       generation_number = b.generation_number,
 
-       dependencytype = 'Dataset' ,
+       dependencytype = 'Dataset',
 
-       repositorystatusname = d.repositorystatusname ,
+       repositorystatusname = d.repositorystatusname,
 
        repositorystatuscode = d.repositorystatuscode
 

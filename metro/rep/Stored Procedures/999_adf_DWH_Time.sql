@@ -31,7 +31,7 @@ TRUNCATE TABLE [adf].[dwh_time] ;WITH hours AS
 
          WHERE dthr < dateadd(dd, 0, datediff(dd, 0, dateadd (d, 1, getdate())))
        )
-INSERT INTO [adf].[dwh_time] ([time_hh_mm_ss] , [time_int])
+INSERT INTO [adf].[dwh_time] ([time_hh_mm_ss], [time_int])
 SELECT DISTINCT cast(dthr AS TIME) time_hh_mm_ss,
 
        (datepart(HOUR, cast(dthr AS TIME)) * 60) + (datepart(MINUTE, cast(dthr AS TIME))) time_int

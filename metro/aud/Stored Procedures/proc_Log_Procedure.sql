@@ -16,7 +16,6 @@ CREATE PROCEDURE [aud].[proc_log_procedure] @logaction varchar(50),
        @log_timeend datetime2 = NULL AS BEGIN -- SET NOCOUNT ON added to prevent extra result sets from
  -- interfering with SELECT statements.
 
-
    SET nocount
     ON; IF @logtime IS NULL
 

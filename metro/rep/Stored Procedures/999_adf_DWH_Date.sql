@@ -22,7 +22,7 @@ Date		time		Author					Description
  dateformat mdy,
 
        LANGUAGE us_english;-- assume the above is here in all subsequent code blocks.
- DECLARE @startdate date = '20100101'; -- startdate
+DECLARE @startdate date = '20100101'; -- startdate
 DECLARE @years int = 30 -- add years from startdate
 DECLARE @cutoffdate date = dateadd(DAY, -1, dateadd(YEAR, @years, @startdate)); -- determine enddate
 DECLARE @startyear int = datepart(YEAR,
@@ -92,7 +92,7 @@ CREATE TABLE [adf].[dwh_date](datekey int NOT NULL,
 
           FROM (
          VALUES (0), (0), (0), (0), (0), (0), (0), (0), (0), (0)) AS t(n)
-       ) ,
+       ),
 
        inputyears (y) AS
 
@@ -125,7 +125,6 @@ SELECT hd.* INTO ##easter
 
         (SELECT * --e7.EasterDay
 
-
           FROM (
          VALUES (y % 19, y % 4, y % 7, y / 100)) AS e1(a, b, c, k) CROSS apply (
                                                                                 VALUES ((13 + 8 * k) / 25, k / 4)) AS e2(p, q) CROSS apply (
@@ -140,14 +139,14 @@ SELECT hd.* INTO ##easter
        ) AS ge --==== Related Easter Holidays (using Gauss' Western algorithm)
  CROSS apply 
   
-        (SELECT h.isholiday , 
-               h.holidaydate , 
-               h.holidayname , 
+        (SELECT h.isholiday, 
+               h.holidaydate, 
+               h.holidayname, 
                h.holidaynamedutch 
    
           FROM (
          VALUES (ge.easterday)) AS e(easterdate) CROSS apply (
-                                                              VALUES (0, dateadd(DAY, -46, e.easterdate), 'Ash Wednesday', 'Aswoensdag') , (0, dateadd(DAY, -7, e.easterdate), 'Palm Sunday' , 'Palmzondag') , (0, dateadd(DAY, -3, e.easterdate), 'Maundy Thursday', 'Witte Donderdag') , (1, dateadd(DAY, -2, e.easterdate), 'Good Friday' , 'Goede Vrijdag') , (0, dateadd(DAY, -1, e.easterdate), 'Holy Saturday', 'Stille Zaterdag') , (1, dateadd(DAY, 0, e.easterdate), 'Easter Sunday', '1e Paasdag') , (0, dateadd(DAY, 1, e.easterdate), 'Easter Monday', '2e Paasdag') , (0, dateadd(DAY, 39, e.easterdate), 'Ascension Day', 'Hemelvaartsdag') , (0, dateadd(DAY, 49, e.easterdate), 'Whit Sunday' , '1e Pinkersterdag') , (0, dateadd(DAY, 50, e.easterdate), 'Whit Monday' , '2e Pinkersterdag')) AS h(isholiday, holidaydate, holidayname, holidaynamedutch)
+                                                              VALUES (0, dateadd(DAY, -46, e.easterdate), 'Ash Wednesday', 'Aswoensdag') , (0, dateadd(DAY, -7, e.easterdate), 'Palm Sunday', 'Palmzondag') , (0, dateadd(DAY, -3, e.easterdate), 'Maundy Thursday', 'Witte Donderdag') , (1, dateadd(DAY, -2, e.easterdate), 'Good Friday', 'Goede Vrijdag') , (0, dateadd(DAY, -1, e.easterdate), 'Holy Saturday', 'Stille Zaterdag') , (1, dateadd(DAY, 0, e.easterdate), 'Easter Sunday', '1e Paasdag') , (0, dateadd(DAY, 1, e.easterdate), 'Easter Monday', '2e Paasdag') , (0, dateadd(DAY, 39, e.easterdate), 'Ascension Day', 'Hemelvaartsdag') , (0, dateadd(DAY, 49, e.easterdate), 'Whit Sunday', '1e Pinkersterdag') , (0, dateadd(DAY, 50, e.easterdate), 'Whit Monday', '2e Pinkersterdag')) AS h(isholiday, holidaydate, holidayname, holidaynamedutch)
        ) AS hd;;WITH seq(n) AS
 
         (SELECT 0
@@ -322,14 +321,12 @@ OPTION (maxrecursion 0);;WITH holidays AS
  SELECT holidaydate = thedate,
 
                holidaynamedutch = CASE
-                               WHEN (thedate = thefirstofyear)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    THEN 'Nieuwjaarsdag' -- Prinsessedag op 31 augustus: t/m 1948 (Wilhelmina)
-
+                               WHEN (thedate = thefirstofyear)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                THEN 'Nieuwjaarsdag' -- Prinsessedag op 31 augustus: t/m 1948 (Wilhelmina)
 
                     WHEN (theyear <= 1948
                                      AND themonth = 8
-                                     AND theday = 31)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  THEN 'Prinsessedag' -- Koninginnedag op 30 april: 1949-1979 (Juliana), behalve als zondag, dan 1 mei
+                                     AND theday = 31)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            THEN 'Prinsessedag' -- Koninginnedag op 30 april: 1949-1979 (Juliana), behalve als zondag, dan 1 mei
  -- Koninginnedag op 30 april: 1980-2013 (Juliana), behalve als zondag, dan 29 april
-
 
                     WHEN (theyear >= 1949
                                      AND theyear <= 2013
@@ -347,7 +344,6 @@ OPTION (maxrecursion 0);;WITH holidays AS
                                         AND theday = 29
                                         AND thedayofweek = 6) THEN 'Koninginnedag' -- Koningsdag op 27 april: 2014- (Willem Alexander), behalve als zondag, dan 26 april
 
-
                     WHEN (theyear >= 2014
                                      AND themonth = 4
                                      AND theday = 27
@@ -355,32 +351,29 @@ OPTION (maxrecursion 0);;WITH holidays AS
                                     OR (theyear >= 2014
                                         AND themonth = 4
                                         AND theday = 26
-                                        AND thedayofweek = 6)                                                                                                                                                                                                                                                                                                                                                                                    THEN 'Koningsdag' -- since 1990 liberation day is an official national holiday
+                                        AND thedayofweek = 6)                                                                                                                                                                                                                                                                                                                                                                                          THEN 'Koningsdag' -- since 1990 liberation day is an official national holiday
  -- *Note 5 may 2016 is both Liberation Day and Ascencion Day. This would create a duplicate record for that day (see union all below). This would create a duplicate record for that day (see union all below)
-
 
                     WHEN (theyear >= 1990
                                      AND themonth = 5
                                      AND theday = 5)-- HolidayText for 5th of May is always Liberation Day. It is however only a Public Holiday once every 5 year
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     THEN 'Bevrijdingsdag'
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               THEN 'Bevrijdingsdag'
 
                     WHEN (themonth = 12
-                                     AND theday = 25)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          THEN '1e Kerstdag'
+                                     AND theday = 25)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     THEN '1e Kerstdag'
 
                     WHEN (themonth = 12
-                                     AND theday = 26)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          THEN '2e Kerstdag'
+                                     AND theday = 26)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     THEN '2e Kerstdag'
 
                      END,
 
                holidayname = CASE
-                                             WHEN (thedate = thefirstofyear)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            THEN 'New Year''s Day' -- Prinsessedag op 31 augustus: t/m 1948 (Wilhelmina)
-
+                                             WHEN (thedate = thefirstofyear)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        THEN 'New Year''s Day' -- Prinsessedag op 31 augustus: t/m 1948 (Wilhelmina)
 
                     WHEN (theyear <= 1948
                                                    AND themonth = 8
-                                                   AND theday = 31)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              THEN 'Princess''s Day' -- Koninginnedag op 30 april: 1949-1979 (Juliana), behalve als zondag, dan 1 mei
+                                                   AND theday = 31)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        THEN 'Princess''s Day' -- Koninginnedag op 30 april: 1949-1979 (Juliana), behalve als zondag, dan 1 mei
  -- Koninginnedag op 30 april: 1980-2013 (Juliana), behalve als zondag, dan 29 april
-
 
                     WHEN (theyear >= 1949
                                                    AND theyear <= 2013
@@ -398,7 +391,6 @@ OPTION (maxrecursion 0);;WITH holidays AS
                                                       AND theday = 29
                                                       AND thedayofweek = 6) THEN 'Queen''s Day' -- Koningsdag op 27 april: 2014- (Willem Alexander), behalve als zondag, dan 26 april
 
-
                     WHEN (theyear >= 2014
                                                    AND themonth = 4
                                                    AND theday = 27
@@ -406,91 +398,84 @@ OPTION (maxrecursion 0);;WITH holidays AS
                                                   OR (theyear >= 2014
                                                       AND themonth = 4
                                                       AND theday = 26
-                                                      AND thedayofweek = 6)                                                                                                                                                                                                                                                                                                                                                                                                                                                                        THEN 'King''s Day' -- since 1990 liberation day is an official national holiday
+                                                      AND thedayofweek = 6)                                                                                                                                                                                                                                                                                                                                                                                                                                                                              THEN 'King''s Day' -- since 1990 liberation day is an official national holiday
  -- *Note 5 may 2016 is both Liberation Day and Ascencion Day. This would create a duplicate record for that day (see union all below). This would create a duplicate record for that day (see union all below)
-
 
                     WHEN (theyear >= 1990
                                                    AND themonth = 5
                                                    AND theday = 5)-- HolidayText for 5th of May is always Liberation Day. It is however only a Public Holiday once every 5 year
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 THEN 'Liberation Day'
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           THEN 'Liberation Day'
 
                     WHEN (themonth = 12
-                                                   AND theday = 25)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    THEN 'Christmas'
+                                                   AND theday = 25)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               THEN 'Christmas'
 
                     WHEN (themonth = 12
-                                                   AND theday = 26)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    THEN 'Boxing Day'
+                                                   AND theday = 26)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               THEN 'Boxing Day'
 
                      END,
 
                isbankholiday = CASE -- New Year's Day is only a bank holiday when it falls not in a weekend
  
-                                                                                                                                                                                     
                     WHEN (thedate = thefirstofyear 
-                                                                   AND thedayofweek <= 5)                                                                        THEN 1 -- Christmas is only a bank holiday when it falls not in a weekend
+                                                                   AND thedayofweek <= 5)                                                                          THEN 1 -- Christmas is only a bank holiday when it falls not in a weekend
  
-                                                             
-                    WHEN (themonth = 12
-                                                                   AND theday = 25
+                    WHEN (themonth = 12 
+                                                                   AND theday = 25 
                                                                    AND thedayofweek <= 5) THEN 1 
                                                              
-                    WHEN (themonth = 12
-                                                                   AND theday = 26
+                    WHEN (themonth = 12 
+                                                                   AND theday = 26 
                                                                    AND thedayofweek <= 5) THEN 1 
                                                              
                     ELSE 0 
                                                          
-                     END ,
+                     END, 
                                                          
                ispublicholiday = CASE 
-                                                                               WHEN (thedate = thefirstofyear)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    THEN 1 -- Prinsessedag op 31 augustus: t/m 1948 (Wilhelmina)
+                                                                               WHEN (thedate = thefirstofyear)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                THEN 1 -- Prinsessedag op 31 augustus: t/m 1948 (Wilhelmina)
  
-                                                                               
-                    WHEN (theyear <= 1948
-                                                                                     AND themonth = 8
-                                                                                     AND theday = 31)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  THEN 1 -- Koninginnedag op 30 april: 1949-1979 (Juliana), behalve als zondag, dan 1 mei
+                    WHEN (theyear <= 1948 
+                                                                                     AND themonth = 8 
+                                                                                     AND theday = 31)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            THEN 1 -- Koninginnedag op 30 april: 1949-1979 (Juliana), behalve als zondag, dan 1 mei
  -- Koninginnedag op 30 april: 1980-2013 (Juliana), behalve als zondag, dan 29 april
  
-                                                                               
-                    WHEN (theyear >= 1949
-                                                                                     AND theyear <= 2013
-                                                                                     AND themonth = 4
-                                                                                     AND theday = 30
-                                                                                     AND thedayofweek <> 7)
-                                                                                    OR (theyear >= 1949
-                                                                                        AND theyear <= 1979
-                                                                                        AND themonth = 5
-                                                                                        AND theday = 1
-                                                                                        AND thedayofweek = 1)
-                                                                                    OR (theyear >= 1980
-                                                                                        AND theyear <= 2013
-                                                                                        AND themonth = 4
-                                                                                        AND theday = 29
+                    WHEN (theyear >= 1949 
+                                                                                     AND theyear <= 2013 
+                                                                                     AND themonth = 4 
+                                                                                     AND theday = 30 
+                                                                                     AND thedayofweek <> 7) 
+                                                                                    OR (theyear >= 1949 
+                                                                                        AND theyear <= 1979 
+                                                                                        AND themonth = 5 
+                                                                                        AND theday = 1 
+                                                                                        AND thedayofweek = 1) 
+                                                                                    OR (theyear >= 1980 
+                                                                                        AND theyear <= 2013 
+                                                                                        AND themonth = 4 
+                                                                                        AND theday = 29 
                                                                                         AND thedayofweek = 6) THEN 1 -- Koningsdag op 27 april: 2014- (Willem Alexander), behalve als zondag, dan 26 april
  
-                                                                               
-                    WHEN (theyear >= 2014
-                                                                                     AND themonth = 4
-                                                                                     AND theday = 27
-                                                                                     AND thedayofweek <> 7)
-                                                                                    OR (theyear >= 2014
-                                                                                        AND themonth = 4
-                                                                                        AND theday = 26
-                                                                                        AND thedayofweek = 6)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    THEN 1 -- Every 5 year liberation day is a public holiday if it falls on a weekday
+                    WHEN (theyear >= 2014 
+                                                                                     AND themonth = 4 
+                                                                                     AND theday = 27 
+                                                                                     AND thedayofweek <> 7) 
+                                                                                    OR (theyear >= 2014 
+                                                                                        AND themonth = 4 
+                                                                                        AND theday = 26 
+                                                                                        AND thedayofweek = 6)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          THEN 1 -- Every 5 year liberation day is a public holiday if it falls on a weekday
  -- *Note 5 may 2016 is both Liberation Day and Ascencion Day. This would create a duplicate record for that day (see union all below)
  
+                    WHEN (theyear >= 1990 
+                                                                                     AND theyear % 5 = 0 
+                                                                                     AND themonth = 5 
+                                                                                     AND theday = 5 
+                                                                                     AND thedayofweek <= 5)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       THEN 1 
                                                                                
-                    WHEN (theyear >= 1990
-                                                                                     AND theyear % 5 = 0
-                                                                                     AND themonth = 5
-                                                                                     AND theday = 5
-                                                                                     AND thedayofweek <= 5)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               THEN 1 
+                    WHEN (themonth = 12 
+                                                                                     AND theday = 25)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     THEN 1 
                                                                                
-                    WHEN (themonth = 12
-                                                                                     AND theday = 25)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          THEN 1 
-                                                                               
-                    WHEN (themonth = 12
-                                                                                     AND theday = 26)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          THEN 1 
+                    WHEN (themonth = 12 
+                                                                                     AND theday = 26)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     THEN 1 
                                                                            
                      END 
    
@@ -500,63 +485,53 @@ OPTION (maxrecursion 0);;WITH holidays AS
      
            AND thedate = thefirstofyear -- 'New Year''s Day'
  
-     
-            OR (theyear <= 1948
-         AND themonth = 8
+            OR (theyear <= 1948 
+         AND themonth = 8 
          AND theday = 31)-- 'Princess''s Day'
  
-     
-            OR (theyear >= 1949
-         AND theyear <= 2013
-         AND themonth = 4
-         AND theday = 30
+            OR (theyear >= 1949 
+         AND theyear <= 2013 
+         AND themonth = 4 
+         AND theday = 30 
          AND thedayofweek <> 7)-- 'Queen''s Day'
  
-     
-            OR (theyear >= 1949
-         AND theyear <= 1979
-         AND themonth = 5
-         AND theday = 1
+            OR (theyear >= 1949 
+         AND theyear <= 1979 
+         AND themonth = 5 
+         AND theday = 1 
          AND thedayofweek = 1)-- 'Queen''s Day'
  
-     
-            OR (theyear >= 1980
-         AND theyear <= 2013
-         AND themonth = 4
-         AND theday = 29
+            OR (theyear >= 1980 
+         AND theyear <= 2013 
+         AND themonth = 4 
+         AND theday = 29 
          AND thedayofweek = 6)-- 'Queen''s Day'
  
-     
-            OR (theyear >= 2014
-         AND themonth = 4
-         AND theday = 27
+            OR (theyear >= 2014 
+         AND themonth = 4 
+         AND theday = 27 
          AND thedayofweek <> 7)-- 'King''s Day'
  
-     
-            OR (theyear >= 2014
-         AND themonth = 4
-         AND theday = 26
+            OR (theyear >= 2014 
+         AND themonth = 4 
+         AND theday = 26 
          AND thedayofweek = 6)-- 'King''s Day'
  
-     
-            OR (theyear >= 1990
-         AND themonth = 5
+            OR (theyear >= 1990 
+         AND themonth = 5 
          AND theday = 5)-- Liberation Day
  
-     
-            OR (themonth = 12
+            OR (themonth = 12 
          AND theday = 25)-- Christmas
  
-     
-            OR (themonth = 12
+            OR (themonth = 12 
          AND theday = 26)-- Boxing Day
  
-   
-     UNION ALL SELECT thedate = e.holidaydate , 
+     UNION ALL SELECT thedate = e.holidaydate, 
                     
-               e.holidaynamedutch , 
+               e.holidaynamedutch, 
                     
-               e.holidayname , 
+               e.holidayname, 
                     
                isbankholiday = CASE e.holidayname 
                                                
@@ -566,16 +541,15 @@ OPTION (maxrecursion 0);;WITH holidays AS
                                         
                     ELSE 0 
                                     
-                     END , 
+                     END, 
                                     
                ispublicholiday = 1 
    
           FROM ##easter e
-       ) , 
+       ), 
      
        lwdm AS -- Last Workday Of Month
  
-  
         (SELECT max(thedate) thelastworkdayofmonth, 
           
                yearmonth AS lwdm_yearmonth 
@@ -592,7 +566,6 @@ OPTION (maxrecursion 0);;WITH holidays AS
          GROUP BY d.yearmonth
        ) , fwdm AS -- First Workday Of Month
  
-  
         (SELECT min(thedate) thefirstworkdayofmonth, 
           
                yearmonth AS fwdm_yearmonth 
@@ -609,7 +582,6 @@ OPTION (maxrecursion 0);;WITH holidays AS
          GROUP BY d.yearmonth
        ) , lfdm AS -- Last Friday Of Month
  
-  
         (SELECT min(thedate) thelastworkdayofmonth, 
           
                yearmonth AS fwdm_yearmonth 
@@ -621,10 +593,10 @@ OPTION (maxrecursion 0);;WITH holidays AS
          GROUP BY d.yearmonth
        ) , wdm AS 
   
-        (SELECT d.thedate , 
+        (SELECT d.thedate, 
           
                row_number() OVER (PARTITION BY d.yearmonth 
-                             ORDER BY d.thedate) AS workdayofmonth , 
+                             ORDER BY d.thedate) AS workdayofmonth, 
           
                row_number() OVER (PARTITION BY 1 
                              ORDER BY d.thedate) AS workdaycounter 
@@ -638,104 +610,104 @@ OPTION (maxrecursion 0);;WITH holidays AS
      
            AND isnull(h.ispublicholiday, 0) = 0
        ) 
-INSERT INTO [adf].[dwh_date] (datekey , thedate , theday , thedaysuffix , thedayname , thedayofweek , thedayofweekinmonth , thedayofyear , isweekend , isworkday , workdayofmonth , theweek , theisoweek , thefirstofweek , thelastofweek , theweekofmonth , themonth , themonthname , thefirstworkdayofmonth , thefirstofmonth , thelastworkdayofmonth , thelastofmonth , thefirstofnextmonth , thelastofnextmonth , thequarter , thefirstofquarter , thelastofquarter , theyear , theisoyear , thefirstofyear , thelastofyear , isleapyear , has53weeks , has53isoweeks , mmyyyy , style101 , style103 , style112 , style120 , yearweek , yearisoweek , yearmonth , holidayname , isbankholiday , ispublicholiday , holidayname_nl , thedayname_nl , themonthname_nl , daycounter , workdaycounter) 
-SELECT [datekey] = convert(varchar(8), d.[thedate], 112) , 
+INSERT INTO [adf].[dwh_date] (datekey, thedate, theday, thedaysuffix, thedayname, thedayofweek, thedayofweekinmonth, thedayofyear, isweekend, isworkday, workdayofmonth, theweek, theisoweek, thefirstofweek, thelastofweek, theweekofmonth, themonth, themonthname, thefirstworkdayofmonth, thefirstofmonth, thelastworkdayofmonth, thelastofmonth, thefirstofnextmonth, thelastofnextmonth, thequarter, thefirstofquarter, thelastofquarter, theyear, theisoyear, thefirstofyear, thelastofyear, isleapyear, has53weeks, has53isoweeks, mmyyyy, style101, style103, style112, style120, yearweek, yearisoweek, yearmonth, holidayname, isbankholiday, ispublicholiday, holidayname_nl, thedayname_nl, themonthname_nl, daycounter, workdaycounter) 
+SELECT [datekey] = convert(varchar(8), d.[thedate], 112), 
        
-       d.[thedate] , 
+       d.[thedate], 
        
-       d.[theday] , 
+       d.[theday], 
        
-       d.[thedaysuffix] , 
+       d.[thedaysuffix], 
        
-       d.[thedayname] , 
+       d.[thedayname], 
        
-       d.[thedayofweek] , 
+       d.[thedayofweek], 
        
-       d.[thedayofweekinmonth] , 
+       d.[thedayofweekinmonth], 
        
-       d.[thedayofyear] , 
+       d.[thedayofyear], 
        
-       d.[isweekend] , 
+       d.[isweekend], 
        
        [isworkday] = CASE 
-                         WHEN d.isweekend = 0
+                         WHEN d.isweekend = 0 
                               AND isnull(h.ispublicholiday, 0) = 0 THEN 1 
                          
             ELSE 0 
                      
-             END , 
+             END, 
                      
-       workdayofmonth = coalesce(wdm.workdayofmonth, 0) , 
+       workdayofmonth = coalesce(wdm.workdayofmonth, 0), 
                      
-       d.[theweek] , 
+       d.[theweek], 
                      
-       d.[theisoweek] , 
+       d.[theisoweek], 
                      
-       d.[thefirstofweek] , 
+       d.[thefirstofweek], 
                      
-       d.[thelastofweek] , 
+       d.[thelastofweek], 
                      
-       d.[theweekofmonth] , 
+       d.[theweekofmonth], 
                      
-       d.[themonth] , 
+       d.[themonth], 
                      
-       d.[themonthname] , 
+       d.[themonthname], 
                      
-       fwdm.thefirstworkdayofmonth , 
+       fwdm.thefirstworkdayofmonth, 
                      
-       d.[thefirstofmonth] , 
+       d.[thefirstofmonth], 
                      
-       lwdm.[thelastworkdayofmonth] , 
+       lwdm.[thelastworkdayofmonth], 
                      
-       d.[thelastofmonth] , 
+       d.[thelastofmonth], 
                      
-       d.[thefirstofnextmonth] , 
+       d.[thefirstofnextmonth], 
                      
-       d.[thelastofnextmonth] , 
+       d.[thelastofnextmonth], 
                      
-       d.[thequarter] , 
+       d.[thequarter], 
                      
-       d.[thefirstofquarter] , 
+       d.[thefirstofquarter], 
                      
-       d.[thelastofquarter] , 
+       d.[thelastofquarter], 
                      
-       d.[theyear] , 
+       d.[theyear], 
                      
-       d.[theisoyear] , 
+       d.[theisoyear], 
                      
-       d.[thefirstofyear] , 
+       d.[thefirstofyear], 
                      
-       d.[thelastofyear] , 
+       d.[thelastofyear], 
                      
-       d.[isleapyear] , 
+       d.[isleapyear], 
                      
-       d.[has53weeks] , 
+       d.[has53weeks], 
                      
-       d.[has53isoweeks] , 
+       d.[has53isoweeks], 
                      
-       d.[mmyyyy] , 
+       d.[mmyyyy], 
                      
-       d.[style101] , 
+       d.[style101], 
                      
-       d.[style103] , 
+       d.[style103], 
                      
-       d.[style112] , 
+       d.[style112], 
                      
-       d.[style120] , 
+       d.[style120], 
                      
-       d.[yearweek] , 
+       d.[yearweek], 
                      
-       d.[yearisoweek] , 
+       d.[yearisoweek], 
                      
-       d.[yearmonth] , 
+       d.[yearmonth], 
                      
-       [holidayname] = cast(isnull(h.[holidayname], '') AS varchar(255)) , 
+       [holidayname] = cast(isnull(h.[holidayname], '') AS varchar(255)), 
                      
-       [isbankholiday] = isnull(h.[isbankholiday], 0) , 
+       [isbankholiday] = isnull(h.[isbankholiday], 0), 
                      
-       [ispublicholiday] = isnull(h.[ispublicholiday], 0) , 
+       [ispublicholiday] = isnull(h.[ispublicholiday], 0), 
                      
-       [holidaynamedutch] = cast(isnull(h.[holidaynamedutch], '') AS varchar(255)) , 
+       [holidaynamedutch] = cast(isnull(h.[holidaynamedutch], '') AS varchar(255)), 
                      
        thedayname_nl = CASE 
                                          WHEN d.[thedayofweek] = 1 THEN 'maandag' 
@@ -754,7 +726,7 @@ SELECT [datekey] = convert(varchar(8), d.[thedate], 112) ,
                                          
             ELSE '' 
                                      
-             END , 
+             END, 
                                      
        themonthname_nl = CASE 
                                                            WHEN d.[themonth] = 1  THEN 'januari' 
@@ -783,14 +755,14 @@ SELECT [datekey] = convert(varchar(8), d.[thedate], 112) ,
                                                            
             ELSE ''
 
-             END ,
+             END,
 
        daycounter = row_number() OVER (
-                                                                                       ORDER BY d.thedate ASC) ,
+                                                                                       ORDER BY d.thedate ASC),
 
        workdaycounter = COALESCE (-- coalesce is needed if the calendare starts with a weekend or an holiday
  max(wdm.workdaycounter) OVER (
-                               ORDER BY d.thedate ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) ,
+                               ORDER BY d.thedate ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW),
  0)
 
   FROM ##basecalendar d

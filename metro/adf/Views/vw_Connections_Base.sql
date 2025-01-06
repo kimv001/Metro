@@ -1,70 +1,70 @@
 ﻿
 CREATE VIEW [adf].[vw_connections_base] AS WITH cte_datasourceproperties_sdtap_values AS
 
-        (SELECT src.bk_datasource ,
+        (SELECT src.bk_datasource,
 
-               src.datasourceserver ,
+               src.datasourceserver,
 
-               src.datasourcedatabase ,
+               src.datasourcedatabase,
 
-               src.datasourceurl ,
+               src.datasourceurl,
 
-               src.datasourceusr ,
+               src.datasourceusr,
 
                src.environment
 
           FROM adf.vw_datasourceproperties_sdtap_values src
        )
-SELECT bk_dataset = d.bk ,
+SELECT bk_dataset = d.bk,
 
-       datasetname = d.datasetname ,
+       datasetname = d.datasetname,
 
-       active = 1 ,
+       active = 1,
 
-       datasetshortname = d.shortname ,
+       datasetshortname = d.shortname,
 
-       groupshortname = d.bk_group + '_' + d.shortname ,
+       groupshortname = d.bk_group + '_' + d.shortname,
 
-       groupname = d.bk_group ,
+       groupname = d.bk_group,
 
-       schemaname = d.schemaname ,
+       schemaname = d.schemaname,
 
-       datasettype = d.objecttype ,
+       datasettype = d.objecttype,
 
-       objecttype = d.objecttype ,
+       objecttype = d.objecttype,
 
-       datasourcename = d.datasource ,
+       datasourcename = d.datasource,
 
-       bk_datasource = d.bk_datasource ,
+       bk_datasource = d.bk_datasource,
 
-       bk_linkedservice = d.bk_linkedservice ,
+       bk_linkedservice = d.bk_linkedservice,
 
-       linkedservicename = d.linkedservicename ,
+       linkedservicename = d.linkedservicename,
 
-       datasourceserver = dspv.datasourceserver ,
+       datasourceserver = dspv.datasourceserver,
 
-       datasourcedatabase = dspv.datasourcedatabase ,
+       datasourcedatabase = dspv.datasourcedatabase,
 
-       datasourceurl = dspv.datasourceurl ,
+       datasourceurl = dspv.datasourceurl,
 
-       datasourceusr = dspv.datasourceusr ,
+       datasourceusr = dspv.datasourceusr,
 
-       layername = d.layername ,
+       layername = d.layername,
 
-       stg_container = 'staging' ,
+       stg_container = 'staging',
 
-       tgt_container = iif(d.schemaname = 'pre_file', 'import', 'archive') ,
+       tgt_container = iif(d.schemaname = 'pre_file', 'import', 'archive'),
 
        corecount = 8 --> sorry nog geen veld voor
 ,
 
-       mta_source = d.mta_source ,
+       mta_source = d.mta_source,
 
-       repositorystatusname = d.repositorystatusname ,
+       repositorystatusname = d.repositorystatusname,
 
-       repositorystatuscode = d.repositorystatuscode ,
+       repositorystatuscode = d.repositorystatuscode,
 
-       bigdata = isnull(bigdata, 0) ,
+       bigdata = isnull(bigdata, 0),
 
        environment = dspv.environment
 

@@ -1,19 +1,19 @@
 ﻿
-CREATE PROCEDURE [rep].[100_publish_deployscriptstoscreen] @tgt_objectname varchar(8000) = '' ,
+CREATE PROCEDURE [rep].[100_publish_deployscriptstoscreen] @tgt_objectname varchar(8000) = '',
 
-       @layername varchar(8000) = '' ,
+       @layername varchar(8000) = '',
 
-       @schemaname varchar(8000) = '' ,
+       @schemaname varchar(8000) = '',
 
-       @groupname varchar(8000) = '' ,
+       @groupname varchar(8000) = '',
 
-       @shortname varchar(8000) = '' ,
+       @shortname varchar(8000) = '',
 
-       @deploydatasets bit = 0 ,
+       @deploydatasets bit = 0,
 
-       @deploymappings bit = 1 ,
+       @deploymappings bit = 1,
 
-       @objecttype varchar(100) = '' ,
+       @objecttype varchar(100) = '',
 
        @ignoreerrors int = 0 -- 2 just show the scripts, 1 stop on all builderrors, 0 stop on builderrors on selection
 AS /*
@@ -72,12 +72,12 @@ SELECT bc.* ,rownum = row_number() OVER (PARTITION BY bc.buildcheckid
                 OR @groupname = d.bk_group)
            AND (@shortname = ''
                 OR @shortname = d.shortname)))
-  SELECT @counternr = min(rownum) ,
+  SELECT @counternr = min(rownum),
 
        @maxnr = max(rownum) --, @StopCounterNr= min(rownum)
 
   FROM #bld_errors bc IF @counternr > 0 PRINT '/*' + char(10) + 'Build errors found:' + char(10) WHILE (@counternr IS NOT NULL
-                                                                                                      AND @counternr <= @maxnr) BEGIN
+                                                                                                        AND @counternr <= @maxnr) BEGIN
   SELECT @bld_msg = 'Dataset: ' + src.bk + ' Message:' + src.checkmessage + char(10)
 
   FROM #bld_errors src
@@ -97,32 +97,32 @@ IF object_id('tempdb..#DeployScripts') IS NOT NULL
 
         (SELECT --	  DeployOrder				= dense_rank() over (partition by  d.Code order by d.ShortName,d.BK_Group, cast(isnull(fl.SortOrder,'1000') as int) asc,   cast(src.ObjectTypeDeployOrder as int) asc) -- rank() OVER (partition by d.SchemaName order by  cast(src.ObjectTypeDeployOrder as int) asc )
  deployorder = dense_rank() OVER (PARTITION BY d.code
-                                  ORDER BY d.shortname , d.bk_group , cast(src.objecttypedeployorder AS int) + cast(d.floworder AS int) ASC) -- rank() OVER (partition by d.SchemaName order by  cast(src.ObjectTypeDeployOrder as int) asc )
- ,
+                                  ORDER BY d.shortname, d.bk_group, cast(src.objecttypedeployorder AS int) + cast(d.floworder AS int) ASC) -- rank() OVER (partition by d.SchemaName order by  cast(src.ObjectTypeDeployOrder as int) asc )
+,
 
-               deployscript = src.templatescript ,
+               deployscript = src.templatescript,
 
-               tgt_objectname = src.tgt_objectname ,
+               tgt_objectname = src.tgt_objectname,
 
-               objecttype = src.objecttype ,
+               objecttype = src.objecttype,
 
-               templatetype = src.templatetype ,
+               templatetype = src.templatetype,
 
-               templatename = src.templatename ,
+               templatename = src.templatename,
 
-               bk_dataset = d.bk ,
+               bk_dataset = d.bk,
 
-               schemaname = d.schemaname ,
+               schemaname = d.schemaname,
 
-               layername = d.layername ,
+               layername = d.layername,
 
-               groupname = d.bk_group ,
+               groupname = d.bk_group,
 
-               shortname = d.shortname ,
+               shortname = d.shortname,
 
-               code = d.code ,
+               code = d.code,
 
-               src.scriptlanguagecode ,
+               src.scriptlanguagecode,
 
                src.scriptlanguage
 
@@ -150,7 +150,7 @@ IF object_id('tempdb..#DeployScripts') IS NOT NULL
           OR @objecttype = '')
        )
 SELECT * ,RowNum = row_number() OVER (
-                                      ORDER BY groupname , shortname , deployorder) INTO #deployscripts
+                                      ORDER BY groupname, shortname, deployorder) INTO #deployscripts
 
   FROM base
 
@@ -171,18 +171,18 @@ SELECT * ,RowNum = row_number() OVER (
    AND (@shortname = ''
        OR @shortname = shortname)
 
- ORDER BY groupname ,
+ ORDER BY groupname,
 
-          shortname ,
+          shortname,
 
           deployorder
-SELECT @counternr = min(RowNum) ,
+SELECT @counternr = min(RowNum),
 
        @maxnr = max(RowNum)
 
   FROM #deployscripts WHILE (@counternr IS NOT NULL
                            AND @counternr <= @maxnr) BEGIN
-SELECT @tgt_objectname = src.tgt_objectname ,
+SELECT @tgt_objectname = src.tgt_objectname,
 
        @sql = replace(src.deployscript, '<!<DeployVersionNum>>', @deployversion)
 
@@ -193,26 +193,25 @@ SELECT @tgt_objectname = src.tgt_objectname ,
    AND src.rownum = @counternr EXEC [rep].[helper_longprint] @string = @sql --Print	(@sql)
  --Exec	(@sql1)
 
+   SET @msg = 'Create Deploy Scripts  ' + @tgt_objectname EXEC [aud].[proc_log_procedure] @logaction = 'Create',
 
-   SET @msg = 'Create Deploy Scripts  ' + @tgt_objectname EXEC [aud].[proc_log_procedure] @logaction = 'Create' ,
+       @lognote = @msg,
 
-       @lognote = @msg ,
+       @logprocedure = @logprocname,
 
-       @logprocedure = @logprocname ,
-
-       @logsql = @sql ,
+       @logsql = @sql,
 
        @logrowcount = 1
 
    SET @counternr = @counternr + 1 END
 
-   SET @logsql = 'exec ' + @tgtschema + '.' + @logprocname EXEC [aud].[proc_log_procedure] @logaction = 'INFO' ,
+   SET @logsql = 'exec ' + @tgtschema + '.' + @logprocname EXEC [aud].[proc_log_procedure] @logaction = 'INFO',
 
-       @lognote = 'Publish deploy scripts to screen done' ,
+       @lognote = 'Publish deploy scripts to screen done',
 
-       @logprocedure = @logprocname ,
+       @logprocedure = @logprocname,
 
-       @logsql = @logsql ,
+       @logsql = @logsql,
 
        @logrowcount = @maxnr -- cleaning
 IF object_id('tempdb..#DeployScripts') IS NOT NULL

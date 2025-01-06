@@ -1,153 +1,153 @@
 ﻿
 CREATE VIEW [adf].[vw_dataset] AS
-SELECT src.bk ,
+SELECT src.bk,
 
-       src.code ,
+       src.code,
 
-       src.datasetname AS datasetname_old ,
+       src.datasetname AS datasetname_old,
 
        CASE
            WHEN src.layername = 'src' THEN concat('[', src.schemaname, '].[', src.bk_group, '_', src_shortname, ']')
 
             ELSE src.datasetname
 
-             END AS datasetname ,
+             END AS datasetname,
 
-       src.schemaname ,
+       src.schemaname,
 
-       src.layername ,
+       src.layername,
 
-       src.datasource ,
+       src.datasource,
 
-       src.bk_linkedservice ,
+       src.bk_linkedservice,
 
-       src.linkedservicename ,
+       src.linkedservicename,
 
-       src.bk_datasource ,
+       src.bk_datasource,
 
-       src.bk_layer ,
+       src.bk_layer,
 
-       src.bk_schema ,
+       src.bk_schema,
 
-       src.bk_group ,
+       src.bk_group,
 
-       src.shortname ,
+       src.shortname,
 
-       src.src_shortname ,
+       src.src_shortname,
 
-       src.src_objecttype ,
+       src.src_objecttype,
 
-       src.dwhtargetshortname ,
+       src.dwhtargetshortname,
 
-       src.prefix ,
+       src.prefix,
 
-       src.postfix ,
+       src.postfix,
 
-       src.[description] ,
+       src.[description],
 
-       src.[description] AS dataset_description ,
+       src.[description] AS dataset_description,
 
-       src.[bk_contactgroup] ,
+       src.[bk_contactgroup],
 
-       src.[bk_contactgroup_data_logistics] ,
+       src.[bk_contactgroup_data_logistics],
 
-       src.[data_logistics_info] ,
+       src.[data_logistics_info],
 
-       src.[bk_contactgroup_data_supplier] ,
+       src.[bk_contactgroup_data_supplier],
 
-       src.[data_supplier_info] ,
+       src.[data_supplier_info],
 
-       src.[view_defintion_contains_business_logic] ,
+       src.[view_defintion_contains_business_logic],
 
-       src.[view_defintion] ,
+       src.[view_defintion],
 
-       src.bk_flow ,
+       src.bk_flow,
 
-       src.floworder ,
+       src.floworder,
 
-       src.[timestamp] ,
+       src.[timestamp],
 
-       src.businessdate ,
+       src.businessdate,
 
-       src.wherefilter ,
+       src.wherefilter,
 
-       src.partitionstatement ,
+       src.partitionstatement,
 
-       src.bk_reftype_objecttype ,
+       src.bk_reftype_objecttype,
 
-       src.fullload ,
+       src.fullload,
 
-       src.insertonly ,
+       src.insertonly,
 
-       src.bigdata ,
+       src.bigdata,
 
-       src.bk_template_load ,
+       src.bk_template_load,
 
-       src.bk_template_create ,
+       src.bk_template_create,
 
-       src.customstagingview ,
+       src.customstagingview,
 
-       src.bk_reftype_repositorystatus ,
+       src.bk_reftype_repositorystatus,
 
-       src.issystem ,
+       src.issystem,
 
-       src.firstdefaultdwhview ,
+       src.firstdefaultdwhview,
 
-       src.replaceattributenames ,
+       src.replaceattributenames,
 
-       src.datasettype ,
+       src.datasettype,
 
-       src.objecttype ,
+       src.objecttype,
 
-       src.repositorystatusname ,
+       src.repositorystatusname,
 
-       src.repositorystatuscode ,
+       src.repositorystatuscode,
 
-       src.isdwh ,
+       src.isdwh,
 
-       src.issrc ,
+       src.issrc,
 
        src.istgt -- filesource properties
 ,
 
-       fp.[filemask] ,
+       fp.[filemask],
 
-       fp.[filename] ,
+       fp.[filename],
 
-       fp.[filesystem] ,
+       fp.[filesystem],
 
-       fp.[folder] ,
+       fp.[folder],
 
-       fp.[ispgp] ,
+       fp.[ispgp],
 
-       fp.expectedfilecount ,
+       fp.expectedfilecount,
 
-       fp.[expectedfilesize] ,
+       fp.[expectedfilesize],
 
-       fp.[bk_schedule_fileexpected] ,
+       fp.[bk_schedule_fileexpected],
 
-       fp.[dateinfilenameformat] ,
+       fp.[dateinfilenameformat],
 
-       fp.[dateinfilenamelength] ,
+       fp.[dateinfilenamelength],
 
-       fp.[dateinfilenamestartpos] ,
+       fp.[dateinfilenamestartpos],
 
        fp.[dateinfilenameexpression] -- meta data
 ,
 
-       src.mta_rectype ,
+       src.mta_rectype,
 
-       src.mta_createdate ,
+       src.mta_createdate,
 
-       src.mta_source ,
+       src.mta_source,
 
-       src.mta_bk ,
+       src.mta_bk,
 
-       src.mta_bkh ,
+       src.mta_bkh,
 
-       src.mta_rh ,
+       src.mta_rh,
 
-       src.mta_isdeleted ,
+       src.mta_isdeleted,
 
        env.environment
 

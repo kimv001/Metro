@@ -16,8 +16,6 @@ select rep.[GetNamePart] ('vw_Groupname_ShortName_suffix',4)		-- returns 'suffix
 NOK:
 select rep.[GetNamePart] ('vw_prefix_Groupname_ShortName_suffix',4) -- returns 'NULL', because the name contains 5 parts
 
-
-
 Changelog:
 Date		time		Author					Description
 20220804	0000		K. Vermeij				Initial

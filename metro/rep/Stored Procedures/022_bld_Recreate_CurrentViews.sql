@@ -7,7 +7,6 @@ CREATE PROCEDURE [rep].[022_bld_recreate_currentviews] @tgt_table_name varchar(2
                              - mta_RH        (Stores the hash of the full row)
                              - mta_RowNum    actually only needed for the view [bld].[vw_XlsTabsToLoad] so i could make an easy loop in this procedure
 
-
 	examples:
 	exec  [rep].[022_bld_Recreate_CurrentViews]
 
@@ -16,7 +15,7 @@ CREATE PROCEDURE [rep].[022_bld_recreate_currentviews] @tgt_table_name varchar(2
     Change log:
     Date                    Author              Description
     20220915 00:00          K. Vermeij          Initial version
-    */  DECLARE @logprocname varchar(MAX) = '[bld].[022_bld_Recreate_CurrentViews]' DECLARE @logsql varchar(MAX) DECLARE @srcschema varchar(MAX) = 'bld' DECLARE @tgtschema varchar(MAX) = 'bld' DECLARE @counternr INT DECLARE @maxnr INT DECLARE @sqldrop nvarchar(MAX) DECLARE @sqlcreate nvarchar(MAX) DECLARE @tablename varchar(MAX) DECLARE @msg varchar(MAX) DECLARE @columnlist nvarchar(MAX) DECLARE @columnhashlist nvarchar(MAX) BEGIN try IF object_id('tempdb..#BuildCurrentViews') IS NOT NULL
+    */ DECLARE @logprocname varchar(MAX) = '[bld].[022_bld_Recreate_CurrentViews]' DECLARE @logsql varchar(MAX) DECLARE @srcschema varchar(MAX) = 'bld' DECLARE @tgtschema varchar(MAX) = 'bld' DECLARE @counternr INT DECLARE @maxnr INT DECLARE @sqldrop nvarchar(MAX) DECLARE @sqlcreate nvarchar(MAX) DECLARE @tablename varchar(MAX) DECLARE @msg varchar(MAX) DECLARE @columnlist nvarchar(MAX) DECLARE @columnhashlist nvarchar(MAX) BEGIN try IF object_id('tempdb..#BuildCurrentViews') IS NOT NULL
 DROP TABLE #buildcurrentviews; WITH base AS
 
         (SELECT table_catalog = t.[table_catalog],
@@ -95,13 +94,10 @@ SELECT *,
 
    AND left(c.[column_name], 3) != 'mta' -- Replace placeholders in the view template
 
-
-   SET @sqlcreate = replace(replace(replace(replace(replace(@viewtemplate , '{SrcSchema}', @srcschema) , '{TgtSchema}', @tgtschema) , '{TableName}', @tablename) , '{ColumnList}', @columnlist) , '{GeneratedAt}', convert(VARCHAR, getdate(), 120)) -- Create the new view
+   SET @sqlcreate = replace(replace(replace(replace(replace(@viewtemplate, '{SrcSchema}', @srcschema), '{TgtSchema}', @tgtschema), '{TableName}', @tablename), '{ColumnList}', @columnlist), '{GeneratedAt}', convert(VARCHAR, getdate(), 120)) -- Create the new view
  PRINT @sqlcreate EXEC sp_executesql @sqlcreate -- Move to the next row
 
-
    SET @counternr = @counternr + 1 END -- Log the procedure execution
-
 
    SET @logsql = 'EXEC ' + @tgtschema + '.' + @logprocname EXEC [aud].[proc_log_procedure] @logaction = 'INFO',
 
