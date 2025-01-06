@@ -30,8 +30,6 @@ exec rep.[Helper_LongPrint] @string =
 
 NOK:
 
-
-
 Changelog:
 Date		time		Author					Description
 20220804	0000		K. Vermeij				Initial
@@ -39,12 +37,10 @@ Date		time		Author					Description
 */ /*
 Example:
 
-
-
 */ /*
- */ DECLARE @currentend BIGINT, /* track the length of the next substring */  @offset tinyint /*tracks the amount of offset needed */
+ */ DECLARE @currentend BIGINT, /* track the length of the next substring */ @offset tinyint /*tracks the amount of offset needed */
 
-   SET @string = replace(replace(@string, char(13) + char(10), char(10)) , char(13), char(10)) WHILE len(@string) > 1 BEGIN IF charindex(char(10), @string) BETWEEN 1 AND 8000 BEGIN
+   SET @string = replace(replace(@string, char(13) + char(10), char(10)), char(13), char(10)) WHILE len(@string) > 1 BEGIN IF charindex(char(10), @string) BETWEEN 1 AND 8000 BEGIN
 
    SET @currentend = charindex(char(10), @string) -1
 

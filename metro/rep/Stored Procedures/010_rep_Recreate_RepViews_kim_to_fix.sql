@@ -10,7 +10,7 @@ CREATE PROCEDURE [rep].[010_rep_recreate_repviews_kim_to_fix] AS BEGIN /*
     Change log:
     Date                    Author              Description
     20220915 00:00          K. Vermeij          Initial version
-    */  DECLARE @logprocname varchar(MAX) = '[rep].[010_rep_Recreate_RepViews]' DECLARE @logsql varchar(MAX) DECLARE @srcschema varchar(MAX) = 'rep' DECLARE @tgtschema varchar(MAX) = 'rep' DECLARE @counternr INT DECLARE @maxnr INT DECLARE @sqldrop nvarchar(MAX) DECLARE @sqlcreate nvarchar(MAX) DECLARE @tablename varchar(MAX) DECLARE @msg varchar(MAX) DECLARE @columnlist nvarchar(MAX) DECLARE @columnhashlist nvarchar(MAX) BEGIN try -- Drop temporary table if it exists
+    */ DECLARE @logprocname varchar(MAX) = '[rep].[010_rep_Recreate_RepViews]' DECLARE @logsql varchar(MAX) DECLARE @srcschema varchar(MAX) = 'rep' DECLARE @tgtschema varchar(MAX) = 'rep' DECLARE @counternr INT DECLARE @maxnr INT DECLARE @sqldrop nvarchar(MAX) DECLARE @sqlcreate nvarchar(MAX) DECLARE @tablename varchar(MAX) DECLARE @msg varchar(MAX) DECLARE @columnlist nvarchar(MAX) DECLARE @columnhashlist nvarchar(MAX) BEGIN try -- Drop temporary table if it exists
  IF object_id('tempdb..#XlsTabsToLoad') IS NOT NULL
 DROP TABLE #xlstabstoload -- Create temporary table with row numbers
 
@@ -90,13 +90,10 @@ SELECT tablename AS TABLE_NAME,
 
    AND TABLE_NAME = @tablename -- Replace placeholders in the view template
 
-
-   SET @sqlcreate = replace(replace(replace(replace(replace(replace(@viewtemplate , '{SrcSchema}', @srcschema) , '{TgtSchema}', @tgtschema) , '{TableName}', @tablename) , '{ColumnList}', @columnlist) , '{ColumnHashList}', @columnhashlist) , '{GeneratedAt}', convert(VARCHAR, getdate(), 120)) -- Create the new view
+   SET @sqlcreate = replace(replace(replace(replace(replace(replace(@viewtemplate, '{SrcSchema}', @srcschema), '{TgtSchema}', @tgtschema), '{TableName}', @tablename), '{ColumnList}', @columnlist), '{ColumnHashList}', @columnhashlist), '{GeneratedAt}', convert(VARCHAR, getdate(), 120)) -- Create the new view
  PRINT @sqlcreate EXEC sp_executesql @sqlcreate -- Move to the next row
 
-
    SET @counternr = @counternr + 1 END -- Log the procedure execution
-
 
    SET @logsql = 'exec ' + @tgtschema + '.' + @logprocname EXEC [aud].[proc_log_procedure] @logaction = 'INFO',
 

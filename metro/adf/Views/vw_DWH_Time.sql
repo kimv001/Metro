@@ -6,11 +6,11 @@ Description:
 *Note
 	SS and MS came along, but always 0
 */
-SELECT src.* ,
+SELECT src.*,
 
-       repositorystatusname = sdtap.repositorystatus ,
+       repositorystatusname = sdtap.repositorystatus,
 
-       repositorystatuscode = sdtap.repositorystatuscode ,
+       repositorystatuscode = sdtap.repositorystatuscode,
 
        environment = sdtap.repositorystatus
 

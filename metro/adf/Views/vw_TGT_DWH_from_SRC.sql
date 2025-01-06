@@ -18,33 +18,33 @@ CREATE VIEW [adf].[vw_tgt_dwh_from_src] AS -- 493
 
        base AS
 
-        (SELECT tgt = src.tgt_datasetname ,
+        (SELECT tgt = src.tgt_datasetname,
 
-               tgt_bk_dataset = src.bk_target ,
+               tgt_bk_dataset = src.bk_target,
 
-               tgt_group = 'All' ,
+               tgt_group = 'All',
 
-               tgt_group_new = src.tgt_group ,
+               tgt_group_new = src.tgt_group,
 
-               tgt_schema = 'All' ,
+               tgt_schema = 'All',
 
-               tgt_layer = 'All' ,
+               tgt_layer = 'All',
 
-               tgt_dwh = 'All' ,
+               tgt_dwh = 'All',
 
-               src_bk_dataset = src.bk_source ,
+               src_bk_dataset = src.bk_source,
 
-               src_dataset = src.src_datasetname ,
+               src_dataset = src.src_datasetname,
 
-               src.src_shortname ,
+               src.src_shortname,
 
-               src.src_group ,
+               src.src_group,
 
-               src.src_schema ,
+               src.src_schema,
 
-               src.src_layer ,
+               src.src_layer,
 
-               src.[generation_number] ,
+               src.[generation_number],
 
                xa.targettoload
 
@@ -69,7 +69,6 @@ CREATE VIEW [adf].[vw_tgt_dwh_from_src] AS -- 493
 
          WHERE 1 = 1 --and  src.TGT_layer != 'his' and src.TGT_layer != 'dwh_audit'
 
-
            AND xa.targettoload IS NULL
 
            AND src.dependencytype = 'TgtFromSrc' --and SRC_Group = 'kanvas'
@@ -79,25 +78,25 @@ CREATE VIEW [adf].[vw_tgt_dwh_from_src] AS -- 493
 
        dwhme AS
 
-        (SELECT tgt_dwh ,
+        (SELECT tgt_dwh,
 
-               tgt_group ,
+               tgt_group,
 
-               tgt_schema ,
+               tgt_schema,
 
-               tgt_layer ,
+               tgt_layer,
 
-               [src_bk_dataset] ,
+               [src_bk_dataset],
 
-               [src_dataset] ,
+               [src_dataset],
 
-               [src_shortname] ,
+               [src_shortname],
 
-               [src_group] ,
+               [src_group],
 
-               [src_schema] ,
+               [src_schema],
 
-               [src_layer] ,
+               [src_layer],
 
                [generation_number] = max([generation_number])
 
@@ -105,54 +104,54 @@ CREATE VIEW [adf].[vw_tgt_dwh_from_src] AS -- 493
 
          WHERE 1 = 1
 
-         GROUP BY [tgt_dwh] ,
+         GROUP BY [tgt_dwh],
 
-                  tgt_group ,
+                  tgt_group,
 
-                  tgt_schema ,
+                  tgt_schema,
 
-                  tgt_layer ,
+                  tgt_layer,
 
-                  [src_bk_dataset] ,
+                  [src_bk_dataset],
 
-                  [src_dataset] ,
+                  [src_dataset],
 
-                  [src_shortname] ,
+                  [src_shortname],
 
-                  [src_group] ,
+                  [src_group],
 
-                  [src_schema] ,
+                  [src_schema],
 
                   [src_layer]
-       ) ,
+       ),
 
        FINAL AS
 
-        (SELECT DISTINCT src.[tgt_dwh] ,
+        (SELECT DISTINCT src.[tgt_dwh],
 
-               src.[tgt_dwh] AS [tgt] ,
+               src.[tgt_dwh] AS [tgt],
 
-               src.tgt_group ,
+               src.tgt_group,
 
-               src.tgt_schema ,
+               src.tgt_schema,
 
-               src.tgt_layer ,
+               src.tgt_layer,
 
-               src.[src_bk_dataset] ,
+               src.[src_bk_dataset],
 
-               src.[src_dataset] ,
+               src.[src_dataset],
 
-               src.[src_shortname] ,
+               src.[src_shortname],
 
-               src_sourcename = src.src_group + '_' + iif(src.src_schema = 'stg', d.src_shortname, src.src_shortname) ,
+               src_sourcename = src.src_group + '_' + iif(src.src_schema = 'stg', d.src_shortname, src.src_shortname),
 
-               src_datasettype = d.src_objecttype ,
+               src_datasettype = d.src_objecttype,
 
-               tgt_datasettype = d.tgt_objecttype ,
+               tgt_datasettype = d.tgt_objecttype,
 
-               [src_group] ,
+               [src_group],
 
-               [src_schema] ,
+               [src_schema],
 
                [src_layer] --, [generation_number_pre] = [generation_number]
 ,
@@ -161,9 +160,9 @@ CREATE VIEW [adf].[vw_tgt_dwh_from_src] AS -- 493
  --, row_num_dataset
 ,
 
-               dependencytype = 'DWH' ,
+               dependencytype = 'DWH',
 
-               [repositorystatusname] = d.repositorystatusname ,
+               [repositorystatusname] = d.repositorystatusname,
 
                [repositorystatuscode] = d.repositorystatuscode
 

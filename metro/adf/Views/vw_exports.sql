@@ -1,82 +1,82 @@
 ﻿
 CREATE VIEW [adf].[vw_exports] AS
-SELECT src.[exportsid] ,
+SELECT src.[exportsid],
 
-       src.[bk] ,
+       src.[bk],
 
-       src.[code] ,
+       src.[code],
 
-       src.[export_name] ,
+       src.[export_name],
 
-       src.[bk_dataset] ,
+       src.[bk_dataset],
 
-       src.[bk_schema] ,
+       src.[bk_schema],
 
-       src.[src_datasetname] ,
+       src.[src_datasetname],
 
-       src.[src_schema] ,
+       src.[src_schema],
 
-       src.[src_dataset] ,
+       src.[src_dataset],
 
-       [bk_schedule] = 'Not applicable over here' ,
+       [bk_schedule] = 'Not applicable over here',
 
-       src.[container] ,
+       src.[container],
 
-       src.[folder] ,
+       src.[folder],
 
-       src.[filename] ,
+       src.[filename],
 
-       src.[datetime] ,
+       src.[datetime],
 
-       src.[bk_fileformat] ,
+       src.[bk_fileformat],
 
-       src.[where_filter] ,
+       src.[where_filter],
 
-       src.[order_by] ,
+       src.[order_by],
 
-       src.[split_by] ,
+       src.[split_by],
 
-       src.[ff_name] ,
+       src.[ff_name],
 
-       src.[ff_fileformat] ,
+       src.[ff_fileformat],
 
-       src.[ff_columndelimiter] ,
+       src.[ff_columndelimiter],
 
-       src.[ff_rowdelimiter] ,
+       src.[ff_rowdelimiter],
 
-       src.[ff_quotecharacter] ,
+       src.[ff_quotecharacter],
 
-       src.[ff_compressionlevel] ,
+       src.[ff_compressionlevel],
 
-       src.[ff_compressiontype] ,
+       src.[ff_compressiontype],
 
-       src.[ff_enablecdc] ,
+       src.[ff_enablecdc],
 
-       src.[ff_escapecharacter] ,
+       src.[ff_escapecharacter],
 
-       src.[ff_fileencoding] ,
+       src.[ff_fileencoding],
 
-       src.[ff_firstrow] ,
+       src.[ff_firstrow],
 
-       src.[ff_firstrowasheader] ,
+       src.[ff_firstrowasheader],
 
-       src.[mta_rectype] ,
+       src.[mta_rectype],
 
-       src.[mta_createdate] ,
+       src.[mta_createdate],
 
-       src.[mta_source] ,
+       src.[mta_source],
 
-       src.[mta_bk] ,
+       src.[mta_bk],
 
-       src.[mta_bkh] ,
+       src.[mta_bkh],
 
-       src.[mta_rh] ,
+       src.[mta_rh],
 
-       src.[mta_isdeleted] ,
+       src.[mta_isdeleted],
 
-       repositorystatusname = sdtap.repositorystatus ,
+       repositorystatusname = sdtap.repositorystatus,
 
-       repositorystatuscode = sdtap.repositorystatuscode ,
+       repositorystatuscode = sdtap.repositorystatuscode,
 
        environment = sdtap.repositorystatus
 

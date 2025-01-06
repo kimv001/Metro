@@ -1,11 +1,11 @@
 ﻿
 CREATE VIEW [adf].vw_connections_src_api AS WITH linkedserviceproperties AS
 
-        (SELECT bk_linkedservice = ls.bk ,
+        (SELECT bk_linkedservice = ls.bk,
 
-               linkedservicename = ls.[name] ,
+               linkedservicename = ls.[name],
 
-               lsp.linkedservicepropertiesname ,
+               lsp.linkedservicepropertiesname,
 
                lsp.linkedservicepropertiesvalue
 
@@ -17,98 +17,98 @@ CREATE VIEW [adf].vw_connections_src_api AS WITH linkedserviceproperties AS
 
        cte_datasourceproperties_sdtap_values AS
 
-        (SELECT src.bk_datasource ,
+        (SELECT src.bk_datasource,
 
-               src.datasourceserver ,
+               src.datasourceserver,
 
-               src.datasourcedatabase ,
+               src.datasourcedatabase,
 
-               src.datasourceurl ,
+               src.datasourceurl,
 
-               src.datasourceusr ,
+               src.datasourceusr,
 
                src.environment
 
           FROM adf.vw_datasourceproperties_sdtap_values src
        )
 SELECT -- first attribute [SRCConnectionName] is legacy
- srcconnectionname = src.groupshortname ,
+ srcconnectionname = src.groupshortname,
 
-       [dwhgroupnameshortname] = src.[groupshortname] ,
+       [dwhgroupnameshortname] = src.[groupshortname],
 
-       [dwhgroupname] = src.groupname ,
+       [dwhgroupname] = src.groupname,
 
-       [dwhshortname] = dt.shortname ,
+       [dwhshortname] = dt.shortname,
 
-       [dwhshortnamesource] = src.datasetshortname ,
+       [dwhshortnamesource] = src.datasetshortname,
 
-       [src_bk_dataset] = src.bk_dataset ,
+       [src_bk_dataset] = src.bk_dataset,
 
-       [tgt_bk_dataset] = dt.bk ,
+       [tgt_bk_dataset] = dt.bk,
 
-       [src_datasettype] = src.objecttype ,
+       [src_datasettype] = src.objecttype,
 
-       [tgt_datasettype] = dt.objecttype ,
+       [tgt_datasettype] = dt.objecttype,
 
-       [src_schema] = src.schemaname ,
+       [src_schema] = src.schemaname,
 
-       [tgt_schema] = dt.schemaname ,
+       [tgt_schema] = dt.schemaname,
 
-       [src_layer] = src.layername ,
+       [src_layer] = src.layername,
 
-       [tgt_layer] = dt.layername ,
+       [tgt_layer] = dt.layername,
 
-       [src_dataset] = src.datasetname ,
+       [src_dataset] = src.datasetname,
 
-       [tgt_dataset] = dt.datasetname ,
+       [tgt_dataset] = dt.datasetname,
 
        [tgt_tablename] =
-CONCAT (src.groupname ,
-                           '_' ,
-                           dt.shortname) ,[src_datasource] = src.datasourcename ,
+CONCAT (src.groupname,
+                           '_',
+                           dt.shortname) ,[src_datasource] = src.datasourcename,
 
-       [src_datasourceserver] = src.datasourceserver ,
+       [src_datasourceserver] = src.datasourceserver,
 
-       [src_datasourcedatabase] = src.datasourcedatabase ,
+       [src_datasourcedatabase] = src.datasourcedatabase,
 
-       [src_datasourceurl] = src.datasourceurl ,
+       [src_datasourceurl] = src.datasourceurl,
 
-       [src_datasourceusr] = src.datasourceusr ,
+       [src_datasourceusr] = src.datasourceusr,
 
-       [tgt_datasource] = dt.datasource ,
+       [tgt_datasource] = dt.datasource,
 
-       [tgt_datasourceserver] = dspv.datasourceserver ,
+       [tgt_datasourceserver] = dspv.datasourceserver,
 
-       [tgt_datasourcedatabase] = dspv.datasourcedatabase ,
+       [tgt_datasourcedatabase] = dspv.datasourcedatabase,
 
-       [tgt_datasourceurl] = dspv.datasourceurl ,
+       [tgt_datasourceurl] = dspv.datasourceurl,
 
-       [tgt_datasourceusr] = dspv.datasourceusr ,
+       [tgt_datasourceusr] = dspv.datasourceusr,
 
-       [stg_container] = src.[stg_container] ,
+       [stg_container] = src.[stg_container],
 
-       [tgt_container] = src.[tgt_container] ,
+       [tgt_container] = src.[tgt_container],
 
-       [active] = src.active ,
+       [active] = src.active,
 
-       [corecount] = src.[corecount] ,
+       [corecount] = src.[corecount],
 
-       [repositorystatusname] = src.repositorystatusname ,
+       [repositorystatusname] = src.repositorystatusname,
 
        [repositorystatuscode] = src.repositorystatuscode -- Api Info
- ,
+,
 
-       [src_datasourceid] = src.bk_datasource ,
+       [src_datasourceid] = src.bk_datasource,
 
-       linkedservicename = src.linkedservicename ,
+       linkedservicename = src.linkedservicename,
 
-       environmenturl = dslp_e.linkedservicepropertiesvalue ,
+       environmenturl = dslp_e.linkedservicepropertiesvalue,
 
-       username = dslp_u.linkedservicepropertiesvalue ,
+       username = dslp_u.linkedservicepropertiesvalue,
 
-       bigdata = isnull(src.bigdata, 0) ,
+       bigdata = isnull(src.bigdata, 0),
 
-       dspv.environment ,
+       dspv.environment,
 
        src.datasettype
 

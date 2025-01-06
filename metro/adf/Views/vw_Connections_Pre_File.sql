@@ -1,111 +1,111 @@
 ﻿
 CREATE VIEW [adf].[vw_connections_pre_file] AS WITH cte_datasourceproperties_sdtap_values AS
 
-        (SELECT src.bk_datasource ,
+        (SELECT src.bk_datasource,
 
-               src.datasourceserver ,
+               src.datasourceserver,
 
-               src.datasourcedatabase ,
+               src.datasourcedatabase,
 
-               src.datasourceurl ,
+               src.datasourceurl,
 
-               src.datasourceusr ,
+               src.datasourceusr,
 
                src.environment
 
           FROM adf.vw_datasourceproperties_sdtap_values src
        )
 SELECT -- first attribute [SRCConnectionName] is legacy
- srcconnectionname = src.groupshortname ,
+ srcconnectionname = src.groupshortname,
 
-       dwhgroupnameshortname = src.groupshortname ,
+       dwhgroupnameshortname = src.groupshortname,
 
-       dwhgroupname = src.groupname ,
+       dwhgroupname = src.groupname,
 
-       dwhshortname = dt.shortname ,
+       dwhshortname = dt.shortname,
 
-       dwhshortnamesource = src.datasetshortname ,
+       dwhshortnamesource = src.datasetshortname,
 
-       src_bk_dataset = src.bk_dataset ,
+       src_bk_dataset = src.bk_dataset,
 
-       tgt_bk_dataset = dt.bk ,
+       tgt_bk_dataset = dt.bk,
 
-       src_datasettype = src.datasettype ,
+       src_datasettype = src.datasettype,
 
-       tgt_datasettype = dt.datasettype ,
+       tgt_datasettype = dt.datasettype,
 
-       src_schema = src.schemaname ,
+       src_schema = src.schemaname,
 
-       tgt_schema = dt.schemaname ,
+       tgt_schema = dt.schemaname,
 
-       src_layer = src.layername ,
+       src_layer = src.layername,
 
-       tgt_layer = dt.layername ,
+       tgt_layer = dt.layername,
 
-       src_dataset = src.datasetname ,
+       src_dataset = src.datasetname,
 
-       tgt_dataset = dt.datasetname ,
+       tgt_dataset = dt.datasetname,
 
-       src_datasource = src.datasourcename ,
+       src_datasource = src.datasourcename,
 
-       src_datasourceserver = src.datasourceserver ,
+       src_datasourceserver = src.datasourceserver,
 
-       src_datasourcedatabase = src.datasourcedatabase ,
+       src_datasourcedatabase = src.datasourcedatabase,
 
-       src_datasourceurl = src.datasourceurl ,
+       src_datasourceurl = src.datasourceurl,
 
-       src_datasourceusr = src.datasourceusr ,
+       src_datasourceusr = src.datasourceusr,
 
-       tgt_datasource = dt.datasource ,
+       tgt_datasource = dt.datasource,
 
-       tgt_datasourceserver = dspv.datasourceserver ,
+       tgt_datasourceserver = dspv.datasourceserver,
 
-       tgt_datasourcedatabase = dspv.datasourcedatabase ,
+       tgt_datasourcedatabase = dspv.datasourcedatabase,
 
-       tgt_datasourceurl = dspv.datasourceurl ,
+       tgt_datasourceurl = dspv.datasourceurl,
 
-       tgt_datasourceusr = dspv.datasourceusr ,
+       tgt_datasourceusr = dspv.datasourceusr,
 
-       stg_container = src.stg_container ,
+       stg_container = src.stg_container,
 
-       tgt_container = src.tgt_container ,
+       tgt_container = src.tgt_container,
 
-       tgt_folder = src.groupshortname ,
+       tgt_folder = src.groupshortname,
 
-       active = src.active ,
+       active = src.active,
 
        corecount = src.corecount -- File MamboJambo
 ,
 
-       srccontainer = lower(fp.filesystem) ,
+       srccontainer = lower(fp.filesystem),
 
-       srcfolder = fp.folder ,
+       srcfolder = fp.folder,
 
-       srcfilemask = fp.filemask ,
+       srcfilemask = fp.filemask,
 
-       srccolumnseperator = fp.ff_columndelimiter ,
+       srccolumnseperator = fp.ff_columndelimiter,
 
-       srccompressiontype = fp.ff_compressiontype ,
+       srccompressiontype = fp.ff_compressiontype,
 
-       srccompressionlevel = fp.ff_compressionlevel ,
+       srccompressionlevel = fp.ff_compressionlevel,
 
-       srcencoding = fp.ff_fileencoding ,
+       srcencoding = fp.ff_fileencoding,
 
-       srcquotecharacter = fp.ff_quotecharacter ,
+       srcquotecharacter = fp.ff_quotecharacter,
 
-       srcfirstrowasheader = fp.ff_firstrowasheader ,
+       srcfirstrowasheader = fp.ff_firstrowasheader,
 
-       srcescapecharacter = fp.ff_escapecharacter ,
+       srcescapecharacter = fp.ff_escapecharacter,
 
-       srcskiplines = (fp.ff_firstrow - 1) ,
+       srcskiplines = (fp.ff_firstrow - 1),
 
-       dateinfilenamestringstartpos = isnull(fp.dateinfilenamestartpos, 1) ,
+       dateinfilenamestringstartpos = isnull(fp.dateinfilenamestartpos, 1),
 
-       dateinfilenamestringlength = isnull(fp.dateinfilenamelength, 1) ,
+       dateinfilenamestringlength = isnull(fp.dateinfilenamelength, 1),
 
-       repositorystatusname = src.repositorystatusname ,
+       repositorystatusname = src.repositorystatusname,
 
-       repositorystatuscode = src.repositorystatuscode ,
+       repositorystatuscode = src.repositorystatuscode,
 
        dspv.environment
 

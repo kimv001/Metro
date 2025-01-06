@@ -7,20 +7,20 @@ Change log:
 Date					Author				Description
 20220915 00:00			K. Vermeij			Initial version
 */
-SELECT bk_datasource ,
+SELECT bk_datasource,
 
-       datasourcename ,
+       datasourcename,
 
-       bk_linkedservice ,
+       bk_linkedservice,
 
-       datasourcepropertiesname ,
+       datasourcepropertiesname,
 
        currentenvironment = CASE
                                 WHEN right(cast(serverproperty('ServerName') AS varchar), 3) = 'ROD' THEN 'PRD'
 
             ELSE right(cast(serverproperty('ServerName') AS varchar), 3)
 
-             END ,
+             END,
 
        datasourcepropertiescurrentvalue = CASE
                                                                    WHEN right(cast(serverproperty('ServerName') AS varchar), 3) = 'dev' THEN isnull([d], [x])
@@ -35,33 +35,32 @@ SELECT bk_datasource ,
 
             ELSE 'Unknown'
 
-             END ,
+             END,
 
-       d = isnull([d], [x]) ,
+       d = isnull([d], [x]),
 
-       t = isnull([t], [x]) ,
+       t = isnull([t], [x]),
 
-       a = isnull([a], [x]) ,
+       a = isnull([a], [x]),
 
-       p = isnull([p], [x]) ,
+       p = isnull([p], [x]),
 
        x = [x] -- default value for all DTAP
 ,
 
        s = isnull([s], [x]) -- Sandbox environment
 
-
   FROM
 
-        (SELECT bk_datasource = ds.bk ,
+        (SELECT bk_datasource = ds.bk,
 
-               bk_linkedservice = ds.bk_linkedservice ,
+               bk_linkedservice = ds.bk_linkedservice,
 
-               datasourcename = ds.[name] ,
+               datasourcename = ds.[name],
 
-               datasourcepropertiesname = src.datasourcepropertiesname ,
+               datasourcepropertiesname = src.datasourcepropertiesname,
 
-               datasourcepropertiesvalue = src.datasourcepropertiesvalue ,
+               datasourcepropertiesvalue = src.datasourcepropertiesvalue,
 
                datasourcepropertiesenvironment = rt.code
 

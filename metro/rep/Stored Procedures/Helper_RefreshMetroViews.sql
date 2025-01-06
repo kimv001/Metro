@@ -8,16 +8,13 @@ Description:
 Test:
 OK:
 
-
 NOK:
-
-
 
 Changelog:
 Date		time		Author					Description
 20220804	0000		K. Vermeij				Initial
 =======================================================
-*/  DECLARE @sqlcmd nvarchar(MAX) = ''
+*/ DECLARE @sqlcmd nvarchar(MAX) = ''
 SELECT @sqlcmd = @sqlcmd + 'EXEC sp_refreshview ''' + schema_name(so.schema_id) + '.' + name + ''';
 '
 

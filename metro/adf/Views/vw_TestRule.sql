@@ -1,15 +1,15 @@
 ﻿
 CREATE VIEW [adf].[vw_testrule] AS WITH cte_datasourceproperties_sdtap_values AS
 
-        (SELECT src.bk_datasource ,
+        (SELECT src.bk_datasource,
 
-               src.datasourceserver ,
+               src.datasourceserver,
 
-               src.datasourcedatabase ,
+               src.datasourcedatabase,
 
-               src.datasourceurl ,
+               src.datasourceurl,
 
-               src.datasourceusr ,
+               src.datasourceusr,
 
                src.environment
 
@@ -51,9 +51,9 @@ SELECT src.[testrulesid],
 
        src.[mta_rh],
 
-       src.[mta_isdeleted] ,
+       src.[mta_isdeleted],
 
-       env.environment ,
+       env.environment,
 
        [repositorystatuscode] = rt.code
 
@@ -63,7 +63,6 @@ SELECT src.[testrulesid],
     ON src.bk_reftype_repositorystatus = rt.bk
 
  CROSS JOIN [adf].[vw_sdtap] env --on env.BK_RepositoryStatus = src.[BK_RefType_RepositoryStatus]
-
 
  WHERE 1 = 1 --and BK_Dataset = 'SA_DWH|src_file||Grafana|LWAP|'
  -- order by BK_Dataset, [TestDefintion]
