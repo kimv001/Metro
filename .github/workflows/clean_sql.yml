@@ -1,3 +1,7 @@
+permissions:
+  contents: write
+  actions: read
+
 name: Clean SQL Files
 
 on: [push, pull_request]
@@ -22,7 +26,7 @@ jobs:
       run: |
         find . -name "*.sql" | while read sqlfile; do
           echo "Cleaning $sqlfile"
-          sqlformat -r -k upper -i lower -a -s $sqlfile -o $sqlfile
+          sqlformat -r -k upper -i lower -a -s "$sqlfile" -o "$sqlfile"
         done
 
     - name: Commit changes

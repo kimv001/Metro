@@ -1,77 +1,123 @@
-﻿CREATE view [adf].[vw_TGT_from_SRC] as
-with base as (
-select
-	TGT 
-	, SRC_BK_DataSet
-	, SRC_Dataset
-	, SRC_ShortName
-	, SRC_Group
-	, SRC_Schema
-	, SRC_Layer
-	, [Source]
-	, SRC_DatasetType
-	, TGT_DatasetType
-	, generation_number
-	, DependencyType
-	, RepositoryStatusName
-	, RepositoryStatusCode
-	, Environment
-from [adf].[vw_TGT_from_SRC_base]
+﻿
+CREATE VIEW [adf].[vw_tgt_from_src] AS WITH base AS
 
-union all 
+        (SELECT tgt ,
 
-select
-	TGT 
-	, SRC_BK_DataSet
-	, SRC_Dataset
-	, SRC_ShortName
-	, SRC_Group
-	, SRC_Schema
-	, SRC_Layer
-	, [Source]
-	, SRC_DatasetType
-	, TGT_DatasetType
-	, generation_number
-	, DependencyType
-	, RepositoryStatusName
-	, RepositoryStatusCode
-	, Environment
-from [adf].[vw_TGT_from_SRC_schedules]
-), final as (
-select
-	
-	TGT							= cast(src.TGT					as varchar(1000))
-	, SRC_BK_DataSet			= cast(src.SRC_BK_DataSet		as varchar(255))
-	, SRC_Dataset				= cast(src.SRC_Dataset			as varchar(255))
-	, SRC_ShortName				= cast(src.SRC_ShortName		as varchar(255))
-	, SRC_Group					= cast(src.SRC_Group			as varchar(255))
-	, SRC_Schema				= cast(src.SRC_Schema			as varchar(255))
-	, SRC_Layer					= cast(src.SRC_Layer			as varchar(255))
-	, [Source]					= cast(src.[Source]				as varchar(1000))
-	, SRC_DatasetType			= cast(src.SRC_DatasetType		as varchar(255))
-	, TGT_DatasetType			= cast(src.TGT_DatasetType		as varchar(255))
-	, generation_number_old			= cast(src.generation_number	as bigint)
-	, generation_number				= cast(
-									case 
-										when s.ProcessParallel = 1 then concat(d.FlowOrder,'00000') 
-										else concat(d.FlowOrder,  right('00000'+cast(src.generation_number as varchar),5))
-									end
-									as bigint)
+               src_bk_dataset ,
 
-	, ProcessParallel			= cast(s.ProcessParallel		as varchar(255))
-	, DependencyType			= cast(src.DependencyType		as varchar(255))
-	, RepositoryStatusName		= cast(src.RepositoryStatusName	as varchar(255))
-	, RepositoryStatusCode		= cast(src.RepositoryStatusCode	as varchar(255))
-	, Environment				= cast(src.Environment			as varchar(255))
-from base src
-left join bld.vw_dataset	d on src.SRC_BK_DataSet = d.BK
-left join bld.vw_schema		s on d.bk_schema = s.bk
+               src_dataset ,
 
+               src_shortname ,
 
-)
-select * from final
-where 1=1
---and Environment = 'prd'
+               src_group ,
+
+               src_schema ,
+
+               src_layer ,
+
+               [source] ,
+
+               src_datasettype ,
+
+               tgt_datasettype ,
+
+               generation_number ,
+
+               dependencytype ,
+
+               repositorystatusname ,
+
+               repositorystatuscode ,
+
+               environment
+
+          FROM [adf].[vw_tgt_from_src_base]
+
+     UNION ALL SELECT tgt ,
+
+               src_bk_dataset ,
+
+               src_dataset ,
+
+               src_shortname ,
+
+               src_group ,
+
+               src_schema ,
+
+               src_layer ,
+
+               [source] ,
+
+               src_datasettype ,
+
+               tgt_datasettype ,
+
+               generation_number ,
+
+               dependencytype ,
+
+               repositorystatusname ,
+
+               repositorystatuscode ,
+
+               environment
+
+          FROM [adf].[vw_tgt_from_src_schedules]
+       ),
+
+       FINAL AS
+
+        (SELECT tgt = cast(src.tgt AS varchar(1000)) ,
+
+               src_bk_dataset = cast(src.src_bk_dataset AS varchar(255)) ,
+
+               src_dataset = cast(src.src_dataset AS varchar(255)) ,
+
+               src_shortname = cast(src.src_shortname AS varchar(255)) ,
+
+               src_group = cast(src.src_group AS varchar(255)) ,
+
+               src_schema = cast(src.src_schema AS varchar(255)) ,
+
+               src_layer = cast(src.src_layer AS varchar(255)) ,
+
+               [source] = cast(src.[source] AS varchar(1000)) ,
+
+               src_datasettype = cast(src.src_datasettype AS varchar(255)) ,
+
+               tgt_datasettype = cast(src.tgt_datasettype AS varchar(255)) ,
+
+               generation_number_old = cast(src.generation_number AS bigint) ,
+
+               generation_number = cast(CASE
+                                       WHEN s.processparallel = 1 THEN concat(d.floworder, '00000')
+                                       ELSE concat(d.floworder, right('00000' + cast(src.generation_number AS varchar), 5))
+                                   END AS bigint) ,
+
+               processparallel = cast(s.processparallel AS varchar(255)) ,
+
+               dependencytype = cast(src.dependencytype AS varchar(255)) ,
+
+               repositorystatusname = cast(src.repositorystatusname AS varchar(255)) ,
+
+               repositorystatuscode = cast(src.repositorystatuscode AS varchar(255)) ,
+
+               environment = cast(src.environment AS varchar(255))
+
+          FROM base src
+
+          LEFT JOIN bld.vw_dataset d
+            ON src.src_bk_dataset = d.bk
+
+          LEFT JOIN bld.vw_schema s
+            ON d.bk_schema = s.bk
+       )
+SELECT *
+
+  FROM FINAL
+
+ WHERE 1 = 1 --and Environment = 'prd'
 --and TGT = '[fct].[IB_ODF_monthly]'
 --and TGT = '[fct].[IB_WEAS]'
 --and TGT = '[dim].[Common_CustomerProduct]'

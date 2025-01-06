@@ -1,27 +1,42 @@
 ﻿
+CREATE PROCEDURE [aud].[proc_log_procedure] @logaction varchar(50),
 
-CREATE PROCEDURE [aud].[proc_Log_Procedure] 
-        @LogAction varchar(50), 
-        @LogNote varchar(max), 
-        @LogTime datetime2 = null,
-		@LogProcedure varchar(255) = null,
-		@LogSQL varchar(max) = NULL,
-		@LogRowCount bigint = NULL,
-		@Log_TimeStart datetime2 = NULL,
-		@Log_TimeEnd datetime2 = NULL
+       @lognote varchar(MAX),
+
+       @logtime datetime2 = NULL,
+
+       @logprocedure varchar(255) = NULL,
+
+       @logsql varchar(MAX) = NULL,
+
+       @logrowcount bigint = NULL,
+
+       @log_timestart datetime2 = NULL,
+
+       @log_timeend datetime2 = NULL AS BEGIN -- SET NOCOUNT ON added to prevent extra result sets from
+ -- interfering with SELECT statements.
 
 
-    AS
-    BEGIN
-        -- SET NOCOUNT ON added to prevent extra result sets from
-        -- interfering with SELECT statements.
-        SET NOCOUNT ON;
+   SET nocount
+    ON; IF @logtime IS NULL
 
-            if @LogTime is null
-                set @LogTime = getdate();
-				--set @Log_TimeEnd = @LogTime;
+   SET @logtime = getdate(); --set @Log_TimeEnd = @LogTime;
 
-            INSERT INTO [aud].[Log_Procedure](Log_Time, Log_Action, Log_Note, Log_Procedure, Log_SQL, Log_RowCount, Log_User, Log_TimeStart,Log_TimeEnd)
-                Select @Logtime, @LogAction, @LogNote, @LogProcedure, @LogSQL, @LogRowCount, SUSER_NAME (), @Log_TimeStart, @Log_TimeEnd
+INSERT INTO [aud].[log_procedure](log_time, log_action, log_note, log_procedure, log_sql, log_rowcount, log_user, log_timestart, log_timeend)
+SELECT @logtime,
 
-    END
+       @logaction,
+
+       @lognote,
+
+       @logprocedure,
+
+       @logsql,
+
+       @logrowcount,
+
+       suser_name (),
+
+       @log_timestart,
+
+       @log_timeend END

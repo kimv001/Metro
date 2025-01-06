@@ -1,47 +1,337 @@
 ﻿
+CREATE VIEW [adf].[vw_tgt_from_src_base] AS WITH tgt AS
 
+        (SELECT [tgt],
 
+               src_bk_dataset,
 
+               src_dataset,
 
+               [src_shortname],
 
+               src_group,
 
+               src_schema,
 
-CREATE  view [adf].[vw_TGT_from_SRC_base] as
+               src_layer,
 
+               src_sourcename,
 
-with  TGT as (
-	select [TGT] , SRC_BK_DataSet, SRC_Dataset, [SRC_ShortName],SRC_Group, SRC_Schema, SRC_Layer, SRC_SourceName, SRC_DatasetType, TGT_DatasetType, generation_number, DependencyType, [RepositoryStatusName], [RepositoryStatusCode] from [adf].[vw_TGT_DWH_from_SRC]					union all																									
-	select [TGT] , SRC_BK_DataSet, SRC_Dataset, [SRC_ShortName],SRC_Group, SRC_Schema, SRC_Layer, SRC_SourceName, SRC_DatasetType, TGT_DatasetType, generation_number, DependencyType, [RepositoryStatusName], [RepositoryStatusCode] from [adf].[vw_TGT_Layer_from_SRC]				union all																									
-	select [TGT] , SRC_BK_DataSet, SRC_Dataset, [SRC_ShortName],SRC_Group, SRC_Schema, SRC_Layer, SRC_SourceName, SRC_DatasetType, TGT_DatasetType, generation_number, DependencyType, [RepositoryStatusName], [RepositoryStatusCode] from [adf].[vw_TGT_LayerGroup_from_SRC]			union all	
-	select [TGT] , SRC_BK_DataSet, SRC_Dataset, [SRC_ShortName],SRC_Group, SRC_Schema, SRC_Layer, SRC_SourceName, SRC_DatasetType, TGT_DatasetType, generation_number, DependencyType, [RepositoryStatusName], [RepositoryStatusCode] from [adf].[vw_TGT_Schema_from_SRC]				union all		
-	select [TGT] , SRC_BK_DataSet, SRC_Dataset, [SRC_ShortName],SRC_Group, SRC_Schema, SRC_Layer, SRC_SourceName, SRC_DatasetType, TGT_DatasetType, generation_number, DependencyType, [RepositoryStatusName], [RepositoryStatusCode] from [adf].[vw_TGT_Group_from_SRC]				union all																									
-	select [TGT] , SRC_BK_DataSet, SRC_Dataset, [SRC_ShortName],SRC_Group, SRC_Schema, SRC_Layer, SRC_SourceName, SRC_DatasetType, TGT_DatasetType, generation_number, DependencyType, [RepositoryStatusName], [RepositoryStatusCode] from [adf].[vw_TGT_Dataset_from_SRC]				union all
-	select [TGT] , SRC_BK_DataSet, SRC_Dataset, [SRC_ShortName],SRC_Group, SRC_Schema, SRC_Layer, SRC_SourceName, SRC_DatasetType, TGT_DatasetType, generation_number, DependencyType, [RepositoryStatusName], [RepositoryStatusCode] from [adf].[vw_TGT_ShortNameGroup_from_SRC]		union all
-	select [TGT] , SRC_BK_DataSet, SRC_Dataset, [SRC_ShortName],SRC_Group, SRC_Schema, SRC_Layer, SRC_SourceName, SRC_DatasetType, TGT_DatasetType, generation_number, DependencyType, [RepositoryStatusName], [RepositoryStatusCode] from [adf].[vw_TGT_ShortNameGroupLayer_from_SRC]	union all
-	select [TGT] , SRC_BK_DataSet, SRC_Dataset, [SRC_ShortName],SRC_Group, SRC_Schema, SRC_Layer, SRC_SourceName, SRC_DatasetType, TGT_DatasetType, generation_number, DependencyType, [RepositoryStatusName], [RepositoryStatusCode] from [adf].[vw_TGT_Export_from_SRC]				union all
-	select [TGT] , SRC_BK_DataSet, SRC_Dataset, [SRC_ShortName],SRC_Group, SRC_Schema, SRC_Layer, SRC_SourceName, SRC_DatasetType, TGT_DatasetType, generation_number, DependencyType, [RepositoryStatusName], [RepositoryStatusCode] from [adf].[vw_TGT_GroupSRCLayer_from_SRC]
+               src_datasettype,
 
-	
-)
+               tgt_datasettype,
 
-select 
-	  TGT.[TGT]
-	, TGT.SRC_BK_DataSet
-	, TGT.SRC_Dataset
-	, TGT.[SRC_ShortName]
-	, TGT.SRC_Group
-	, TGT.SRC_Schema
-	, TGT.SRC_Layer
-	, TGT.SRC_SourceName as [Source]
-	, TGT.SRC_DatasetType
-	, TGT.TGT_DatasetType
-	, TGT.generation_number
-	, TGT.DependencyType
-	, TGT.[RepositoryStatusName]
-	, TGT.[RepositoryStatusCode]
-	, env.Environment
-	
-from  TGT 
-Cross join [adf].[vw_SDTAP]  env
---where TGT.SRC_Layer != 'src' -- sources are no entities from where actions are triggered on in ADF
+               generation_number,
+
+               dependencytype,
+
+               [repositorystatusname],
+
+               [repositorystatuscode]
+
+          FROM [adf].[vw_tgt_dwh_from_src]
+
+     UNION ALL SELECT [tgt],
+
+               src_bk_dataset,
+
+               src_dataset,
+
+               [src_shortname],
+
+               src_group,
+
+               src_schema,
+
+               src_layer,
+
+               src_sourcename,
+
+               src_datasettype,
+
+               tgt_datasettype,
+
+               generation_number,
+
+               dependencytype,
+
+               [repositorystatusname],
+
+               [repositorystatuscode]
+
+          FROM [adf].[vw_tgt_layer_from_src]
+
+     UNION ALL SELECT [tgt],
+
+               src_bk_dataset,
+
+               src_dataset,
+
+               [src_shortname],
+
+               src_group,
+
+               src_schema,
+
+               src_layer,
+
+               src_sourcename,
+
+               src_datasettype,
+
+               tgt_datasettype,
+
+               generation_number,
+
+               dependencytype,
+
+               [repositorystatusname],
+
+               [repositorystatuscode]
+
+          FROM [adf].[vw_tgt_layergroup_from_src]
+
+     UNION ALL SELECT [tgt],
+
+               src_bk_dataset,
+
+               src_dataset,
+
+               [src_shortname],
+
+               src_group,
+
+               src_schema,
+
+               src_layer,
+
+               src_sourcename,
+
+               src_datasettype,
+
+               tgt_datasettype,
+
+               generation_number,
+
+               dependencytype,
+
+               [repositorystatusname],
+
+               [repositorystatuscode]
+
+          FROM [adf].[vw_tgt_schema_from_src]
+
+     UNION ALL SELECT [tgt],
+
+               src_bk_dataset,
+
+               src_dataset,
+
+               [src_shortname],
+
+               src_group,
+
+               src_schema,
+
+               src_layer,
+
+               src_sourcename,
+
+               src_datasettype,
+
+               tgt_datasettype,
+
+               generation_number,
+
+               dependencytype,
+
+               [repositorystatusname],
+
+               [repositorystatuscode]
+
+          FROM [adf].[vw_tgt_group_from_src]
+
+     UNION ALL SELECT [tgt],
+
+               src_bk_dataset,
+
+               src_dataset,
+
+               [src_shortname],
+
+               src_group,
+
+               src_schema,
+
+               src_layer,
+
+               src_sourcename,
+
+               src_datasettype,
+
+               tgt_datasettype,
+
+               generation_number,
+
+               dependencytype,
+
+               [repositorystatusname],
+
+               [repositorystatuscode]
+
+          FROM [adf].[vw_tgt_dataset_from_src]
+
+     UNION ALL SELECT [tgt],
+
+               src_bk_dataset,
+
+               src_dataset,
+
+               [src_shortname],
+
+               src_group,
+
+               src_schema,
+
+               src_layer,
+
+               src_sourcename,
+
+               src_datasettype,
+
+               tgt_datasettype,
+
+               generation_number,
+
+               dependencytype,
+
+               [repositorystatusname],
+
+               [repositorystatuscode]
+
+          FROM [adf].[vw_tgt_shortnamegroup_from_src]
+
+     UNION ALL SELECT [tgt],
+
+               src_bk_dataset,
+
+               src_dataset,
+
+               [src_shortname],
+
+               src_group,
+
+               src_schema,
+
+               src_layer,
+
+               src_sourcename,
+
+               src_datasettype,
+
+               tgt_datasettype,
+
+               generation_number,
+
+               dependencytype,
+
+               [repositorystatusname],
+
+               [repositorystatuscode]
+
+          FROM [adf].[vw_tgt_shortnamegrouplayer_from_src]
+
+     UNION ALL SELECT [tgt],
+
+               src_bk_dataset,
+
+               src_dataset,
+
+               [src_shortname],
+
+               src_group,
+
+               src_schema,
+
+               src_layer,
+
+               src_sourcename,
+
+               src_datasettype,
+
+               tgt_datasettype,
+
+               generation_number,
+
+               dependencytype,
+
+               [repositorystatusname],
+
+               [repositorystatuscode]
+
+          FROM [adf].[vw_tgt_export_from_src]
+
+     UNION ALL SELECT [tgt],
+
+               src_bk_dataset,
+
+               src_dataset,
+
+               [src_shortname],
+
+               src_group,
+
+               src_schema,
+
+               src_layer,
+
+               src_sourcename,
+
+               src_datasettype,
+
+               tgt_datasettype,
+
+               generation_number,
+
+               dependencytype,
+
+               [repositorystatusname],
+
+               [repositorystatuscode]
+
+          FROM [adf].[vw_tgt_groupsrclayer_from_src]
+       )
+SELECT tgt.[tgt] ,
+
+       tgt.src_bk_dataset ,
+
+       tgt.src_dataset ,
+
+       tgt.[src_shortname] ,
+
+       tgt.src_group ,
+
+       tgt.src_schema ,
+
+       tgt.src_layer ,
+
+       tgt.src_sourcename AS [source] ,
+
+       tgt.src_datasettype ,
+
+       tgt.tgt_datasettype ,
+
+       tgt.generation_number ,
+
+       tgt.dependencytype ,
+
+       tgt.[repositorystatusname] ,
+
+       tgt.[repositorystatuscode] ,
+
+       env.environment
+
+  FROM tgt
+
+ CROSS JOIN [adf].[vw_sdtap] env --where TGT.SRC_Layer != 'src' -- sources are no entities from where actions are triggered on in ADF
 --and env.Environment = 'PRD' -- 4387

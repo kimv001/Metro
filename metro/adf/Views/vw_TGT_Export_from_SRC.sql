@@ -1,22 +1,28 @@
 ﻿
+CREATE VIEW [adf].[vw_tgt_export_from_src] AS
+SELECT tgt = e.[export_name],
 
+       src_bk_dataset = e.bk_dataset,
 
-CREATE view [adf].[vw_TGT_Export_from_SRC] as
+       [src_dataset] = e.[export_name], --e.src_dataset,
+ [src_shortname] = e.src_shortname,
 
-select 
-	TGT							= e.[export_name],	 
-	SRC_BK_DataSet				= e.bk_dataset,
-	[SRC_DataSet]				= e.[export_name], --e.src_dataset,
-	[SRC_ShortName]				= e.SRC_ShortName,
-	SRC_SourceName				= e.[export_name], --e.SRC_Group + '_' +  e.SRC_ShortName,
-	SRC_DatasetType				= e.SRC_DatasetType,
-	TGT_DatasetType				= 'File',
-	[SRC_Group]					= e.src_group,
-	[SRC_Schema]				= e.src_schema,
-	[SRC_Layer]					= e.src_layer,
-	generation_number			=  1, --DENSE_RANK() over(partition by [TGT_Group] order by [generation_number])
-	DependencyType				= 'export-file',
-	[RepositoryStatusName]		= e.RepositoryStatusName,
-	[RepositoryStatusCode]		= e.RepositoryStatusCode
-	-- select *
-from bld.vw_Exports e
+       src_sourcename = e.[export_name], --e.SRC_Group + '_' +  e.SRC_ShortName,
+ src_datasettype = e.src_datasettype,
+
+       tgt_datasettype = 'File',
+
+       [src_group] = e.src_group,
+
+       [src_schema] = e.src_schema,
+
+       [src_layer] = e.src_layer,
+
+       generation_number = 1, --DENSE_RANK() over(partition by [TGT_Group] order by [generation_number])
+ dependencytype = 'export-file',
+
+       [repositorystatusname] = e.repositorystatusname,
+
+       [repositorystatuscode] = e.repositorystatuscode -- select *
+
+  FROM bld.vw_exports e

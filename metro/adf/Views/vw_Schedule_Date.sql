@@ -1,134 +1,180 @@
-﻿
+﻿ ;
+CREATE VIEW [adf].[vw_schedule_date] AS WITH alldates AS
 
+        (SELECT *
 
+          FROM adf.vw_dwh_date d
 
+         WHERE 1 = 1
 
+           AND d.theyear BETWEEN year(getdate())-1 AND year(getdate()) + 1 --and d.TheDate between getdate()-7 and  getdate()+93
 
-;
-CREATE VIEW [adf].[vw_Schedule_Date] AS 
-with 
-AllDates as (
-select * from adf.vw_DWH_Date d
-where 1=1
-and d.TheYear between year(getdate())-1 and year(getdate())+1
---and d.TheDate between getdate()-7 and  getdate()+93
-)
-, UNCDate as (
+       ),
 
-	-- Get the current UTC "Central European Standard Time" date and time
-				Select 
-					  CurrentDate		= Cast (GETUTCDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Central European Standard Time' as datetime2) 
-					, CurrentTime		= Cast (GETUTCDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Central European Standard Time' as time)  
-					, CurrentTimeInt	= (DATEPART(hour, Cast (GETUTCDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Central European Standard Time' as time)  ) * 60) + (DATEPART(minute, Cast (GETUTCDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Central European Standard Time' as time)  ) ) 
-					, TimeOutInHours	= 4
-)
-, GetAllDates as (
+       uncdate AS
 
--- Get Daily Schedules
-	Select 
-		BK_Schedule							= s.BK
-		, d.DateKey
-		, d.TheDate
-	From [bld].[vw_Schedule] s
-	join AllDates d on cast(d.TheDate as varchar) between s.StartDate and s.EndDate
-	Where 1=1 and s.ScheduleTypeName = 'TimeBased' and s.ScheduleFrequencyName = 'Daily'
+        (-- Get the current UTC "Central European Standard Time" date and time
+ SELECT currentdate = CAST (getutcdate() AT TIME ZONE 'UTC' AT TIME ZONE 'CENTRAL EUROPEAN STANDARD TIME' AS datetime2) , currenttime = CAST (getutcdate() AT TIME ZONE 'UTC' AT TIME ZONE 'CENTRAL EUROPEAN STANDARD TIME' AS TIME) , currenttimeint = (datepart(HOUR, CAST (getutcdate() AT TIME ZONE 'UTC' AT TIME ZONE 'CENTRAL EUROPEAN STANDARD TIME' AS TIME)) * 60) + (datepart(MINUTE, CAST (getutcdate() AT TIME ZONE 'UTC' AT TIME ZONE 'CENTRAL EUROPEAN STANDARD TIME' AS TIME))) ,
 
-Union 
+               timeoutinhours = 4
+       ),
 
+       getalldates AS
 
--- Get Weekly Schedules
-	Select 
-		BK_Schedule							= s.BK
-		, d.DateKey
-		, d.TheDate
-	From [bld].[vw_Schedule] s
-	join AllDates d on cast(d.TheDate as varchar) between s.StartDate and s.EndDate
-	Where 1=1 and s.ScheduleTypeName = 'TimeBased' and s.ScheduleWeeklyIntervalCode = d.TheDayOfWeek
+        (-- Get Daily Schedules
+ SELECT bk_schedule = s.bk ,
 
-Union 
+               d.datekey ,
 
--- Get workdayOfMonth Schedules
-	Select 
-		BK_Schedule							= s.BK
-		, d.DateKey
-		, d.TheDate
-	From [bld].[vw_Schedule] s
-	join AllDates d on cast(d.TheDate as varchar) between s.StartDate and s.EndDate
-	Where 1=1 and s.ScheduleTypeName = 'TimeBased' and s.ScheduleWorkdayIntervalCode = d.WorkDayOfMonth
+               d.thedate
 
-Union 
+          FROM [bld].[vw_schedule] s
 
--- Get Monthly Schedules
-	Select 
-		BK_Schedule							= s.BK
-		, d.DateKey
-		, d.TheDate
-	From [bld].[vw_Schedule] s
-	join AllDates d on cast(d.TheDate as varchar) between s.StartDate and s.EndDate
-	Where 1=1 and s.ScheduleTypeName = 'TimeBased' and s.ScheduleMonthlyIntervalCode = d.TheDay
+          JOIN alldates d
+            ON cast(d.thedate AS varchar) BETWEEN s.startdate AND s.enddate
 
-Union 
+         WHERE 1 = 1
 
--- Get Quarterly Schedules
-	-- kind of specials Schedule, just the first or the last day of a quarter
-	Select 
-		BK_Schedule							= s.BK
-		, d.DateKey
-		, d.TheDate
-	From [bld].[vw_Schedule] s
-	join AllDates d on cast(d.TheDate as varchar) between s.StartDate and s.EndDate
-							and ( 
-									( s.ScheduleQuarterlyIntervalCode = 1 and d.TheDate = d.TheFirstOfQuarter)
-									OR 
-									( s.ScheduleQuarterlyIntervalCode = 2 and d.TheDate = d.TheLastOfQuarter)
-								)
-	Where 1=1 and s.ScheduleTypeName = 'TimeBased' 
+           AND s.scheduletypename = 'TimeBased'
 
-Union 
+           AND s.schedulefrequencyname = 'Daily'
 
--- Get Yearly Schedules
-	-- kind of specials Schedule, just the first or the last day of a year
-	Select 
-		BK_Schedule							= s.BK
-		, d.DateKey
-		, d.TheDate
-	
-	From [bld].[vw_Schedule] s
-	join AllDates d on cast(d.TheDate as varchar) between s.StartDate and s.EndDate
-							and ( 
-									( s.ScheduleYearlyIntervalCode = 1 and d.TheDate = d.TheFirstOfYear)
-									OR 
-									( s.ScheduleYearlyIntervalCode = 2 and d.TheDate = d.TheLastOfYear)
-								)
-	Where 1=1 and s.ScheduleTypeName = 'TimeBased' 
+         UNION -- Get Weekly Schedules
+ SELECT bk_schedule = s.bk ,
 
-Union 
+               d.datekey ,
 
--- Get Specials (Last workday of Month, First workday of month etc...)
-	Select 
-		BK_Schedule							= s.BK
-		, d.DateKey
-		, d.TheDate
-	From [bld].[vw_Schedule] s
-	join AllDates d on cast(d.TheDate as varchar) between s.StartDate and s.EndDate
-							and ( 
-									( s.ScheduleSpecialsCode = 1 and d.TheDate = d.TheLastOfMonth)
-									OR 
-									( s.ScheduleSpecialsCode = 9 and d.TheDate = d.TheLastWorkDayOfMonth)
-									OR 
-									( s.ScheduleSpecialsCode = 10 and d.TheDate = d.theFirstWorkdayOfMonth)
-								)
-	Where 1=1 and s.ScheduleTypeName = 'TimeBased' 
-)
-select 
-	  a.BK_Schedule
-	, a.DateKey
-	, a.TheDate  
-	, s.RepositoryStatusCode
-	, s.RepositoryStatusName
-	, s.Environment
-from GetAllDates a
-join adf.vw_Schedule s on a.BK_Schedule = s.BK
---where s.Environment = 'prd'
+               d.thedate
+
+          FROM [bld].[vw_schedule] s
+
+          JOIN alldates d
+            ON cast(d.thedate AS varchar) BETWEEN s.startdate AND s.enddate
+
+         WHERE 1 = 1
+
+           AND s.scheduletypename = 'TimeBased'
+
+           AND s.scheduleweeklyintervalcode = d.thedayofweek
+
+         UNION -- Get workdayOfMonth Schedules
+ SELECT bk_schedule = s.bk ,
+
+               d.datekey ,
+
+               d.thedate
+
+          FROM [bld].[vw_schedule] s
+
+          JOIN alldates d
+            ON cast(d.thedate AS varchar) BETWEEN s.startdate AND s.enddate
+
+         WHERE 1 = 1
+
+           AND s.scheduletypename = 'TimeBased'
+
+           AND s.scheduleworkdayintervalcode = d.workdayofmonth
+
+         UNION -- Get Monthly Schedules
+ SELECT bk_schedule = s.bk ,
+
+               d.datekey ,
+
+               d.thedate
+
+          FROM [bld].[vw_schedule] s
+
+          JOIN alldates d
+            ON cast(d.thedate AS varchar) BETWEEN s.startdate AND s.enddate
+
+         WHERE 1 = 1
+
+           AND s.scheduletypename = 'TimeBased'
+
+           AND s.schedulemonthlyintervalcode = d.theday
+
+         UNION -- Get Quarterly Schedules
+ -- kind of specials Schedule, just the first or the last day of a quarter
+ SELECT bk_schedule = s.bk ,
+
+               d.datekey ,
+
+               d.thedate
+
+          FROM [bld].[vw_schedule] s
+
+          JOIN alldates d
+            ON cast(d.thedate AS varchar) BETWEEN s.startdate AND s.enddate
+
+           AND ((s.schedulequarterlyintervalcode = 1
+         AND d.thedate = d.thefirstofquarter)
+        OR (s.schedulequarterlyintervalcode = 2
+            AND d.thedate = d.thelastofquarter))
+
+         WHERE 1 = 1
+
+           AND s.scheduletypename = 'TimeBased'
+
+         UNION -- Get Yearly Schedules
+ -- kind of specials Schedule, just the first or the last day of a year
+ SELECT bk_schedule = s.bk ,
+
+               d.datekey ,
+
+               d.thedate
+
+          FROM [bld].[vw_schedule] s
+
+          JOIN alldates d
+            ON cast(d.thedate AS varchar) BETWEEN s.startdate AND s.enddate
+
+           AND ((s.scheduleyearlyintervalcode = 1
+         AND d.thedate = d.thefirstofyear)
+        OR (s.scheduleyearlyintervalcode = 2
+            AND d.thedate = d.thelastofyear))
+
+         WHERE 1 = 1
+
+           AND s.scheduletypename = 'TimeBased'
+
+         UNION -- Get Specials (Last workday of Month, First workday of month etc...)
+ SELECT bk_schedule = s.bk ,
+
+               d.datekey ,
+
+               d.thedate
+
+          FROM [bld].[vw_schedule] s
+
+          JOIN alldates d
+            ON cast(d.thedate AS varchar) BETWEEN s.startdate AND s.enddate
+
+           AND ((s.schedulespecialscode = 1
+         AND d.thedate = d.thelastofmonth)
+        OR (s.schedulespecialscode = 9
+            AND d.thedate = d.thelastworkdayofmonth)
+        OR (s.schedulespecialscode = 10
+            AND d.thedate = d.thefirstworkdayofmonth))
+
+         WHERE 1 = 1
+
+           AND s.scheduletypename = 'TimeBased'
+       )
+SELECT a.bk_schedule ,
+
+       a.datekey ,
+
+       a.thedate ,
+
+       s.repositorystatuscode ,
+
+       s.repositorystatusname ,
+
+       s.environment
+
+  FROM getalldates a
+
+  JOIN adf.vw_schedule s
+    ON a.bk_schedule = s.bk --where s.Environment = 'prd'
 --order by 2 desc
 --where s.bk = 'WDM2_1100'

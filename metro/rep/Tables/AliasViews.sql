@@ -1,19 +1,17 @@
-﻿CREATE TABLE [rep].[AliasViews] (
-    [BK]                          NVARCHAR (MAX) NULL,
-    [Code]                        NVARCHAR (MAX) NULL,
-    [Name]                        NVARCHAR (MAX) NULL,
-    [BK_DatasetTrn]               NVARCHAR (MAX) NULL,
-    [BK_Schema]                   NVARCHAR (MAX) NULL,
-    [SRC_GroupName]               NVARCHAR (MAX) NULL,
-    [SRC_ShortName]               NVARCHAR (MAX) NULL,
-    [Prefix]                      NVARCHAR (MAX) NULL,
-    [TGT_ShortName]               NVARCHAR (MAX) NULL,
-    [Postfix]                     NVARCHAR (MAX) NULL,
-    [ReplaceAttributeNames]       NVARCHAR (MAX) NULL,
-    [BK_Template_Create]          NVARCHAR (MAX) NULL,
-    [Active]                      NVARCHAR (MAX) NULL,
-    [BK_RefType_RepositoryStatus] NVARCHAR (MAX) NULL,
-    [mta_Source]                  NVARCHAR (MAX) NULL,
-    [mta_LoadDate]                NVARCHAR (MAX) NULL
-);
-
+﻿
+CREATE TABLE [rep].[aliasviews] ([bk] NVARCHAR (MAX) NULL,
+                                                     [code] NVARCHAR (MAX) NULL,
+                                                                           [name] NVARCHAR (MAX) NULL,
+                                                                                                 [bk_datasettrn] NVARCHAR (MAX) NULL,
+                                                                                                                                [bk_schema] NVARCHAR (MAX) NULL,
+                                                                                                                                                           [src_groupname] NVARCHAR (MAX) NULL,
+                                                                                                                                                                                          [src_shortname] NVARCHAR (MAX) NULL,
+                                                                                                                                                                                                                         [prefix] NVARCHAR (MAX) NULL,
+                                                                                                                                                                                                                                                 [tgt_shortname] NVARCHAR (MAX) NULL,
+                                                                                                                                                                                                                                                                                [postfix] NVARCHAR (MAX) NULL,
+                                                                                                                                                                                                                                                                                                         [replaceattributenames] NVARCHAR (MAX) NULL,
+                                                                                                                                                                                                                                                                                                                                                [bk_template_create] NVARCHAR (MAX) NULL,
+                                                                                                                                                                                                                                                                                                                                                                                    [active] NVARCHAR (MAX) NULL,
+                                                                                                                                                                                                                                                                                                                                                                                                            [bk_reftype_repositorystatus] NVARCHAR (MAX) NULL,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                         [mta_source] NVARCHAR (MAX) NULL,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     [mta_loaddate] NVARCHAR (MAX) NULL);

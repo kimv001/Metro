@@ -1,19 +1,17 @@
-﻿CREATE TABLE [rep].[FlowLayer] (
-    [BK]                 NVARCHAR (MAX) NULL,
-    [Code]               NVARCHAR (MAX) NULL,
-    [Name]               NVARCHAR (MAX) NULL,
-    [Description]        NVARCHAR (MAX) NULL,
-    [Active]             NVARCHAR (MAX) NULL,
-    [BK_Flow]            NVARCHAR (MAX) NULL,
-    [BK_Layer]           NVARCHAR (MAX) NULL,
-    [BK_Schema]          NVARCHAR (MAX) NULL,
-    [Schema]             NVARCHAR (MAX) NULL,
-    [SortOrder]          NVARCHAR (MAX) NULL,
-    [ReadFromView]       NVARCHAR (MAX) NULL,
-    [BK_Template_Load]   NVARCHAR (MAX) NULL,
-    [BK_Template_Create] NVARCHAR (MAX) NULL,
-    [IsSystem]           NVARCHAR (MAX) NULL,
-    [mta_Source]         NVARCHAR (MAX) NULL,
-    [mta_LoadDate]       NVARCHAR (MAX) NULL
-);
-
+﻿
+CREATE TABLE [rep].[flowlayer] ([bk] NVARCHAR (MAX) NULL,
+                                                    [code] NVARCHAR (MAX) NULL,
+                                                                          [name] NVARCHAR (MAX) NULL,
+                                                                                                [description] NVARCHAR (MAX) NULL,
+                                                                                                                             [active] NVARCHAR (MAX) NULL,
+                                                                                                                                                     [bk_flow] NVARCHAR (MAX) NULL,
+                                                                                                                                                                              [bk_layer] NVARCHAR (MAX) NULL,
+                                                                                                                                                                                                        [bk_schema] NVARCHAR (MAX) NULL,
+                                                                                                                                                                                                                                   [schema] NVARCHAR (MAX) NULL,
+                                                                                                                                                                                                                                                           [sortorder] NVARCHAR (MAX) NULL,
+                                                                                                                                                                                                                                                                                      [readfromview] NVARCHAR (MAX) NULL,
+                                                                                                                                                                                                                                                                                                                    [bk_template_load] NVARCHAR (MAX) NULL,
+                                                                                                                                                                                                                                                                                                                                                      [bk_template_create] NVARCHAR (MAX) NULL,
+                                                                                                                                                                                                                                                                                                                                                                                          [issystem] NVARCHAR (MAX) NULL,
+                                                                                                                                                                                                                                                                                                                                                                                                                    [mta_source] NVARCHAR (MAX) NULL,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                [mta_loaddate] NVARCHAR (MAX) NULL);

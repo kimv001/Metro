@@ -1,78 +1,105 @@
 ﻿
-CREATE PROCEDURE [adf].[GetOrchestrationFlow]	
+CREATE PROCEDURE [adf].[getorchestrationflow] @projectname nvarchar(280),
 
-	@ProjectName NVARCHAR(280),
-	@FlowName NVARCHAR(280) = NULL
+       @flowname nvarchar(280) = NULL AS IF ((@flowname IS NULL)
+                                                                                                 OR (lower(@flowname) = 'null')) BEGIN
+SELECT [projects].[projectid],
 
-AS 
+       [projects].[projectname],
 
-IF ((@FlowName IS NULL) OR (LOWER(@FlowName) = 'null'))
-	
-	BEGIN
-		SELECT	
- 				[Projects].[ProjectId],
-        		[Projects].[ProjectName],
-				[Flows].[FlowId],
-				[Flows].[FlowName],
-				[Jobs].[JobId],
-				[Jobs].[JobName],
-				[Jobs].[JobDescription],
-				[Jobs].[JobType],
-				[Jobs].[JobGroup],
-				[Jobs].[JobOrder],
-				[Jobs].[LastRunDuration],
-				[Jobs].[LastRunStart],
-				[Jobs].[LastRunStatus],
-				[Jobs].[CheckPoint]
+       [flows].[flowid],
 
-		FROM	[adf].[Jobs] AS Jobs
+       [flows].[flowname],
 
-		INNER JOIN [adf].[Flows] AS Flows
-			ON [Jobs].[FlowId] = [Flows].[FlowId]
+       [jobs].[jobid],
 
-		INNER JOIN [adf].[Projects] AS Projects
-			ON [Flows].[ProjectId] = [Projects].[ProjectId]
+       [jobs].[jobname],
 
-		WHERE	[Projects].[ProjectName] = @ProjectName
-				AND [Flows].[FlowGroup] >= 0
-				AND [Jobs].[JobGroup] >= 0
+       [jobs].[jobdescription],
 
-		ORDER BY
-				[FlowGroup] ASC, [FlowOrder] ASC, [JobGroup] ASC, [JobOrder] ASC
-	END
+       [jobs].[jobtype],
 
-ELSE
+       [jobs].[jobgroup],
 
-	BEGIN
-		SELECT	
-        		[Projects].[ProjectId],
-				[Projects].[ProjectName],
-				[Flows].[FlowId],
-				[Flows].[FlowName],
-				[Jobs].[JobId],
-				[Jobs].[JobName],
-				[Jobs].[JobDescription],
-				[Jobs].[JobType],
-				[Jobs].[JobGroup],
-				[Jobs].[JobOrder],
-				[Jobs].[LastRunDuration],
-				[Jobs].[LastRunStart],
-				[Jobs].[LastRunStatus],
-				[Jobs].[CheckPoint]
+       [jobs].[joborder],
 
-		FROM	[adf].[Jobs] AS Jobs
+       [jobs].[lastrunduration],
 
-		INNER JOIN [adf].[Flows] AS Flows
-			ON [Jobs].[FlowId] = [Flows].[FlowId]
+       [jobs].[lastrunstart],
 
-		INNER JOIN [adf].[Projects] AS Projects
-			ON [Flows].[ProjectId] = [Projects].[ProjectId]
+       [jobs].[lastrunstatus],
 
-		WHERE	[Projects].[ProjectName] = @ProjectName
-				AND [Flows].[FlowName] = @FlowName
-				AND [Flows].[FlowGroup] >= 0
-				AND [Jobs].[JobGroup] >= 0
+       [jobs].[checkpoint]
 
-		ORDER BY
-				[FlowGroup] ASC, [FlowOrder] ASC, [JobGroup] ASC, [JobOrder] ASC
-	END
+  FROM [adf].[jobs] AS jobs
+
+ INNER JOIN [adf].[flows] AS flows
+    ON [jobs].[flowid] = [flows].[flowid]
+
+ INNER JOIN [adf].[projects] AS projects
+    ON [flows].[projectid] = [projects].[projectid]
+
+ WHERE [projects].[projectname] = @projectname
+
+   AND [flows].[flowgroup] >= 0
+
+   AND [jobs].[jobgroup] >= 0
+
+ ORDER BY [flowgroup] ASC,
+
+          [floworder] ASC,
+
+          [jobgroup] ASC,
+
+          [joborder] ASC END ELSE BEGIN
+SELECT [projects].[projectid],
+
+       [projects].[projectname],
+
+       [flows].[flowid],
+
+       [flows].[flowname],
+
+       [jobs].[jobid],
+
+       [jobs].[jobname],
+
+       [jobs].[jobdescription],
+
+       [jobs].[jobtype],
+
+       [jobs].[jobgroup],
+
+       [jobs].[joborder],
+
+       [jobs].[lastrunduration],
+
+       [jobs].[lastrunstart],
+
+       [jobs].[lastrunstatus],
+
+       [jobs].[checkpoint]
+
+  FROM [adf].[jobs] AS jobs
+
+ INNER JOIN [adf].[flows] AS flows
+    ON [jobs].[flowid] = [flows].[flowid]
+
+ INNER JOIN [adf].[projects] AS projects
+    ON [flows].[projectid] = [projects].[projectid]
+
+ WHERE [projects].[projectname] = @projectname
+
+   AND [flows].[flowname] = @flowname
+
+   AND [flows].[flowgroup] >= 0
+
+   AND [jobs].[jobgroup] >= 0
+
+ ORDER BY [flowgroup] ASC,
+
+          [floworder] ASC,
+
+          [jobgroup] ASC,
+
+          [joborder] ASC END

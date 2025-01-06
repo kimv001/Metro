@@ -1,23 +1,37 @@
 ﻿
+CREATE VIEW adf.vw_deployscripts AS
+SELECT src.bk ,
 
-CREATE view adf.vw_DeployScripts as
-SELECT 
-	  src.BK
-	, src.Code
-	, src.BK_Template
-	, src.BK_Dataset
-	, src.TGT_ObjectName
-	, src.ObjectType
-	, src.ObjectTypeDeployOrder
-	, src.TemplateType
-	, src.ScriptLanguageCode
-	, src.ScriptLanguage
-	, src.TemplateSource
-	, src.TemplateName
-	, src.TemplateScript
+       src.code ,
 
-	, RepositoryStatusName	= env.RepositoryStatus
-	, RepositoryStatusCode	= env.RepositoryStatusCode
-	, Environment			= env.Environment
-  FROM bld.vw_DeployScripts src
-  Cross join adf.vw_SDTAP  env
+       src.bk_template ,
+
+       src.bk_dataset ,
+
+       src.tgt_objectname ,
+
+       src.objecttype ,
+
+       src.objecttypedeployorder ,
+
+       src.templatetype ,
+
+       src.scriptlanguagecode ,
+
+       src.scriptlanguage ,
+
+       src.templatesource ,
+
+       src.templatename ,
+
+       src.templatescript ,
+
+       repositorystatusname = env.repositorystatus ,
+
+       repositorystatuscode = env.repositorystatuscode ,
+
+       environment = env.environment
+
+  FROM bld.vw_deployscripts src
+
+ CROSS JOIN adf.vw_sdtap env
