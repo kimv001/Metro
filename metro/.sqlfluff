@@ -1,0 +1,7 @@
+[sqlfluff]
+dialect = ansi
+
+[sqlfluff:rules]
+L010 = true
+L014 = true
+L016 = true

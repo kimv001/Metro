@@ -27,7 +27,7 @@ jobs:
       run: |
         find . -name "*.sql" | while read sqlfile; do
           echo "Cleaning $sqlfile"
-          sqlfluff fix "$sqlfile" --rules L010,L014,L016 --force
+          sqlfluff fix "$sqlfile" --force
         done
 
     - name: Commit changes
