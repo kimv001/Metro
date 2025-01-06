@@ -1,35 +1,45 @@
 ﻿
+CREATE VIEW [bld].[tr_600_template_010_default] AS
+SELECT t.bk ,
 
+       t.code ,
 
+       templatename = t.[name] ,
 
-CREATE view [bld].[tr_600_Template_010_Default] as
+       templatetype = tt.[name] ,
 
-SELECT 
-	  t.BK
-	, t.Code
-	, TemplateName			= t.[Name]
-	, TemplateType			= tt.[Name]
-	, TemplateDecription	= t.[Description]
-	, ObjectType			= rt.[Name]
-	, ObjectTypeDeployOrder	= rt.SortOrder
-	, Script				= t.Script
-	, ScriptLanguageCode	= t.ScriptLanguage	
-	, ScriptLanguage		= sl.[Description]
-	
-	, ObjectName			= t.ObjectName
-	
-	
-	-- Other
-	, t.BK_RefType_TemplateType
-	, t.BK_RefType_ObjectType
-	, t.BK_RefType_ObjectType_BasedOn
-	, t.BK_RefType_ScriptLanguage
-	, t.TemplateVersion
+       templatedecription = t.[description] ,
 
-  FROM rep.vw_Template t
-  -- objecttype
-  left join rep.vw_RefType rt on rt.bk	 = t.BK_RefType_ObjectType
-  -- templatetype
-  left join rep.vw_RefType	tt on tt.bk	 = t.BK_RefType_TemplateType
-  -- scriptlanguage
-  left join rep.vw_RefType	sl on sl.bk	 = t.BK_RefType_ScriptLanguage
+       objecttype = rt.[name] ,
+
+       objecttypedeployorder = rt.sortorder ,
+
+       script = t.script ,
+
+       scriptlanguagecode = t.scriptlanguage ,
+
+       scriptlanguage = sl.[description] ,
+
+       objectname = t.objectname -- Other
+,
+
+       t.bk_reftype_templatetype ,
+
+       t.bk_reftype_objecttype ,
+
+       t.bk_reftype_objecttype_basedon ,
+
+       t.bk_reftype_scriptlanguage ,
+
+       t.templateversion
+
+  FROM rep.vw_template t -- objecttype
+
+  LEFT JOIN rep.vw_reftype rt
+    ON rt.bk = t.bk_reftype_objecttype -- templatetype
+
+  LEFT JOIN rep.vw_reftype tt
+    ON tt.bk = t.bk_reftype_templatetype -- scriptlanguage
+
+  LEFT JOIN rep.vw_reftype sl
+    ON sl.bk = t.bk_reftype_scriptlanguage

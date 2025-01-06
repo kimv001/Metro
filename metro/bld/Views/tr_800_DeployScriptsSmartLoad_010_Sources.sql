@@ -1,83 +1,99 @@
 ﻿
-
-
-
-
-
-
-
-CREATE view [bld].[tr_800_DeployScriptsSmartLoad_010_Sources] as 
-/* 
+CREATE VIEW [bld].[tr_800_deployscriptssmartload_010_sources] AS /*
 === Comments =========================================
 
 Description:
 	Is a helper for the bld.DeployScripts views.
 	When change is detected in the bld tables [bld].[Markers], [bld].[DatasetTemplates] or [bld].[Template] on which the [bld].[DeployScripts] are dependent, the code of the full set will be returned
-	
-	
+
 Changelog:
 Date		time		Author					Description
 20220804	0000		K. Vermeij				Initial
 =======================================================
-*/
+*/ WITH createdate_markersanddatasettemplatesandtemplates AS
 
+        (-- get create date from Markers
+ -- if 1 marker is changed, all should be rebuild
+ -- kind of design flaw, but you cant detemine which marker are used in which templates
+ SELECT src.bk_dataset,
 
+               max(src.mta_createdate) AS mta_createdate,
 
-with CreateDate_MarkersAndDatasetTemplatesAndTemplates as (
-	
-	-- get create date from Markers
-	-- if 1 marker is changed, all should be rebuild
-	-- kind of design flaw, but you cant detemine which marker are used in which templates
-	select src.BK_Dataset, max(src.mta_CreateDate) as mta_CreateDate, 'vw_Markers' as source
-	from bld.vw_Markers src
-	group by src.BK_Dataset
-	
+               'vw_Markers' AS SOURCE
 
-	union all 
-	
-	-- get create date for the combination of Datasets and Templates
-	select src.BK_Dataset, src.mta_CreateDate, 'vw_DatasetTemplates' as source
-	from bld.vw_DatasetTemplates src
+          FROM bld.vw_markers src
 
-	union all
+         GROUP BY src.bk_dataset
 
-	-- get create date Templates
-	select src.BK_Dataset, t.mta_CreateDate, 'vw_DatasetTemplates' as source
-	from bld.vw_DatasetTemplates src
-	join bld.vw_Template t on src.BK_Template = t.BK
+     UNION ALL -- get create date for the combination of Datasets and Templates
+ SELECT src.bk_dataset,
 
-)
+               src.mta_createdate,
 
+               'vw_DatasetTemplates' AS SOURCE
 
-, MaxCreateDateSrc as (
-	select 
-		src.BK_Dataset
-		, mta_CreateDate = max(mta_CreateDate) 
-	from  CreateDate_MarkersAndDatasetTemplatesAndTemplates src
-	group by src.BK_Dataset
-)
-, CreateDateTgt as (
-	select 
-		 BK_Dataset				= t.BK_Dataset
-		, mta_CreateDate	= max(t.mta_CreateDate)
-	from bld.vw_DeployScripts t
-	group by t.BK_Dataset
-)
--- List of Codes that are possibly changed
-select distinct 
-	BK					= Coalesce(S.BK_Dataset, T.BK_Dataset)
-	, BK_Dataset		= Coalesce(S.BK_Dataset, T.BK_Dataset)
-	, Code				= Coalesce(S.BK_Dataset, T.BK_Dataset)
-	, SrcCreateDate		= S.mta_CreateDate
-	, TgtCreateDate		= T.mta_CreateDate
-	, IsUpdated			= iif(S.mta_CreateDate> T.mta_CreateDate,1,0)
-	, RecType			= case 
-							when S.BK_Dataset = T.BK_Dataset and 	S.mta_CreateDate> T.mta_CreateDate  then 0
-							when T.BK_Dataset is null then 1
-							when S.BK_Dataset is null then -1
-							else -99
-							end
+          FROM bld.vw_datasettemplates src
 
-from MaxCreateDateSrc S
+     UNION ALL -- get create date Templates
+ SELECT src.bk_dataset,
 
-full outer join CreateDateTgt T on T.BK_Dataset = S.BK_Dataset
+               t.mta_createdate,
+
+               'vw_DatasetTemplates' AS SOURCE
+
+          FROM bld.vw_datasettemplates src
+
+          JOIN bld.vw_template t
+            ON src.bk_template = t.bk
+       ) ,
+
+       maxcreatedatesrc AS
+
+        (SELECT src.bk_dataset ,
+
+               mta_createdate = max(mta_createdate)
+
+          FROM createdate_markersanddatasettemplatesandtemplates src
+
+         GROUP BY src.bk_dataset
+       ),
+
+       createdatetgt AS
+
+        (SELECT bk_dataset = t.bk_dataset ,
+
+               mta_createdate = max(t.mta_createdate)
+
+          FROM bld.vw_deployscripts t
+
+         GROUP BY t.bk_dataset
+       ) -- List of Codes that are possibly changed
+
+SELECT DISTINCT bk = coalesce(s.bk_dataset, t.bk_dataset) ,
+
+       bk_dataset = coalesce(s.bk_dataset, t.bk_dataset) ,
+
+       code = coalesce(s.bk_dataset, t.bk_dataset) ,
+
+       srccreatedate = s.mta_createdate ,
+
+       tgtcreatedate = t.mta_createdate ,
+
+       isupdated = iif(s.mta_createdate > t.mta_createdate, 1, 0) ,
+
+       rectype = CASE
+                              WHEN s.bk_dataset = t.bk_dataset
+                                   AND s.mta_createdate > t.mta_createdate THEN 0
+
+            WHEN t.bk_dataset IS NULL                                                THEN 1
+
+            WHEN s.bk_dataset IS NULL                                                THEN -1
+
+            ELSE -99
+
+             END
+
+  FROM maxcreatedatesrc s
+
+  FULL OUTER JOIN createdatetgt t
+    ON t.bk_dataset = s.bk_dataset

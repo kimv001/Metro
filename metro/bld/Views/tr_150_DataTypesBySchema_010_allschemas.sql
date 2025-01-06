@@ -1,87 +1,110 @@
 ﻿
-
-
-
-
-
-CREATE view [bld].[tr_150_DataTypesBySchema_010_allschemas] as 
-/* 
+CREATE VIEW [bld].[tr_150_datatypesbyschema_010_allschemas] AS /*
 === Comments =========================================
 
 Description:
 	Get DataType per Schema (per DataSourceType)
-	
+
 Changelog:
 Date		time		Author					Description
 20220804	0000		K. Vermeij				Initial
 20230326	1222		K. Vermeij				Replaced schema related join logic to bld.vw_schema
 20241101	1300		K. Vermeij				Added [DefaultValue]
 =======================================================
-*/
+*/ WITH fixedschemadatatype AS
 
+        (/* get fixed datatypes for scehma's, like "staging" */  SELECT bk_schema = ss.bk , 
+                                                                  
+               datatypemapped = dtm.datatypebydatasource 
+   
+          FROM bld.vw_schema ss 
+   
+          JOIN bld.[vw_reftype] sdt 
+            ON sdt.bk = ss.[bk_reftype_tochar] 
+   
+          JOIN bld.vw_reftype dst 
+            ON dst.bk = ss.bk_datasourcetype 
+   
+          JOIN rep.vw_datatypemapping dtm 
+            ON dtm.bk_reftype_dst = dst.bk 
+   
+           AND sdt.code = dtm.code 
+   
+          JOIN bld.vw_reftype dt 
+            ON dt.bk = dtm.bk_reftype_datatype 
+   
+         WHERE sdt.reftype = 'SchemaDataType'
+       ), 
+        
+       genericdatasourcetype AS 
+  
+        (-- select the default DataSourceType. This will be used if no datasource Type is mapped in [DataTypeMapping]
+ SELECT bk_reftype_datasourcetype = r.bk 
+   
+          FROM bld.[vw_reftype] r 
+   
+         WHERE r.reftypeabbr = 'DST'
+     
+           AND cast(r.[isdefault] AS int) = 1
+       ) , 
+        
+       datatypemapping AS 
+  
+        (-- get all datatypes by DataSourceType
+  SELECT bk_schema = ss.bk , 
+         
+               datatypemapped = coalesce(fd.datatypemapped, dtm.datatypebydatasource, gdtm.datatypebydatasource) , 
+         
+               datatypeinrep = coalesce(dt.code, gdtm.datatypebydatasource) , 
+         
+               fixedschemadatatype = iif(fd.bk_schema IS NULL, 0, 1) , 
+         
+               orgmappeddatatype = coalesce(dtm.datatypebydatasource, gdtm.datatypebydatasource) , 
+         
+               defaultvalue = coalesce(dt.defaultvalue, gdt.defaultvalue) 
+   
+          FROM bld.vw_schema ss 
+   
+          JOIN rep.vw_datasource ds 
+            ON ds.bk = ss.bk_datasource --
 
-with FixedSchemaDataType as (
+          JOIN bld.vw_reftype dst 
+            ON dst.bk = ds.bk_reftype_datasourcetype 
+   
+          LEFT JOIN rep.vw_datatypemapping dtm 
+            ON dtm.bk_reftype_dst = dst.bk 
+   
+          LEFT JOIN bld.vw_reftype dt 
+            ON dt.bk = dtm.bk_reftype_datatype -- DataSourceType zonder specifieke datatypemapping (generic)
 
-/* get fixed datatypes for scehma's, like "staging" */
+          JOIN genericdatasourcetype gdst 
+            ON 1 = 1 
+   
+          LEFT JOIN rep.vw_datatypemapping gdtm 
+            ON gdtm.bk_reftype_dst = gdst.bk_reftype_datasourcetype
+   
+           AND dtm.bk_reftype_dst IS NULL 
+   
+          LEFT JOIN bld.vw_reftype gdt 
+            ON gdt.bk = gdtm.bk_reftype_datatype -- Some schema's get a fixed datatype like staging
 
-	Select  
-		  BK_Schema				= ss.BK
-		, DataTypeMapped		= dtm.DataTypeByDataSource
-	From bld.vw_schema				ss
-	join bld.[vw_RefType]			sdt on sdt.bk				= ss.[BK_RefType_ToChar]
-	join bld.vw_RefType				dst	on dst.BK				= ss.BK_DataSourceType
-	join rep.vw_DataTypeMapping		dtm on dtm.BK_RefType_DST	= dst.bk					and sdt.code = dtm.code
-	join bld.vw_RefType				dt	on dt.bk				= dtm.BK_RefType_DataType 
-  where sdt.reftype = 'SchemaDataType'
+          LEFT JOIN fixedschemadatatype fd
+            ON ss.bk = fd.bk_schema
+       )
+SELECT DISTINCT bk = src.bk_schema + '|' + datatypemapped + '|' + datatypeinrep ,
 
-  )
-, GenericDataSourcetype as (
-	-- select the default DataSourceType. This will be used if no datasource Type is mapped in [DataTypeMapping]
-	Select  
-		BK_RefType_DataSourceType	= r.BK
-	From bld.[vw_RefType] r
-	Where r.RefTypeAbbr = 'DST' and cast(r.[isDefault] as int) = 1
-)
+       code = src.bk_schema ,
 
-, DataTypeMapping as (
+       src.bk_schema ,
 
-	-- get all datatypes by DataSourceType
+       src.datatypemapped ,
 
-	Select 
-		  BK_Schema					= ss.BK
-		, DataTypeMapped			= Coalesce(fd.DataTypeMapped,dtm.DataTypeByDataSource, gdtm.DataTypeByDataSource)
-		, DataTypeInRep				= Coalesce(dt.Code,gdtm.DataTypeByDataSource)
-		, FixedSchemaDataType		= iif(fd.BK_Schema is null, 0, 1)
-		, OrgMappedDataType			= Coalesce(dtm.DataTypeByDataSource,gdtm.DataTypeByDataSource)
-		, DefaultValue				= coalesce(dt.defaultValue, gdt.DefaultValue)
-	From bld.vw_schema					ss
-	join rep.vw_DataSource				ds		on ds.bk				= ss.BK_DataSource
+       src.datatypeinrep ,
 
+       src.fixedschemadatatype ,
 
+       src.orgmappeddatatype ,
 
-	--
-	join bld.vw_RefType					dst		on dst.BK				= ds.BK_RefType_DataSourceType
-	left join rep.vw_DataTypeMapping	dtm		on dtm.BK_RefType_DST	= dst.bk
-	left join bld.vw_RefType			dt		on dt.bk				= dtm.BK_RefType_DataType
+       src.defaultvalue
 
-	-- DataSourceType zonder specifieke datatypemapping (generic)
-	join GenericDataSourcetype			gdst	on 1=1
-	left join rep.vw_DataTypeMapping	gdtm	on gdtm.BK_RefType_DST	= gdst.BK_RefType_DataSourceType and dtm.BK_RefType_DST is null
-	left join bld.vw_RefType			gdt		on gdt.bk				= gdtm.BK_RefType_DataType
-
-
-	-- Some schema's get a fixed datatype like staging
-	left join FixedSchemaDataType		fd		on ss.bk				= fd.BK_Schema 
-
-)
-select distinct
-	BK	=  src.BK_Schema+'|'+ DataTypeMapped+'|'+DataTypeInRep
-	, Code = src.BK_Schema
-	, src.BK_Schema
-	, src.DataTypeMapped
-	, src.DataTypeInRep
-	, src.FixedSchemaDataType
-	, src.OrgMappedDataType
-	, src.DefaultValue
-
-from DataTypeMapping src
+  FROM datatypemapping src

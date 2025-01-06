@@ -1,11 +1,5 @@
 ﻿
-
-
-
-
-
-CREATE view [bld].[tr_100_Dataset_011_DatasetSrcFlowDatasets] as 
-/* 
+CREATE VIEW [bld].[tr_100_dataset_011_datasetsrcflowdatasets] AS /*
 === Comments =========================================
 
 Description:
@@ -13,139 +7,264 @@ Description:
 
 	For Example you defined a Source table and attached it to the flow SRC-STG-PST
 	it creates a staging table and a persistant staging table
-	
-	
+
 Changelog:
 Date		time		Author					Description
 20220804	0000		K. Vermeij				Initial
 20230326	1222		K. Vermeij				Replaced schema related join logic to bld.vw_schema
 20230406	1023		K. Vermeij				Added "ToDeploy	= 1", it will be used to determine if a deployscript has to be generated
 =======================================================
-*/
-with view_logic as (
-select
-	  [dataset_name]							= lower(concat('[',src.ObjectSchema,'].[',src.ObjectName,']'))
-	, [view_defintion_contains_business_logic]	= src.ObjectDefinition_contains_business_logic
-    , [view_defintion]							= cast(src.ObjectDefinition as varchar(max))
-from [stg].[DWH_ObjectDefinitions] src 
-)
+*/ WITH view_logic AS
 
-, DataFlowTables as (
-SELECT 
-	  BK							= Concat(ts.BK,'||', d.BK_Group,'|', iif(isnull(D.dwhTargetShortName,'')='', replace(d.ShortName,'_',''),D.dwhTargetShortName) ,'|')
-	, Code							= d.code 
-	, DatasetName					= Quotename(ts.SchemaName)+'.'+Quotename(d.bk_Group+'_'+iif(isnull(D.dwhTargetShortName,'')='', replace(d.ShortName,'_',''),D.dwhTargetShortName))
-	, SchemaName					= ts.SchemaName
-	, LayerName						= ts.LayerName
-	, DataSource					= ts.DataSourceName
-	, ts.BK_LinkedService
-	, LinkedServiceName				= ts.LinkedServiceName
-	, ts.BK_DataSource
-	, ts.BK_Layer
-	, BK_Schema						= ts.BK
-	, BK_Group						= d.BK_Group
-	, Shortname						= iif(isnull(D.dwhTargetShortName,'')='', replace(d.ShortName,'_',''),D.dwhTargetShortName) 
-	, SRC_ShortName					= d.SRC_ShortName
-	, SRC_ObjectType				= d.ObjectType
-	, dwhTargetShortName			= d.dwhTargetShortName
-	, Description					= d.Description
-	, [BK_ContactGroup]					= d.[BK_ContactGroup]
-	, [bk_ContactGroup_Data_Logistics]	= d.[bk_ContactGroup_Data_Logistics]
-	, [Data_Logistics_Info]				= d.[Data_Logistics_Info]
-	, [bk_ContactGroup_Data_Supplier]	= d.[bk_ContactGroup_Data_Supplier]
-	, [Data_Supplier_Info]				= d.[Data_Supplier_Info]
-	, BK_Flow						= d.BK_Flow
-	-- If correct configured, it should be ("LayerOrder" + ("FlowOrder" * "10")) 
-	, FlowOrder						= cast(isnull(ts.LayerOrder,0) as int) + (fl.SortOrder * 10)
-	, TimeStamp						= d.TimeStamp
-	, BusinessDate					= d.BusinessDate
-	, RecordSrcDate					= d.RecordSrcDate
-	, DistinctValues				= isnull(d.DistinctValues,0)
-	, WhereFilter					= d.WhereFilter
-	, PartitionStatement			= d.PartitionStatement
-	, [BK_RefType_ObjectType]			= (select BK from rep.vw_Reftype where RefType='ObjectType' and [Name] = 'Table')
-	, FullLoad						= d.FullLoad
-	, InsertOnly					= d.InsertOnly
-	, BigData						= d.BigData
-	, BK_Template_Load				= case when l.[Name] != 'pst' then d.BK_Template_Load else null end --d.BK_Template_Load
-	, BK_Template_Create			= ''--d.BK_Template_Create
-	, CustomStagingView				= d.CustomStagingView
-	, BK_RefType_RepositoryStatus	= d.BK_RefType_RepositoryStatus
-	, isSystem						= d.IsSystem
-	, isDWH							= ts.isDWH
-	, isSRC							= ts.isSRC
-	, isTGT							= ts.isTGT
-	, isRep							= ts.IsRep
-	, createdummies					= isnull(ts.createdummies,0)
-	, mta_RowNum					= Row_Number() over (order by d.BK)
-	
-		from [bld].[tr_100_Dataset_010_DatasetSrc] d
-		join bld.vw_Schema				ss		on ss.BK		= d.BK_Schema
-		join rep.vw_FlowLayer			fl		on fl.BK_Flow	= d.BK_Flow and (fl.SortOrder > 1 )
-		-- Get Flow Layer
-		join rep.vw_Layer	l					on l.BK			= fl.BK_Layer 
+        (SELECT [dataset_name] = lower(concat('[', src.objectschema, '].[', src.objectname, ']')) ,
 
-		-- Get target Schema
-		left join bld.vw_Schema			ts		on ts.BK		= fl.BK_Schema
+               [view_defintion_contains_business_logic] = src.objectdefinition_contains_business_logic ,
 
-			)
-Select 
-	  src.BK
-	, src.Code
-	, src.DatasetName
-	, src.SchemaName
-	, src.LayerName
-	, src.DataSource
-	, src.BK_DataSource
-	, src.BK_LinkedService
-	, src.BK_Layer
-	, src.BK_Schema
-	, src.BK_Group
-	, src.Shortname
-	, src.SRC_ShortName
-	, src.SRC_ObjectType
-	, src.dwhTargetShortName
-	, PreFix									= ''
-	, PostFix									= ''
-	, src.[Description]
-	, [BK_ContactGroup]							= src.[BK_ContactGroup]
-	, [bk_ContactGroup_Data_Logistics]			= src.[bk_ContactGroup_Data_Logistics]
-	, [Data_Logistics_Info]						= src.[Data_Logistics_Info]
-	, [bk_ContactGroup_Data_Supplier]			= src.[bk_ContactGroup_Data_Supplier]
-	, [Data_Supplier_Info]						= src.[Data_Supplier_Info]
-	, src.BK_Flow
+               [view_defintion] = cast(src.objectdefinition AS varchar(MAX))
 
-	, src.FlowOrder
-	, FlowOrderDesc								= ROW_NUMBER() over (partition by src.Code order by src.FlowOrder desc)
-	, src.[TimeStamp]
-	, src.BusinessDate
-	, src.RecordSrcDate
-	, src.DistinctValues
-	, src.WhereFilter
-	, src.PartitionStatement
-	, src.BK_RefType_ObjectType
-	, src.FullLoad
-	, src.InsertOnly
-	, src.BigData
-	, src.BK_Template_Load
-	, src.BK_Template_Create
-	, src.CustomStagingView
-	, src.BK_RefType_RepositoryStatus
-	, src.IsSystem
-	, src.isDWH								
-	, src.isSRC								
-	, src.isTGT		
-	, src.isRep
-	, FirstDefaultDWHView						= 0
-	, createdummies
-	, ObjectType								= rtOT.[Name]
-	, RepositoryStatusName						= rtRS.[Name]
-	, RepositoryStatusCode						= rtRS.Code
-	, [view_defintion_contains_business_logic]	= vl.[view_defintion_contains_business_logic]
-	, [view_defintion]							= vl.[view_defintion]
-	, ToDeploy									= 1
-from DataFlowTables src
-join rep.vw_RefType			rtOT	on rtOT.BK				= src.BK_RefType_ObjectType
-join rep.vw_RefType			rtRS	on rtRS.BK				= src.BK_RefType_RepositoryStatus
-left join view_logic		vl		on vl.dataset_name		= src.DatasetName
-where 1=1
+          FROM [stg].[dwh_objectdefinitions] src
+       ) ,
+
+       dataflowtables AS
+
+        (SELECT bk = concat(ts.bk, '||', d.bk_group, '|', iif(isnull(d.dwhtargetshortname, '') = '', replace(d.shortname, '_', ''), d.dwhtargetshortname), '|') ,
+
+               code = d.code ,
+
+               datasetname = quotename(ts.schemaname) + '.' + quotename(d.bk_group + '_' + iif(isnull(d.dwhtargetshortname, '') = '', replace(d.shortname, '_', ''), d.dwhtargetshortname)) ,
+
+               schemaname = ts.schemaname ,
+
+               layername = ts.layername ,
+
+               datasource = ts.datasourcename ,
+
+               ts.bk_linkedservice ,
+
+               linkedservicename = ts.linkedservicename ,
+
+               ts.bk_datasource ,
+
+               ts.bk_layer ,
+
+               bk_schema = ts.bk ,
+
+               bk_group = d.bk_group ,
+
+               shortname = iif(isnull(d.dwhtargetshortname, '') = '', replace(d.shortname, '_', ''), d.dwhtargetshortname) ,
+
+               src_shortname = d.src_shortname ,
+
+               src_objecttype = d.objecttype ,
+
+               dwhtargetshortname = d.dwhtargetshortname ,
+
+               description = d.description ,
+
+               [bk_contactgroup] = d.[bk_contactgroup] ,
+
+               [bk_contactgroup_data_logistics] = d.[bk_contactgroup_data_logistics] ,
+
+               [data_logistics_info] = d.[data_logistics_info] ,
+
+               [bk_contactgroup_data_supplier] = d.[bk_contactgroup_data_supplier] ,
+
+               [data_supplier_info] = d.[data_supplier_info] ,
+
+               bk_flow = d.bk_flow -- If correct configured, it should be ("LayerOrder" + ("FlowOrder" * "10"))
+,
+
+               floworder = cast(isnull(ts.layerorder, 0) AS int) + (fl.sortorder * 10) , TimeStamp = d.timestamp ,
+
+               businessdate = d.businessdate ,
+
+               recordsrcdate = d.recordsrcdate ,
+
+               distinctvalues = isnull(d.distinctvalues, 0) ,
+
+               wherefilter = d.wherefilter ,
+
+               partitionstatement = d.partitionstatement ,
+
+               [bk_reftype_objecttype] =
+
+                (SELECT bk
+
+                  FROM rep.vw_reftype
+
+                 WHERE reftype = 'ObjectType'
+
+                   AND [name] = 'Table'
+               ) ,
+
+               fullload = d.fullload ,
+
+               insertonly = d.insertonly ,
+
+               bigdata = d.bigdata ,
+
+               bk_template_load = CASE
+                                                                                                                       WHEN l.[name] != 'pst' THEN d.bk_template_load
+
+                    ELSE NULL
+
+                     END --d.BK_Template_Load
+,
+
+               bk_template_create = ''--d.BK_Template_Create
+,
+
+               customstagingview = d.customstagingview ,
+
+               bk_reftype_repositorystatus = d.bk_reftype_repositorystatus ,
+
+               issystem = d.issystem ,
+
+               isdwh = ts.isdwh ,
+
+               issrc = ts.issrc ,
+
+               istgt = ts.istgt ,
+
+               isrep = ts.isrep ,
+
+               createdummies = isnull(ts.createdummies, 0) ,
+
+               mta_rownum = row_number() OVER (
+                                                                                                                                                   ORDER BY d.bk)
+
+          FROM [bld].[tr_100_dataset_010_datasetsrc] d
+
+          JOIN bld.vw_schema ss
+            ON ss.bk = d.bk_schema
+
+          JOIN rep.vw_flowlayer fl
+            ON fl.bk_flow = d.bk_flow
+
+           AND (fl.sortorder > 1 )-- Get Flow Layer
+
+          JOIN rep.vw_layer l
+            ON l.bk = fl.bk_layer -- Get target Schema
+
+          LEFT JOIN bld.vw_schema ts
+            ON ts.bk = fl.bk_schema
+       )
+SELECT src.bk ,
+
+       src.code ,
+
+       src.datasetname ,
+
+       src.schemaname ,
+
+       src.layername ,
+
+       src.datasource ,
+
+       src.bk_datasource ,
+
+       src.bk_linkedservice ,
+
+       src.bk_layer ,
+
+       src.bk_schema ,
+
+       src.bk_group ,
+
+       src.shortname ,
+
+       src.src_shortname ,
+
+       src.src_objecttype ,
+
+       src.dwhtargetshortname ,
+
+       PREFIX = '' ,
+
+       POSTFIX = '' ,
+
+       src.[description] ,
+
+       [bk_contactgroup] = src.[bk_contactgroup] ,
+
+       [bk_contactgroup_data_logistics] = src.[bk_contactgroup_data_logistics] ,
+
+       [data_logistics_info] = src.[data_logistics_info] ,
+
+       [bk_contactgroup_data_supplier] = src.[bk_contactgroup_data_supplier] ,
+
+       [data_supplier_info] = src.[data_supplier_info] ,
+
+       src.bk_flow ,
+
+       src.floworder ,
+
+       floworderdesc = row_number() OVER (PARTITION BY src.code
+                                                             ORDER BY src.floworder DESC) ,
+
+       src.[timestamp] ,
+
+       src.businessdate ,
+
+       src.recordsrcdate ,
+
+       src.distinctvalues ,
+
+       src.wherefilter ,
+
+       src.partitionstatement ,
+
+       src.bk_reftype_objecttype ,
+
+       src.fullload ,
+
+       src.insertonly ,
+
+       src.bigdata ,
+
+       src.bk_template_load ,
+
+       src.bk_template_create ,
+
+       src.customstagingview ,
+
+       src.bk_reftype_repositorystatus ,
+
+       src.issystem ,
+
+       src.isdwh ,
+
+       src.issrc ,
+
+       src.istgt ,
+
+       src.isrep ,
+
+       firstdefaultdwhview = 0 ,
+
+       createdummies ,
+
+       objecttype = rtot.[name] ,
+
+       repositorystatusname = rtrs.[name] ,
+
+       repositorystatuscode = rtrs.code ,
+
+       [view_defintion_contains_business_logic] = vl.[view_defintion_contains_business_logic] ,
+
+       [view_defintion] = vl.[view_defintion] ,
+
+       todeploy = 1
+
+  FROM dataflowtables src
+
+  JOIN rep.vw_reftype rtot
+    ON rtot.bk = src.bk_reftype_objecttype
+
+  JOIN rep.vw_reftype rtrs
+    ON rtrs.bk = src.bk_reftype_repositorystatus
+
+  LEFT JOIN view_logic vl
+    ON vl.dataset_name = src.datasetname
+
+ WHERE 1 = 1

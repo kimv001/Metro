@@ -1,27 +1,41 @@
-﻿CREATE view [bld].[tr_075_Flow_010_Default] as 
+﻿
+CREATE VIEW [bld].[tr_075_flow_010_default] AS
+SELECT bk = fl.bk,
 
-select
-	BK							= fl.BK,
-	Code						= fl.code,
-	BK_Flow						= f.bk,
-	Flow_Name					= f.[Name],
-	Flow_Description			= isnull(f.[Description],'<no description available ...>'),
-	Flow_Layer_Step_Name		= fl.[Name],
-	Flow_Layer_Step_Description	= isnull(fl.[Description],'<no description available ...>'),
-	Flow_Layer_Step_Order		= fl.SortOrder,
-	BK_Layer					= l.BK,
-	BK_Schema					= s.BK,
-	
-	-- helper to determine if there is a view on the source dataset that should be used instead of the table
-	ReadFromView				= fl.ReadFromView,
-	BK_Template_Load			= fl.BK_Template_Load,
-	--Load_Template_Name			= tl.[Name],
-	--Load_Template_Description	= tl.[Description],
-	--Load_Template				= tl.Script
-	BK_Template_Create			= fl.BK_Template_Create
+       code = fl.code,
 
-from rep.vw_Flow			f
-join rep.vw_FlowLayer		fl		on fl.BK_Flow			= f.BK 
-left join rep.vw_Layer		l		on fl.BK_Layer			= l.bk
-left join rep.vw_Schema		s		on fl.BK_Schema			= s.bk
-left join rep.vw_template	tl		on fl.BK_Template_Load	= tl.bk
+       bk_flow = f.bk,
+
+       flow_name = f.[name],
+
+       flow_description = isnull(f.[description], '<no description available ...>'),
+
+       flow_layer_step_name = fl.[name],
+
+       flow_layer_step_description = isnull(fl.[description], '<no description available ...>'),
+
+       flow_layer_step_order = fl.sortorder,
+
+       bk_layer = l.bk,
+
+       bk_schema = s.bk, -- helper to determine if there is a view on the source dataset that should be used instead of the table
+ readfromview = fl.readfromview,
+
+       bk_template_load = fl.bk_template_load, --Load_Template_Name			= tl.[Name],
+ --Load_Template_Description	= tl.[Description],
+ --Load_Template				= tl.Script
+ bk_template_create = fl.bk_template_create
+
+  FROM rep.vw_flow f
+
+  JOIN rep.vw_flowlayer fl
+    ON fl.bk_flow = f.bk
+
+  LEFT JOIN rep.vw_layer l
+    ON fl.bk_layer = l.bk
+
+  LEFT JOIN rep.vw_schema s
+    ON fl.bk_schema = s.bk
+
+  LEFT JOIN rep.vw_template tl
+    ON fl.bk_template_load = tl.bk
