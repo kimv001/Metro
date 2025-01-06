@@ -22,7 +22,7 @@ jobs:
       run: |
         find . -name "*.sql" | while read sqlfile; do
           echo "Cleaning $sqlfile"
-          sqlformat -r -k upper -i lower -a -s $sqlfile -o $sqlfile
+          sqlformat -r -k upper -i lower -a -s "$sqlfile" -o "$sqlfile"
         done
 
     - name: Commit changes
