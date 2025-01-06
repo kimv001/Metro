@@ -1,151 +1,100 @@
-﻿ /****** Object:  View [adf].[Connections_Sto_Table]    Script Date: 11/1/2022 1:28:28 PM ******/
-CREATE VIEW [adf].[vw_connections_sto_table] AS WITH linkedserviceproperties AS
-
-        (SELECT bk_linkedservice = ls.bk ,
-
-               linkedservicename = ls.[name] ,
-
-               linkedservicepropertiesname = lsp.linkedservicepropertiesname ,
-
-               linkedservicepropertiesvalue = lsp.linkedservicepropertiesvalue
-
-          FROM rep.vw_linkedservice ls
-
-          JOIN rep.vw_linkedserviceproperties lsp
-            ON ls.bk = lsp.bk_linkedservice
-       ),
-
-       cte_datasourceproperties_sdtap_values AS
-
-        (SELECT src.bk_datasource ,
-
-               src.datasourceserver ,
-
-               src.datasourcedatabase ,
-
-               src.datasourceurl ,
-
-               src.datasourceusr ,
-
-               src.environment
-
-          FROM adf.vw_datasourceproperties_sdtap_values src
-       )
-SELECT -- first attribute [SRCConnectionName] is legacy
- [srcconnectionname] = src.groupshortname ,
-
-       linkedservicename = dsl.[name] ,
-
-       [dwhgroupnameshortname] = src.[groupshortname] ,
-
-       [prefix_groupname_shortname] = concat(ds.prefix, '_', ds.bk_group, '_', ds.shortname) --replace(replace(replace(replace(src.DatasetName,src.SchemaName,''),'.',''),'[',''),']','')
-,
-
-       [dwhgroupname] = src.groupname -- SRC
-,
-
-       [src_bk_dataset] = src.bk_dataset ,
-
-       [src_datasettype] = src.datasettype ,
-
-       [src_schema] = src.schemaname ,
-
-       [src_tablename] = src.datasetshortname ,
-
-       [src_dataset] = src.datasetname ,
-
-       [src_datasource] = src.datasourcename ,
-
-       [src_datasourceserver] = src.datasourceserver ,
-
-       [src_datasourcedatabase] = src.datasourcedatabase ,
-
-       [src_datasourceurl] = src.datasourceurl ,
-
-       [src_datasourceusr] = src.datasourceusr ,
-
-       [src_layer] = src.layername ,
-
-       [stg_container] = src.[stg_container] ,
-
-       [src_datasourceid] = src.bk_datasource -- TGT
-,
-
-       [tgt_bk_dataset] = dt.bk ,
-
-       [tgt_linkedservicename] = dslt.[name] ,
-
-       [tgt_datasettype] = dt.datasettype ,
-
-       [tgt_schema] = dt.schemaname ,
-
-       [tgt_tablename] =
-CONCAT (src.groupname ,
-                           '_' ,
-                           dt.shortname) , [tgt_dataset] = dt.datasetname ,
-
-       [tgt_datasource] = dt.datasource ,
-
-       [tgt_datasourceserver] = dspv.datasourceserver ,
-
-       [tgt_datasourcedatabase] = dspv.datasourcedatabase ,
-
-       [tgt_datasourceurl] = dspv.datasourceurl ,
-
-       [tgt_datasourceusr] = dspv.datasourceusr ,
-
-       [tgt_layer] = dt.layername ,
-
-       [tgt_container] = src.[tgt_container] ,
-
-       [active] = src.active --    DB Info
- ,
-
-       [repositorystatusname] = src.repositorystatusname ,
-
-       [repositorystatuscode] = src.repositorystatuscode ,
-
-       dspv.environment
-
-  FROM [adf].[vw_connections_base] src
-
-  JOIN bld.vw_datasetdependency dd
-    ON src.bk_dataset = dd.bk_parent
-
-  LEFT JOIN bld.vw_dataset dt
-    ON dd.bk_child = dt.bk
-
-  LEFT JOIN bld.vw_dataset ds
-    ON dd.bk_parent = ds.bk
-
-  LEFT JOIN rep.vw_linkedservice dsl
-    ON dt.bk_linkedservice = dsl.bk
-
-  LEFT JOIN rep.vw_linkedservice dslt
-    ON dt.bk_linkedservice = dslt.bk
-
-  LEFT JOIN linkedserviceproperties dslp_s
-    ON dslp_s.bk_linkedservice = dsl.bk
-
-   AND dslp_s.linkedservicepropertiesname = 'FQ_SQLServerName'
-
-  LEFT JOIN linkedserviceproperties dslp_d
-    ON dslp_d.bk_linkedservice = dsl.bk
-
-   AND dslp_d.linkedservicepropertiesname = 'DatabaseName'
-
-  LEFT JOIN cte_datasourceproperties_sdtap_values dspv
-    ON dt.bk_datasource = dspv.bk_datasource
-
-   AND src.environment = dspv.environment
-
-  LEFT JOIN [adf].[vw_datasourceproperties] dspl
-    ON dt.bk_datasource = dspl.bk_datasource
-
-   AND dspl.[datasourcepropertiesname] = 'linkedservicename'
-
- WHERE 1 = 1 --AND src.SchemaName = 'sto'
-
-
-   AND dt.layername IN ('TGT' ,
-                       'MDSstg')
+﻿
+
+
+
+
+
+
+
+
+
+/****** Object:  View [adf].[Connections_Sto_Table]    Script Date: 11/1/2022 1:28:28 PM ******/
+CREATE VIEW [adf].[vw_Connections_Sto_Table] AS
+WITH LinkedServiceProperties
+AS (
+	SELECT 
+			BK_LinkedService					= ls.BK
+			, LinkedServiceName					= ls.[Name]
+			, LinkedServicePropertiesName		= lsp.LinkedServicePropertiesName
+			, LinkedServicePropertiesValue		= lsp.LinkedServicePropertiesValue
+		FROM rep.vw_LinkedService ls
+		JOIN rep.vw_LinkedServiceProperties lsp ON ls.BK = lsp.BK_LinkedService
+	)
+, cte_DataSourceProperties_SDTAP_Values as (
+	select 
+		src.BK_DataSource
+		, src.DataSourceServer
+		, src.DataSourceDatabase
+		, src.DataSourceURL
+		, src.DataSourceUSR
+		, src.Environment
+	from adf.vw_DataSourceProperties_SDTAP_Values src
+)
+SELECT
+	-- first attribute [SRCConnectionName] is legacy
+	  [SRCConnectionName]						= src.GroupShortName
+	, LinkedServiceName							= dsl.[Name]
+	, [DWHGroupnameShortname]					= src.[GroupShortName]
+	, [Prefix_Groupname_Shortname]				= concat(ds.prefix,'_',ds.bk_group,'_',ds.shortname)  --replace(replace(replace(replace(src.DatasetName,src.SchemaName,''),'.',''),'[',''),']','')
+	, [DWHGroupname]							= src.GroupName
+	-- SRC	
+	, [SRC_BK_Dataset]							= src.BK_Dataset
+	, [SRC_DatasetType]							= src.DatasetType
+	, [SRC_Schema]								= src.SchemaName
+	, [SRC_Tablename]							= src.DatasetShortName
+	, [SRC_Dataset]								= src.DatasetName
+	, [SRC_DataSource]							= src.DataSourceName
+	, [SRC_DataSourceServer]					= src.DataSourceServer
+	, [SRC_DataSourceDatabase]					= src.DataSourceDatabase
+	, [SRC_DataSourceURL]						= src.DataSourceURL
+	, [SRC_DataSourceUSR]						= src.DataSourceUSR
+	, [SRC_Layer]								= src.LayerName
+	, [STG_Container]							= src.[STG_Container]
+	, [SRC_DataSourceId]						= src.BK_DataSource
+	-- TGT	
+	, [TGT_BK_Dataset]							= dt.BK
+	, [TGT_LinkedServiceName]					= dslt.[Name]
+
+	, [TGT_DatasetType]							= dt.DatasetType
+	, [TGT_Schema]								= dt.SchemaName
+	, [TGT_Tablename]							= CONCAT (
+	 														src.GroupName
+	 														,'_'
+	 														,dt.ShortName
+	 														)
+	, [TGT_Dataset]								= dt.DatasetName
+	, [TGT_DataSource]							= dt.DataSource
+	, [TGT_DataSourceServer]					= DSPV.DataSourceServer
+	, [TGT_DataSourceDatabase]					= DSPV.DataSourceDatabase
+	, [TGT_DataSourceURL]						= DSPV.DataSourceURL
+	, [TGT_DataSourceUSR]						= DSPV.DataSourceUSR
+	, [TGT_Layer]								= dt.LayerName
+	, [TGT_Container]							= src.[TGT_Container]
+	, [Active] = src.Active
+
+--    DB Info
+
+	, [RepositoryStatusName]					= src.RepositoryStatusName
+	, [RepositoryStatusCode]					= src.RepositoryStatusCode
+	, DSPV.Environment
+FROM [adf].[vw_Connections_BASE] src
+JOIN bld.vw_DatasetDependency dd ON src.BK_Dataset = dd.BK_Parent
+LEFT JOIN bld.vw_Dataset dt ON dd.BK_Child = dt.BK
+LEFT JOIN bld.vw_Dataset ds ON dd.BK_Parent = ds.BK
+
+LEFT JOIN rep.vw_LinkedService dsl ON dt.BK_LinkedService = dsl.BK
+LEFT JOIN rep.vw_LinkedService dslt ON dt.BK_LinkedService = dslt.BK
+LEFT JOIN LinkedServiceProperties dslp_s ON dslp_s.BK_LinkedService = dsl.BK
+	AND dslp_s.LinkedServicePropertiesName = 'FQ_SQLServerName'
+LEFT JOIN LinkedServiceProperties dslp_d ON dslp_d.BK_LinkedService = dsl.BK
+	AND dslp_d.LinkedServicePropertiesName = 'DatabaseName'
+left join cte_DataSourceProperties_SDTAP_Values DSPV on dt.BK_DataSource = DSPV.BK_DataSource and src.Environment = DSPV.Environment
+LEFT JOIN [adf].[vw_DataSourceProperties] dspL ON dt.BK_DataSource = dspl.BK_Datasource 
+	AND dspL.[DataSourcePropertiesName] = 'linkedservicename'
+WHERE 1 = 1
+	--AND src.SchemaName = 'sto'
+
+	AND dt.LayerName IN (
+		'TGT'
+		,'MDSstg'
+		)

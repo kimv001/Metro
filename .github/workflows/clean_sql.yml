@@ -27,6 +27,8 @@ jobs:
         find . -name "*.sql" | while read sqlfile; do
           echo "Cleaning $sqlfile"
           sqlformat -r -k upper -i lower -a -s "$sqlfile" -o "$sqlfile"
+          # Remove consecutive empty lines
+          awk 'NF || !blank {print} {blank = NF == 0}' "$sqlfile" > tmp && mv tmp "$sqlfile"
         done
 
     - name: Commit changes
@@ -34,7 +36,7 @@ jobs:
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git add .
-        git commit -m "Automated SQL formatting"
+        git commit -m "Automated SQL formatting and empty line removal"
         git push
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
