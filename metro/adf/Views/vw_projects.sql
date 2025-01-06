@@ -1,9 +1,13 @@
-﻿create view adf.vw_projects as 
+﻿
+CREATE VIEW adf.vw_projects AS
+SELECT projectid = src.[projectid],
 
-select  
-	 projectid			= src.[ProjectId],
-     projectname		= src.[ProjectName],
-     projectdescription	= src.[ProjectDescription],
-	 environment		= env.Environment
-from [adf].[Projects] src
-Cross join [adf].[vw_SDTAP]  env
+       projectname = src.[projectname],
+
+       projectdescription = src.[projectdescription],
+
+       environment = env.environment
+
+  FROM [adf].[projects] src
+
+ CROSS JOIN [adf].[vw_sdtap] env

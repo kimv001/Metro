@@ -1,14 +1,12 @@
-﻿CREATE TABLE [rep].[InformationSchema] (
-    [BK]                NVARCHAR (MAX) NULL,
-    [Code]              NVARCHAR (MAX) NULL,
-    [Name]              NVARCHAR (MAX) NULL,
-    [BK_DataSourceType] NVARCHAR (MAX) NULL,
-    [SRC_Schema]        NVARCHAR (MAX) NULL,
-    [SRC_Dataset]       NVARCHAR (MAX) NULL,
-    [TGT_Schema_Metro]  NVARCHAR (MAX) NULL,
-    [TGT_Dataset_Metro] NVARCHAR (MAX) NULL,
-    [Active]            NVARCHAR (MAX) NULL,
-    [mta_Source]        NVARCHAR (MAX) NULL,
-    [mta_LoadDate]      NVARCHAR (MAX) NULL
-);
-
+﻿
+CREATE TABLE [rep].[informationschema] ([bk] NVARCHAR (MAX) NULL,
+                                                            [code] NVARCHAR (MAX) NULL,
+                                                                                  [name] NVARCHAR (MAX) NULL,
+                                                                                                        [bk_datasourcetype] NVARCHAR (MAX) NULL,
+                                                                                                                                           [src_schema] NVARCHAR (MAX) NULL,
+                                                                                                                                                                       [src_dataset] NVARCHAR (MAX) NULL,
+                                                                                                                                                                                                    [tgt_schema_metro] NVARCHAR (MAX) NULL,
+                                                                                                                                                                                                                                      [tgt_dataset_metro] NVARCHAR (MAX) NULL,
+                                                                                                                                                                                                                                                                         [active] NVARCHAR (MAX) NULL,
+                                                                                                                                                                                                                                                                                                 [mta_source] NVARCHAR (MAX) NULL,
+                                                                                                                                                                                                                                                                                                                             [mta_loaddate] NVARCHAR (MAX) NULL);
