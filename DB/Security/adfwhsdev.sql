@@ -1,2 +1,0 @@
-﻿CREATE USER [adfwhsdev] FOR EXTERNAL PROVIDER;
-

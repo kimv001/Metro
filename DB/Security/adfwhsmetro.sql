@@ -1,2 +1,0 @@
-﻿CREATE USER [adfwhsmetro] FOR EXTERNAL PROVIDER;
-
