@@ -1,34 +1,34 @@
 ﻿
 CREATE VIEW adf.vw_deployscripts AS
-SELECT src.bk ,
+SELECT src.bk,
 
-       src.code ,
+       src.code,
 
-       src.bk_template ,
+       src.bk_template,
 
-       src.bk_dataset ,
+       src.bk_dataset,
 
-       src.tgt_objectname ,
+       src.tgt_objectname,
 
-       src.objecttype ,
+       src.objecttype,
 
-       src.objecttypedeployorder ,
+       src.objecttypedeployorder,
 
-       src.templatetype ,
+       src.templatetype,
 
-       src.scriptlanguagecode ,
+       src.scriptlanguagecode,
 
-       src.scriptlanguage ,
+       src.scriptlanguage,
 
-       src.templatesource ,
+       src.templatesource,
 
-       src.templatename ,
+       src.templatename,
 
-       src.templatescript ,
+       src.templatescript,
 
-       repositorystatusname = env.repositorystatus ,
+       repositorystatusname = env.repositorystatus,
 
-       repositorystatuscode = env.repositorystatuscode ,
+       repositorystatuscode = env.repositorystatuscode,
 
        environment = env.environment
 

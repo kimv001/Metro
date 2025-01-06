@@ -84,15 +84,12 @@ SELECT tablename AS TABLE_NAME,
 
    AND TABLE_NAME = @tablename -- Replace placeholders in the view template
 
-
    SET @sqlcreate = replace(replace(replace(replace(replace(replace(@viewtemplate , '{SrcSchema}', @srcschema) , '{TgtSchema}', @tgtschema) , '{TableName}', @tablename) , '{ColumnList}', @columnlist) , '{ColumnHashList}', @columnhashlist) , '{GeneratedAt}', convert(NVARCHAR, getdate(), 120)) -- Create the new view
  DECLARE @printmsg nvarchar(MAX) = @sqlcreate WHILE len(@printmsg) > 0 BEGIN PRINT left(@printmsg, 4000)
 
    SET @printmsg = substring(@printmsg, 4001, len(@printmsg)) END EXEC sp_executesql @sqlcreate -- Move to the next row
 
-
    SET @counternr = @counternr + 1 END -- Log the procedure execution
-
 
    SET @logsql = 'exec ' + @tgtschema + '.' + @logprocname EXEC [aud].[proc_log_procedure] @logaction = 'INFO',
 

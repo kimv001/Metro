@@ -22,29 +22,29 @@ STRING_AGG(
 									,',' ) WITHIN GROUP (ORDER BY  cast(a.OrdinalPosition as int))
 <--END COMMENT */
 CREATE
-FUNCTION [rep].[getdummyvaluebyattributebk] (@attributebk varchar(255) , @dummytype varchar(2) = '-1' --/ -2
- , @dummystring10 varchar(10) = '<EMPTY>' --/ '<UNKNOWN>'
- , @dummydate varchar(10) = '1900-01-01') RETURNS varchar(255) AS BEGIN --;
+FUNCTION [rep].[getdummyvaluebyattributebk] (@attributebk varchar(255), @dummytype varchar(2) = '-1' --/ -2
+, @dummystring10 varchar(10) = '<EMPTY>' --/ '<UNKNOWN>'
+, @dummydate varchar(10) = '1900-01-01') RETURNS varchar(255) AS BEGIN --;
 --with dummy_list as ( select reftype from bld.vw_RefType RT where 1=1 and rt.RefTypeAbbr = 'DUM' and [Name] = @DummyType )
 --select
 --	  DummyDate			= [Code]
 --	, DummyValue		= [Name]
 --from   bld.vw_RefType RT
 --join dummy_list dl on rt.reftype = dl.reftype
-  DECLARE @datatype varchar(20),
+ DECLARE @datatype varchar(20),
 
        @maxlength varchar(10),
 
        @dummystringshort varchar(2)
 
    SET @dummystringshort = cast(@dummytype AS varchar(2)) BEGIN
-SELECT @datatype = a.datatype ,
+SELECT @datatype = a.datatype,
 
        @maxlength = --cast(A.MaximumLength as int)
-  cast(CASE
-           WHEN a.maximumlength = 'max' THEN '-1'
-           ELSE a.maximumlength
-       END AS int) --cast(
+ cast(CASE
+          WHEN a.maximumlength = 'max' THEN '-1'
+          ELSE a.maximumlength
+      END AS int) --cast(
  --	case
  --		--when A.MaximumLength = 'max' then '-1'
  --	    when A.MaximumLength = '-1'
@@ -56,7 +56,6 @@ SELECT @datatype = a.datatype ,
  --		else A.MaximumLength
  --		end
  --   as int)
-
 
   FROM bld.vw_attribute a
 
@@ -76,13 +75,13 @@ SELECT @datatype = a.datatype ,
                                           'nvarchar',
                                           'char',
                                           'varchar')
-                            AND @maxlength BETWEEN 2 AND 9                                                                             THEN '''' +@ dummystringshort + ''''
+                            AND @maxlength BETWEEN 2 AND 9                                                                              THEN '''' +@ dummystringshort + ''''
 
             WHEN @datatype IN ('nchar',
                                           'nvarchar',
                                           'char',
                                           'varchar')
-                            AND @maxlength = 1                                                                                         THEN '''' + '-' + ''''
+                            AND @maxlength = 1                                                                                          THEN '''' + '-' + ''''
 
             WHEN @datatype IN ('smallint',
                                           'int',
@@ -94,13 +93,13 @@ SELECT @datatype = a.datatype ,
             WHEN @datatype IN ('uniqueidentifier',
                                           'xml',
                                           'bit',
-                                          'varbinary')                                                                                                     THEN '''' + '0' + ''''
+                                          'varbinary')                                                                                                      THEN '''' + '0' + ''''
 
             WHEN @datatype IN ('date',
                                           'datetime',
-                                          'datetime2')                                                                                                                                                                THEN '''' + @dummydate + ''''
+                                          'datetime2')                                                                                                                                                               THEN '''' + @dummydate + ''''
 
-            WHEN @datatype IN ('time')                                                                                                                                                                                                                                                                             THEN '''' + '00:00:00' + ''''
+            WHEN @datatype IN ('time')                                                                                                                                                                                                                                                                              THEN '''' + '00:00:00' + ''''
 
              END -- Set @Result = iif(@AddAs=1, 'AS '+@Result,@Result)
  if(@result = '') BEGIN

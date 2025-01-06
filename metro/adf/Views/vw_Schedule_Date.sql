@@ -14,7 +14,7 @@ CREATE VIEW [adf].[vw_schedule_date] AS WITH alldates AS
        uncdate AS
 
         (-- Get the current UTC "Central European Standard Time" date and time
- SELECT currentdate = CAST (getutcdate() AT TIME ZONE 'UTC' AT TIME ZONE 'CENTRAL EUROPEAN STANDARD TIME' AS datetime2) , currenttime = CAST (getutcdate() AT TIME ZONE 'UTC' AT TIME ZONE 'CENTRAL EUROPEAN STANDARD TIME' AS TIME) , currenttimeint = (datepart(HOUR, CAST (getutcdate() AT TIME ZONE 'UTC' AT TIME ZONE 'CENTRAL EUROPEAN STANDARD TIME' AS TIME)) * 60) + (datepart(MINUTE, CAST (getutcdate() AT TIME ZONE 'UTC' AT TIME ZONE 'CENTRAL EUROPEAN STANDARD TIME' AS TIME))) ,
+ SELECT currentdate = CAST (getutcdate() AT TIME ZONE 'UTC' AT TIME ZONE 'CENTRAL EUROPEAN STANDARD TIME' AS datetime2) , currenttime = CAST (getutcdate() AT TIME ZONE 'UTC' AT TIME ZONE 'CENTRAL EUROPEAN STANDARD TIME' AS TIME) , currenttimeint = (datepart(HOUR, CAST (getutcdate() AT TIME ZONE 'UTC' AT TIME ZONE 'CENTRAL EUROPEAN STANDARD TIME' AS TIME)) * 60) + (datepart(MINUTE, CAST (getutcdate() AT TIME ZONE 'UTC' AT TIME ZONE 'CENTRAL EUROPEAN STANDARD TIME' AS TIME))),
 
                timeoutinhours = 4
        ),
@@ -22,9 +22,9 @@ CREATE VIEW [adf].[vw_schedule_date] AS WITH alldates AS
        getalldates AS
 
         (-- Get Daily Schedules
- SELECT bk_schedule = s.bk ,
+ SELECT bk_schedule = s.bk,
 
-               d.datekey ,
+               d.datekey,
 
                d.thedate
 
@@ -40,9 +40,9 @@ CREATE VIEW [adf].[vw_schedule_date] AS WITH alldates AS
            AND s.schedulefrequencyname = 'Daily'
 
          UNION -- Get Weekly Schedules
- SELECT bk_schedule = s.bk ,
+ SELECT bk_schedule = s.bk,
 
-               d.datekey ,
+               d.datekey,
 
                d.thedate
 
@@ -58,9 +58,9 @@ CREATE VIEW [adf].[vw_schedule_date] AS WITH alldates AS
            AND s.scheduleweeklyintervalcode = d.thedayofweek
 
          UNION -- Get workdayOfMonth Schedules
- SELECT bk_schedule = s.bk ,
+ SELECT bk_schedule = s.bk,
 
-               d.datekey ,
+               d.datekey,
 
                d.thedate
 
@@ -76,9 +76,9 @@ CREATE VIEW [adf].[vw_schedule_date] AS WITH alldates AS
            AND s.scheduleworkdayintervalcode = d.workdayofmonth
 
          UNION -- Get Monthly Schedules
- SELECT bk_schedule = s.bk ,
+ SELECT bk_schedule = s.bk,
 
-               d.datekey ,
+               d.datekey,
 
                d.thedate
 
@@ -95,9 +95,9 @@ CREATE VIEW [adf].[vw_schedule_date] AS WITH alldates AS
 
          UNION -- Get Quarterly Schedules
  -- kind of specials Schedule, just the first or the last day of a quarter
- SELECT bk_schedule = s.bk ,
+ SELECT bk_schedule = s.bk,
 
-               d.datekey ,
+               d.datekey,
 
                d.thedate
 
@@ -117,9 +117,9 @@ CREATE VIEW [adf].[vw_schedule_date] AS WITH alldates AS
 
          UNION -- Get Yearly Schedules
  -- kind of specials Schedule, just the first or the last day of a year
- SELECT bk_schedule = s.bk ,
+ SELECT bk_schedule = s.bk,
 
-               d.datekey ,
+               d.datekey,
 
                d.thedate
 
@@ -138,9 +138,9 @@ CREATE VIEW [adf].[vw_schedule_date] AS WITH alldates AS
            AND s.scheduletypename = 'TimeBased'
 
          UNION -- Get Specials (Last workday of Month, First workday of month etc...)
- SELECT bk_schedule = s.bk ,
+ SELECT bk_schedule = s.bk,
 
-               d.datekey ,
+               d.datekey,
 
                d.thedate
 
@@ -160,15 +160,15 @@ CREATE VIEW [adf].[vw_schedule_date] AS WITH alldates AS
 
            AND s.scheduletypename = 'TimeBased'
        )
-SELECT a.bk_schedule ,
+SELECT a.bk_schedule,
 
-       a.datekey ,
+       a.datekey,
 
-       a.thedate ,
+       a.thedate,
 
-       s.repositorystatuscode ,
+       s.repositorystatuscode,
 
-       s.repositorystatusname ,
+       s.repositorystatusname,
 
        s.environment
 

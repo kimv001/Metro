@@ -90,13 +90,10 @@ SELECT tablename AS TABLE_NAME,
 
    AND TABLE_NAME = @tablename -- Replace placeholders in the view template
 
-
    SET @sqlcreate = replace(replace(replace(replace(replace(replace(@viewtemplate , '{SrcSchema}', @srcschema) , '{TgtSchema}', @tgtschema) , '{TableName}', @tablename) , '{ColumnList}', @columnlist) , '{ColumnHashList}', @columnhashlist) , '{GeneratedAt}', convert(VARCHAR, getdate(), 120)) -- Create the new view
  PRINT @sqlcreate EXEC sp_executesql @sqlcreate -- Move to the next row
 
-
    SET @counternr = @counternr + 1 END -- Log the procedure execution
-
 
    SET @logsql = 'exec ' + @tgtschema + '.' + @logprocname EXEC [aud].[proc_log_procedure] @logaction = 'INFO',
 

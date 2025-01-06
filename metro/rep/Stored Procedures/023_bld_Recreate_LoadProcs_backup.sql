@@ -3,9 +3,7 @@ CREATE PROCEDURE [rep].[023_bld_recreate_loadprocs_backup] AS /*
 Developed by:			metro
 Description:			(Re)Create Stored Procedures to load data into [generated]
 
-
 Exec [bld].[Step007_Recreate_LoadProcs]
-
 
 Change log:
 Date					Author				Description
@@ -112,7 +110,6 @@ SELECT @tablename = src.tgt_table_name ,
 
        @sql2c = '-- Clean up ...' + @lb + 'If OBJECT_ID(''tempdb..#' + src.dataset + ''') IS NOT NULL ' + char(10) + 'Drop Table #' + src.dataset + ';' + @lb + @lb + 'set @EndDateTime =  getutcdate()' + @lb + 'set @Duration = datediff(ss,@StartDateTime, @EndDateTime)' + @lb + 'print ''Load "' + @routinenameshort + '" took '' +cast(@Duration as varchar(10))+ '' second(s)''' + @lb --select *
 
-
   FROM #buildprocs src
 
   JOIN [information_schema].[columns] c
@@ -146,7 +143,6 @@ SELECT @tablename = src.tgt_table_name ,
        @logsql = @sql1 ,
 
        @logrowcount = 1 -- create load procedure
-
 
    SET @longsql = @sql2a + @sql2b + @sql2c EXEC rep.helper_longprint @string = @longsql EXEC (@longsql)
 

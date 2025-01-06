@@ -8,17 +8,17 @@ Date					Author				Description
 20220916 20:15			K. Vermeij			Initial version
 */ IF object_id('tempdb..#tbl') IS NOT NULL
 DROP TABLE #tbl;
-SELECT table_catalog = t.[table_catalog] ,
+SELECT table_catalog = t.[table_catalog],
 
-       src_table_schema = t.[table_schema] ,
+       src_table_schema = t.[table_schema],
 
-       src_table_name = t.[table_name] ,
+       src_table_name = t.[table_name],
 
-       src_table_type = t.[table_type] ,
+       src_table_type = t.[table_type],
 
-       tgt_table_name = [rep].[getnamepart](replace(t.[table_name], 'tr_', ''), 2) ,
+       tgt_table_name = [rep].[getnamepart](replace(t.[table_name], 'tr_', ''), 2),
 
-       sql_code = 'Exec bld.load_' + replace(t.[table_name], 'tr_', '') ,
+       sql_code = 'Exec bld.load_' + replace(t.[table_name], 'tr_', ''),
 
        SEQUENCE = row_number() OVER (
                                      ORDER BY t.[table_name]) INTO #tbl

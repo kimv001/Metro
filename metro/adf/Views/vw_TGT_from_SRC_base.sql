@@ -301,33 +301,33 @@ CREATE VIEW [adf].[vw_tgt_from_src_base] AS WITH tgt AS
 
           FROM [adf].[vw_tgt_groupsrclayer_from_src]
        )
-SELECT tgt.[tgt] ,
+SELECT tgt.[tgt],
 
-       tgt.src_bk_dataset ,
+       tgt.src_bk_dataset,
 
-       tgt.src_dataset ,
+       tgt.src_dataset,
 
-       tgt.[src_shortname] ,
+       tgt.[src_shortname],
 
-       tgt.src_group ,
+       tgt.src_group,
 
-       tgt.src_schema ,
+       tgt.src_schema,
 
-       tgt.src_layer ,
+       tgt.src_layer,
 
-       tgt.src_sourcename AS [source] ,
+       tgt.src_sourcename AS [source],
 
-       tgt.src_datasettype ,
+       tgt.src_datasettype,
 
-       tgt.tgt_datasettype ,
+       tgt.tgt_datasettype,
 
-       tgt.generation_number ,
+       tgt.generation_number,
 
-       tgt.dependencytype ,
+       tgt.dependencytype,
 
-       tgt.[repositorystatusname] ,
+       tgt.[repositorystatusname],
 
-       tgt.[repositorystatuscode] ,
+       tgt.[repositorystatuscode],
 
        env.environment
 

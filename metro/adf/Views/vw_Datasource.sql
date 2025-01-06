@@ -1,20 +1,20 @@
 ﻿
 CREATE VIEW [adf].[vw_datasource] AS
-SELECT src.bk_datasource ,
+SELECT src.bk_datasource,
 
-       src.isdwh ,
+       src.isdwh,
 
-       src.isrep ,
+       src.isrep,
 
-       src.datasourceserver ,
+       src.datasourceserver,
 
-       src.datasourcedatabase ,
+       src.datasourcedatabase,
 
-       src.datasourceurl ,
+       src.datasourceurl,
 
-       src.datasourceusr ,
+       src.datasourceusr,
 
-       src.environment ,
+       src.environment,
 
        rt.code AS repositorystatus
 

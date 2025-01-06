@@ -7,7 +7,6 @@ CREATE PROCEDURE [rep].[022_bld_recreate_currentviews] @tgt_table_name varchar(2
                              - mta_RH        (Stores the hash of the full row)
                              - mta_RowNum    actually only needed for the view [bld].[vw_XlsTabsToLoad] so i could make an easy loop in this procedure
 
-
 	examples:
 	exec  [rep].[022_bld_Recreate_CurrentViews]
 
@@ -95,13 +94,10 @@ SELECT *,
 
    AND left(c.[column_name], 3) != 'mta' -- Replace placeholders in the view template
 
-
    SET @sqlcreate = replace(replace(replace(replace(replace(@viewtemplate , '{SrcSchema}', @srcschema) , '{TgtSchema}', @tgtschema) , '{TableName}', @tablename) , '{ColumnList}', @columnlist) , '{GeneratedAt}', convert(VARCHAR, getdate(), 120)) -- Create the new view
  PRINT @sqlcreate EXEC sp_executesql @sqlcreate -- Move to the next row
 
-
    SET @counternr = @counternr + 1 END -- Log the procedure execution
-
 
    SET @logsql = 'EXEC ' + @tgtschema + '.' + @logprocname EXEC [aud].[proc_log_procedure] @logaction = 'INFO',
 

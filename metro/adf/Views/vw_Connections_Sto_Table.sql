@@ -146,6 +146,5 @@ CONCAT (src.groupname ,
 
  WHERE 1 = 1 --AND src.SchemaName = 'sto'
 
-
    AND dt.layername IN ('TGT' ,
                        'MDSstg')

@@ -1,11 +1,11 @@
 ﻿
 CREATE VIEW adf.vw_tgt_from_src_schedules AS WITH schedule_all AS
 
-        (SELECT tgt_new = concat('schedule : ', s.bk) ,
+        (SELECT tgt_new = concat('schedule : ', s.bk),
 
-               s.excludefromalllevel ,
+               s.excludefromalllevel,
 
-               s.excludefromallother ,
+               s.excludefromallother,
 
                ts.*
 
@@ -20,11 +20,11 @@ CREATE VIEW adf.vw_tgt_from_src_schedules AS WITH schedule_all AS
 
        schedule_other AS
 
-        (SELECT tgt_new = concat('schedule : ', s.bk) ,
+        (SELECT tgt_new = concat('schedule : ', s.bk),
 
-               s.excludefromalllevel ,
+               s.excludefromalllevel,
 
-               s.excludefromallother ,
+               s.excludefromallother,
 
                ts.*
 
@@ -71,31 +71,31 @@ CREATE VIEW adf.vw_tgt_from_src_schedules AS WITH schedule_all AS
 SELECT tgt = tgt_new --, TGT_old = TGT
 ,
 
-       src_bk_dataset ,
+       src_bk_dataset,
 
-       src_dataset ,
+       src_dataset,
 
-       src_shortname ,
+       src_shortname,
 
-       src_group ,
+       src_group,
 
-       src_schema ,
+       src_schema,
 
-       src_layer ,
+       src_layer,
 
-       [source] ,
+       [source],
 
-       src_datasettype ,
+       src_datasettype,
 
-       tgt_datasettype ,
+       tgt_datasettype,
 
-       generation_number ,
+       generation_number,
 
-       dependencytype ,
+       dependencytype,
 
-       repositorystatusname ,
+       repositorystatusname,
 
-       repositorystatuscode ,
+       repositorystatuscode,
 
        environment
 

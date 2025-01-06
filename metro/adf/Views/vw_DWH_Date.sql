@@ -3,7 +3,6 @@ CREATE VIEW [adf].[vw_dwh_date] AS /*
 Description:
 	Date Table from 2010-01-01 till 2039-12-31
 
-
 */
 SELECT src.* ,
 

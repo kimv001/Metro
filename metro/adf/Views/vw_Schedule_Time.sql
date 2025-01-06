@@ -67,7 +67,6 @@ CREATE VIEW [adf].[vw_schedule_time] AS WITH uncdate AS
 
                environment = s.environment --select *
 
-
           FROM adf.vw_schedule s
 
          CROSS JOIN uncdate d
@@ -76,7 +75,6 @@ CREATE VIEW [adf].[vw_schedule_time] AS WITH uncdate AS
 
            AND s.scheduletypename = 'TimeBased' --and s.BK_ScheduleFrequency		= 'SF|1|Daily'
  --and s.BK_ScheduleDailyInterval	= 'SDI|0|once'
-
 
            AND isnull(s.scheduledailyintervalcode, 0) < 1
        ) -- Minute Schedules
@@ -120,11 +118,9 @@ SELECT bk_schedule = s.bk ,
 
    AND s.environment = t.environment--and  d.CurrentTimeInt < s.EndTimeInt
 
-
  WHERE 1 = 1
 
    AND (t.time_int - s.starttime_int) % s.scheduledailyintervalcode = 0 -- the minute trick, calculate minutes diff and finish it with a modulo. The outcome must be 0
-
 
 UNION ALL -- Once a Day Schedule
 

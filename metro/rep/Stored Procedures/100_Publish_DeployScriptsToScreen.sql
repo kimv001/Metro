@@ -193,7 +193,6 @@ SELECT @tgt_objectname = src.tgt_objectname ,
    AND src.rownum = @counternr EXEC [rep].[helper_longprint] @string = @sql --Print	(@sql)
  --Exec	(@sql1)
 
-
    SET @msg = 'Create Deploy Scripts  ' + @tgt_objectname EXEC [aud].[proc_log_procedure] @logaction = 'Create' ,
 
        @lognote = @msg ,

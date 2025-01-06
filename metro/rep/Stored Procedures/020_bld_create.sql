@@ -3,7 +3,6 @@ CREATE PROCEDURE [rep].[020_bld_create] @tgt_table_name varchar(255) = NULL AS /
 Developed by:			metro
 Description:			create all bld tables, views and procedures based on defined [bld].[tr_%] views
 
-
 example:
 
 exec [rep].[020_bld_create] @tgt_table_name = 'Attribute'

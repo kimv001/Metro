@@ -14,7 +14,6 @@ Select[rep].[GetRidOfQuotation] ('[sta].[Kim]')
 Select [rep].[GetRidOfQuotation]('TestKim]]')
 Select [rep].[GetRidOfQuotation]('[TestKim]]')
 
-
 Change log:
 Date					Author				Description
 20220915 00:00			K. Vermeij			Initial version

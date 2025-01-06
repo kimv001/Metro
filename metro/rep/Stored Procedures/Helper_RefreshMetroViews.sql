@@ -8,10 +8,7 @@ Description:
 Test:
 OK:
 
-
 NOK:
-
-
 
 Changelog:
 Date		time		Author					Description
