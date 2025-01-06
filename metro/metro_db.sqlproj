@@ -46,6 +46,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <SqlTargetName>metro</SqlTargetName>
+    <SuppressTSqlWarnings>SQL71558</SuppressTSqlWarnings>
   </PropertyGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
@@ -381,11 +382,11 @@
     <Build Include="adf\Stored Procedures\ImportDefaultMaintenanceProject.sql" />
     <Build Include="adf\Stored Procedures\GetOrchestrationJob.sql" />
     <Build Include="adf\Stored Procedures\GetOrchestrationFlow.sql" />
-    <Build Include="Security\stg_in_dwh.sql" />
     <Build Include="Security\stg.sql" />
     <Build Include="Security\rep.sql" />
     <Build Include="Security\bld.sql" />
     <Build Include="Security\aud.sql" />
     <Build Include="Security\adf.sql" />
+    <Build Include="bld\Views\tr_510_Markers_040_DatasetColumnlistsByCode.sql" />
   </ItemGroup>
 </Project>

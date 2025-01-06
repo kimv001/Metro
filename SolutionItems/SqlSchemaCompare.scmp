@@ -726,7 +726,7 @@
       </PropertyElementName>
       <PropertyElementName>
         <Name>ExcludeDatabaseRoles</Name>
-        <Value>False</Value>
+        <Value>True</Value>
       </PropertyElementName>
       <PropertyElementName>
         <Name>ExcludeDatabaseTriggers</Name>
@@ -910,7 +910,7 @@
       </PropertyElementName>
       <PropertyElementName>
         <Name>ExcludeUsers</Name>
-        <Value>False</Value>
+        <Value>True</Value>
       </PropertyElementName>
       <PropertyElementName>
         <Name>ExcludeViews</Name>
@@ -1180,6 +1180,22 @@
         <Name>Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlSecurityPolicy</Name>
         <Value>ExcludedType</Value>
       </PropertyElementName>
+      <PropertyElementName>
+        <Name>Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlRole</Name>
+        <Value>ExcludedType</Value>
+      </PropertyElementName>
+      <PropertyElementName>
+        <Name>Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlPermissionStatement</Name>
+        <Value>ExcludedType</Value>
+      </PropertyElementName>
+      <PropertyElementName>
+        <Name>Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlRoleMembership</Name>
+        <Value>ExcludedType</Value>
+      </PropertyElementName>
+      <PropertyElementName>
+        <Name>Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlUser</Name>
+        <Value>ExcludedType</Value>
+      </PropertyElementName>
     </ConfigurationOptionsElement>
   </SchemaCompareSettingsService>
   <SchemaCompareViewSettings>
@@ -1223,10 +1239,6 @@
     </SelectedItem>
     <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlSchema, Microsoft.Data.Tools.Schema.Sql, Version=162.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>pst</Name>
-    </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlView, Microsoft.Data.Tools.Schema.Sql, Version=162.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <Name>bld</Name>
-      <Name>tr_510_Markers_040_DatasetColumnlistsByCode</Name>
     </SelectedItem>
     <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlSchema, Microsoft.Data.Tools.Schema.Sql, Version=162.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>csl</Name>
