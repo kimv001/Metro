@@ -1257,9 +1257,5 @@
         <Name>db_owner</Name>
       </ParentItem>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlProcedure, Microsoft.Data.Tools.Schema.Sql, Version=162.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <Name>rep</Name>
-      <Name>022_bld_Recreate_CurrentViews_new</Name>
-    </SelectedItem>
   </ExcludedTargetElements>
 </SchemaComparison>
