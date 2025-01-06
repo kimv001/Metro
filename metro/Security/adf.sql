@@ -1,4 +1,4 @@
 ﻿
 CREATE SCHEMA [adf]
+    AUTHORIZATION [dbo];
 
-AUTHORIZATION [dbo];

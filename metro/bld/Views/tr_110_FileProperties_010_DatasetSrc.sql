@@ -1,87 +1,69 @@
 ﻿
-CREATE VIEW [bld].[tr_110_fileproperties_010_datasetsrc] AS /*
+
+CREATE view [bld].[tr_110_FileProperties_010_DatasetSrc] as 
+
+/* 
 === Comments =========================================
 
 Description:
 	Get all defined fileproperties and fileformats
-
+	
 Changelog:
 Date		time		Author					Description
 20220804	0000		K. Vermeij				Initial
-20230830	1600		K. Vermeij				added [isPGP] for PGP decrypting purposes
+20230830	1600		K. Vermeij				added [isPGP] for PGP decrypting purposes 
 												added [ExpectedFileSize] for file testing purposes
 20240403	1600		K. Vermeij				added [bk_schedule_FileExpected] for monitoring purposes
 20240410	1130		K. Vermeij				added ExpectedFileCount
 =======================================================
 */
-SELECT src.[bk] ,
 
-       src.[code] -- File Properties
- ,
 
-       fp.[description] ,
+Select
+		  src.[BK]
+		, src.[Code]
+		
+		-- File Properties 
+		, fp.[Description]
 
-       fp.filemask ,
 
-       fp.[filename] ,
+		, fp.FileMask
+		, fp.[Filename]
+		, fp.FileSystem
+		, fp.Folder
 
-       fp.filesystem ,
+		, fp.isPGP
 
-       fp.folder ,
+		-- test characteristics
 
-       fp.ispgp -- test characteristics
-  ,
+		, ExpectedFileCount			= coalesce(fp.ExpectedFileCount,1)
+		, fp.ExpectedFileSize
+		, bk_schedule_FileExpected	= fp.bk_schedule_expected
 
-       expectedfilecount = coalesce(fp.expectedfilecount, 1) ,
-
-       fp.expectedfilesize ,
-
-       bk_schedule_fileexpected = fp.bk_schedule_expected -- File Date Characteristics
- ,
-
-       fp.dateinfilenameformat ,
-
-       fp.dateinfilenamelength ,
-
-       fp.dateinfilenamestartpos ,
-
-       fp.dateinfilenameexpression ,
-
-       fp.testdateinfilename -- FileFormat FF
- ,
-
-       ff_name = ff.[name] ,
-
-       ff_fileformat = ff.fileformat ,
-
-       ff_columndelimiter = ff.columndelimiter ,
-
-       ff_rowdelimiter = ff.rowdelimiter ,
-
-       ff_quotecharacter = isnull(ff.quotecharacter, '') ,
-
-       ff_compressionlevel = ff.compressionlevel ,
-
-       ff_compressiontype = ff.compressiontype ,
-
-       ff_enablecdc = ff.enablecdc ,
-
-       ff_escapecharacter = ff.escapecharacter ,
-
-       ff_fileencoding = ff.fileencoding ,
-
-       ff_firstrow = ff.[firstrow] ,
-
-       ff_firstrowasheader = ff.firstrowasheader ,
-
-       ff_filesize = fp.filesize ,
-
-       ff_threshold = fp.threshold
-
-  FROM rep.vw_datasetsrcfileproperties fp
-
-  JOIN [bld].[vw_dataset] src
-    ON fp.bk = src.code
-
-  JOIN rep.vw_datasetsrcfileformat ff
-    ON ff.bk = fp.bk_fileformat
+		-- File Date Characteristics
+		, fp.DateInFileNameFormat
+		, fp.DateinFileNameLength
+		, fp.DateInFileNameStartPos
+		, fp.DateInFileNameExpression
+		, fp.TestDateInFileName
+		
+		-- FileFormat FF
+		, FF_Name					= ff.[name]
+		, FF_Fileformat				= ff.Fileformat
+		, FF_ColumnDelimiter		= ff.ColumnDelimiter
+		, FF_RowDelimiter			= ff.RowDelimiter
+		, FF_QuoteCharacter			= isnull(ff.QuoteCharacter,'')
+		, FF_CompressionLevel		= ff.CompressionLevel
+		, FF_CompressionType		= ff.CompressionType
+		, FF_EnableCDC				= ff.EnableCDC
+		, FF_EscapeCharacter		= ff.EscapeCharacter
+		, FF_FileEncoding			= ff.FileEncoding
+		, FF_FirstRow				= ff.[FirstRow]
+		, FF_FirstRowAsHeader		= ff.FirstRowAsHeader
+		, FF_Filesize				= fp.Filesize
+		, FF_Threshold				= fp.Threshold
+		
+		
+	From  rep.vw_DatasetSrcFileProperties fp 
+	join [bld].[vw_Dataset] src on fp.bk = src.code
+	join rep.vw_DatasetSrcFileFormat ff on ff.BK = fp.BK_FileFormat

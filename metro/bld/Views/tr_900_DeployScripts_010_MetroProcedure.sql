@@ -1,34 +1,27 @@
 ﻿
-CREATE VIEW [bld].[tr_900_deployscripts_010_metroprocedure] AS
-SELECT top 0 bk = '' ,
 
-       code = '' ,
 
-       bk_template = '' ,
+CREATE view [bld].[tr_900_DeployScripts_010_MetroProcedure] as
 
-       bk_dataset = '' ,
+SELECT top 0
+	  BK						= ''
+	, Code						= ''
+	, BK_Template				= ''
+	, BK_Dataset				= ''
+	, TGT_ObjectName			= ''
+	, ObjectType				= ''
+	, ObjectTypeDeployOrder		= ''
+	, TemplateType				= ''
+	, ScriptLanguageCode		= ''
+	, ScriptLanguage			= ''
+	, TemplateSource			= ''
+	, TemplateName				= ''
+	, TemplateScript			= ''
+	, TemplateVersion			= ''
+	, ToDeploy					= ''
+	
 
-       tgt_objectname = '' ,
-
-       objecttype = '' ,
-
-       objecttypedeployorder = '' ,
-
-       templatetype = '' ,
-
-       scriptlanguagecode = '' ,
-
-       scriptlanguage = '' ,
-
-       templatesource = '' ,
-
-       templatename = '' ,
-
-       templatescript = '' ,
-
-       templateversion = '' ,
-
-       todeploy = '' /*
+  /*
   @Script					varchar(max),
 	@PreScript				varchar(max),
 	@PostScript				varchar(max),
@@ -41,6 +34,7 @@ SELECT top 0 bk = '' ,
 	@Marker					varchar(max),
 	@MarkerValue			varchar(max),
 	@TGT_ObjectName			varchar(max),
+	
 
 	@TemplateName	varchar(max),
 	@TemplateType	 varchar(max),
