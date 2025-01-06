@@ -314,7 +314,6 @@
     <Build Include="rep\Functions\GetDummyValueByAttributeBK.sql" />
     <Build Include="rep\Functions\GetNamePart.sql" />
     <Build Include="rep\Functions\GetRidOfQuotation.sql" />
-    <Build Include="rep\Stored Procedures\022_bld_Recreate_CurrentViews_new.sql" />
     <Build Include="rep\Stored Procedures\022_bld_Recreate_CurrentViews_backup.sql" />
     <Build Include="rep\Stored Procedures\010_rep_Recreate_RepViews_kim_to_fix.sql" />
     <Build Include="rep\Stored Procedures\023_bld_Recreate_LoadProcs_backup.sql" />
@@ -324,9 +323,7 @@
     <Build Include="rep\Stored Procedures\999_adf_DWH_Time.sql" />
     <Build Include="rep\Stored Procedures\Helper_LongPrint.sql" />
     <Build Include="rep\Stored Procedures\999_adf_DWH_Date.sql" />
-    <Build Include="rep\Stored Procedures\022_bld_Recreate_CurrentViews_kim_to_fix.sql" />
     <Build Include="rep\Stored Procedures\Helper_RefreshMetroViews.sql" />
-    <Build Include="rep\Stored Procedures\021_bld_Recreate_BuildTables_kim_to_fix.sql" />
     <Build Include="rep\Stored Procedures\Helper_adf_Views.sql" />
     <Build Include="rep\Stored Procedures\050_bld_load.sql" />
     <Build Include="rep\Stored Procedures\021_bld_Recreate_BuildTables_backup.sql" />
