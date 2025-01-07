@@ -1,18 +1,11 @@
-﻿
-
-
-
-
-
-
-
-CREATE VIEW [bld].[tr_800_DeployScriptsSmartLoad_010_Sources] AS 
+﻿CREATE VIEW [bld].[tr_800_DeployScriptsSmartLoad_010_Sources] AS 
 /* 
 === Comments =========================================
 
 Description:
 	Is a helper for the bld.DeployScripts views.
-	When change is detected in the bld tables [bld].[Markers], [bld].[DatasetTemplates] or [bld].[Template] on which the [bld].[DeployScripts] are dependent, the code of the full set will be returned
+	When change is detected in the bld tables [bld].[Markers], [bld].[DatasetTemplates] or [bld].[Template]
+	on which the [bld].[DeployScripts] are dependent, the code of the full set will be returned
 	
 	
 Changelog:

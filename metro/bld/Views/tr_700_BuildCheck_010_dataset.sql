@@ -1,5 +1,5 @@
-﻿ -- noqa: PRS
-create view [bld].[tr_700_BuildCheck_010_dataset] as
+﻿
+CREATE VIEW [bld].[tr_700_BuildCheck_010_dataset] AS
 /* 
 === Comments =========================================
 
@@ -19,8 +19,8 @@ Date		time		Author					Description
 
 
 WITH ErrorCodes AS (
-	select Severity, Code, Error from 
-			(values 
+	SELECT Severity, Code, Error FROM 
+			(VALUES 
 				/* 
 				Severity:
 						1	Blocking for ETL Generation
@@ -39,7 +39,7 @@ WITH ErrorCodes AS (
 					,(1, 'U8', 'Datatype Length is not defined')
 					,(1, 'U9', 'Datatype Scale and/or Precesion is not set correct')
 
-					)  list ([Severity], [Code], [Error])
+					)  list ([Severity], [Code], [Error])   -- noqa: PRS
 
 )
 , All_Checks AS (

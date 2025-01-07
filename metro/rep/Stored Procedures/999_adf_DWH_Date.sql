@@ -1,4 +1,5 @@
-﻿CREATE procedure [rep].[999_adf_DWH_Date] as
+﻿ -- noqa: PRS
+ CREATE PROCEDURE [rep].[999_adf_DWH_Date] AS
 /* 
 === Comments =========================================
 
@@ -19,30 +20,31 @@ Date		time		Author					Description
 
 -- prevent set or regional settings From interfering with 
 -- interpretation of dates / literals
-SET DATEFIRST  1, -- 1 = Monday, 7 = Sunday
-    DATEFORMAT mdy, 
-    LANGUAGE   US_ENGLISH;
+-- 1 = Monday, 7 = Sunday
+SET DATEFIRST  1,  -- noqa: PRS
+    DATEFORMAT mdy,  -- noqa: PRS
+    LANGUAGE   US_ENGLISH;  -- noqa: PRS
 -- assume the above is here in all subsequent code blocks.
 
-Declare @StartDate  date	= '20100101';											-- startdate
-Declare @Years		int		= 30													-- add years from startdate
-Declare @CutoffDate date	= Dateadd(Day, -1, Dateadd(Year, @Years, @StartDate));	-- determine enddate
-Declare @startYear	int		= Datepart(Year,@StartDate)
-Declare @endYear	int		= Datepart(Year, @CutoffDate)
+DECLARE @StartDate  date	= '20100101';											-- startdate
+DECLARE @Years		int		= 30													-- add years from startdate
+DECLARE @CutoffDate date	= Dateadd(DAY, -1, Dateadd(YEAR, @Years, @StartDate));	-- determine enddate
+DECLARE @startYear	int		= Datepart(YEAR,@StartDate)
+DECLARE @endYear	int		= Datepart(YEAR, @CutoffDate)
 
 
 IF OBJECT_ID('adf.DWH_date', 'U') IS NOT NULL
-Drop Table [adf].[DWH_Date]
+DROP TABLE [adf].[DWH_Date]
 				-- 
 IF OBJECT_ID('tempdb..##Easter', 'U') IS NOT NULL
-Drop Table ##Easter
+DROP TABLE ##Easter
 
 IF OBJECT_ID('tempdb..##BaseCalendar', 'U') IS NOT NULL
-Drop Table ##BaseCalendar
+DROP TABLE ##BaseCalendar
 
 
-Create table [adf].[DWH_Date](
-					DateKey					int not null,
+CREATE TABLE [adf].[DWH_Date](
+					DateKey					int NOT NULL,
 					TheDate					date NULL,
 					TheDay					int NULL,
 					TheDaySuffix			char(2) NULL,
@@ -52,7 +54,7 @@ Create table [adf].[DWH_Date](
 					TheDayOfYear			int		NULL,
 					IsWeekend				int NOT NULL,
 					IsWorkDay				int NOT NULL,
-					WorkdayOfMonth			int not null,
+					WorkdayOfMonth			int NOT NULL,
 					TheWeek					int NULL,
 					TheISOweek				int NULL,
 					TheFirstOfWeek			date NULL,
@@ -81,19 +83,19 @@ Create table [adf].[DWH_Date](
 					Style103				char(10) NULL,
 					Style112				char(8) NULL,
 					Style120				char(10) NULL,
-					YearWeek				char(6) null,
-					YearISOWeek				char(6) null,
-					YearMonth				char(6) null,
+					YearWeek				char(6) NULL,
+					YearISOWeek				char(6) NULL,
+					YearMonth				char(6) NULL,
 
-					HolidayName				varchar(255) null,
-					IsBankHoliday			int null,
-					IsPublicHoliday			int null,
+					HolidayName				varchar(255) NULL,
+					IsBankHoliday			int NULL,
+					IsPublicHoliday			int NULL,
 
-					HolidayName_NL			varchar(255) null,
-					TheDayName_NL			varchar(255) null,
-					TheMonthName_NL			varchar (255) null,
-					DayCounter				bigint null,
-					WorkDayCounter			bigint null,
+					HolidayName_NL			varchar(255) NULL,
+					TheDayName_NL			varchar(255) NULL,
+					TheMonthName_NL			varchar (255) NULL,
+					DayCounter				bigint NULL,
+					WorkDayCounter			bigint NULL,
 				) ON [PRIMARY]
 ;
 
@@ -103,21 +105,21 @@ Create table [adf].[DWH_Date](
 
 -- First we determine Easter related dates
 ;
-		   With t(n)
-			 As (
-		 Select t.n 
-		   From (
-		 Values (0), (0), (0), (0), (0), (0), (0), (0), (0), (0)) As t(n)
+		   WITH t(n)
+			 AS (
+		 SELECT t.n 
+		   FROM (
+		 VALUES (0), (0), (0), (0), (0), (0), (0), (0), (0), (0)) AS t(n)
 				)
 			  , inputYears (y)
-			 As (
-		 Select Top (@endYear - @startYear + 1) 
-				(@startYear - 1) + row_number() over(Order By @@spid) As rn 
-		   From t t1, t t2, t t3, t t4
+			 AS (
+		 SELECT TOP (@endYear - @startYear + 1) 
+				(@startYear - 1) + ROW_NUMBER() OVER(ORDER BY @@spid) AS rn 
+		   FROM t t1, t t2, t t3, t t4
 				)
-		 Select hd.*
-		 into ##Easter
-		   From inputYears                                      dd
+		 SELECT hd.*
+		 INTO ##Easter
+		   FROM inputYears                                      dd
 
 		/*  Gauss' Easter algorithm
 
@@ -132,70 +134,70 @@ Create table [adf].[DWH_Date](
 			o       iif(e = 6 And (d = 29 Or (d = 28 And a > 10)), 7, 0)    subtract days for 26 April OR 25 April AND a > 10
 					Add d + e - o to March 22                               Easter Sunday (Gregorian calendar)
 		*/ 
-		Cross Apply (
-				Select * --e7.EasterDay
-				  From (Values (y % 19, y % 4, y % 7, y / 100))                                 As e1(a, b, c, k)
-				 Cross Apply (Values ((13 + 8*k) / 25, k / 4))                                  As e2(p, q)
-				 Cross Apply (Values ((15 - p + k - q) % 30, (4 + k - q) % 7))                  As e3(M, N)
-				 Cross Apply (Values ((19*a + M) % 30))                                         As e4(d)
-				 Cross Apply (Values ((2*b + 4*c + 6*d + N) % 7))                               As e5(e)
-				 Cross Apply (Values (iif(e = 6 And (d = 29 Or (d = 28 And a > 10)), 7, 0)))    As e6(o)
-				 Cross Apply (Values (dateadd(day, d + e - o, dateFromparts(y, 3, 22))))        As e7(EasterDay)
-					  ) As ge
+		CROSS APPLY (
+				SELECT * --e7.EasterDay
+				  FROM (VALUES (y % 19, y % 4, y % 7, y / 100))                                 AS e1(a, b, c, k)
+				 CROSS APPLY (VALUES ((13 + 8*k) / 25, k / 4))                                  AS e2(p, q)
+				 CROSS APPLY (VALUES ((15 - p + k - q) % 30, (4 + k - q) % 7))                  AS e3(M, N)
+				 CROSS APPLY (VALUES ((19*a + M) % 30))                                         AS e4(d)
+				 CROSS APPLY (VALUES ((2*b + 4*c + 6*d + N) % 7))                               AS e5(e)
+				 CROSS APPLY (VALUES (iif(e = 6 AND (d = 29 OR (d = 28 AND a > 10)), 7, 0)))    AS e6(o)
+				 CROSS APPLY (VALUES (dateadd(DAY, d + e - o, dateFromparts(y, 3, 22))))        AS e7(EasterDay)
+					  ) AS ge
 
 
 		 --==== Related Easter Holidays (using Gauss' Western algorithm)
-		  Cross Apply (
-				Select h.IsHoliday
+		  CROSS APPLY (
+				SELECT h.IsHoliday
 					 , h.HolidayDate
 					 , h.HolidayName
 					 , h.HolidayNameDutch
-				  From (Values (ge.EasterDay))                                                  As e(EasterDate)
-				 Cross Apply (Values (0, dateadd(day,-46, e.EasterDate), 'Ash Wednesday'	, 'Aswoensdag'		)
-								   , (0, dateadd(day, -7, e.EasterDate), 'Palm Sunday'		, 'Palmzondag'		)
-								   , (0, dateadd(day, -3, e.EasterDate), 'Maundy Thursday'	, 'Witte Donderdag'	)
-								   , (1, dateadd(day, -2, e.EasterDate), 'Good Friday'		, 'Goede Vrijdag'	)
-								   , (0, dateadd(day, -1, e.EasterDate), 'Holy Saturday'	, 'Stille Zaterdag'	)
-								   , (1, dateadd(day,  0, e.EasterDate), 'Easter Sunday'	, '1e Paasdag'		)
-								   , (0, dateadd(day,  1, e.EasterDate), 'Easter Monday'	, '2e Paasdag'		)
-								   , (0, dateadd(day, 39, e.EasterDate), 'Ascension Day'	, 'Hemelvaartsdag'	)
-								   , (0, dateadd(day, 49, e.EasterDate), 'Whit Sunday'		, '1e Pinkersterdag')
-								   , (0, dateadd(day, 50, e.EasterDate), 'Whit Monday'		, '2e Pinkersterdag')
-							 ) As h(IsHoliday, HolidayDate, HolidayName, HolidayNameDutch)
-					  ) As hd;
+				  FROM (VALUES (ge.EasterDay))                                                  AS e(EasterDate)
+				 CROSS APPLY (VALUES (0, dateadd(DAY,-46, e.EasterDate), 'Ash Wednesday'	, 'Aswoensdag'		)
+								   , (0, dateadd(DAY, -7, e.EasterDate), 'Palm Sunday'		, 'Palmzondag'		)
+								   , (0, dateadd(DAY, -3, e.EasterDate), 'Maundy Thursday'	, 'Witte Donderdag'	)
+								   , (1, dateadd(DAY, -2, e.EasterDate), 'Good Friday'		, 'Goede Vrijdag'	)
+								   , (0, dateadd(DAY, -1, e.EasterDate), 'Holy Saturday'	, 'Stille Zaterdag'	)
+								   , (1, dateadd(DAY,  0, e.EasterDate), 'Easter Sunday'	, '1e Paasdag'		)
+								   , (0, dateadd(DAY,  1, e.EasterDate), 'Easter Monday'	, '2e Paasdag'		)
+								   , (0, dateadd(DAY, 39, e.EasterDate), 'Ascension Day'	, 'Hemelvaartsdag'	)
+								   , (0, dateadd(DAY, 49, e.EasterDate), 'Whit Sunday'		, '1e Pinkersterdag')
+								   , (0, dateadd(DAY, 50, e.EasterDate), 'Whit Monday'		, '2e Pinkersterdag')
+							 ) AS h(IsHoliday, HolidayDate, HolidayName, HolidayNameDutch)
+					  ) AS hd;
 
 
 
 ;WITH seq(n) AS 
 (
-  Select 0 UNION ALL Select n + 1 From seq
-  Where n < DATEDIFF(DAY, @StartDate, @CutoffDate)
+  SELECT 0 UNION ALL SELECT n + 1 FROM seq
+  WHERE n < DATEDIFF(DAY, @StartDate, @CutoffDate)
 ),
 d(d) AS 
 (
-  Select DATEADD(DAY, n, @StartDate) From seq
+  SELECT DATEADD(DAY, N, @StartDate) FROM seq
 ),
 src AS
 (
-  Select
+  SELECT
     TheDate         = CONVERT(date, d),
-    TheDay          = DATEPART(DAY,       d),
-    TheDayName      = DATENAME(WEEKDAY,   d),
-    TheWeek         = DATEPART(WEEK,      d),
-    TheISOWeek      = DATEPART(ISO_WEEK,  d),
-    TheDayOfWeek    = DATEPART(WEEKDAY,   d),
-    TheMonth        = DATEPART(MONTH,     d),
-    TheMonthName    = DATENAME(MONTH,     d),
-    TheQuarter      = DATEPART(Quarter,   d),
-    TheYear         = DATEPART(YEAR,      d),
+    TheDay          = DATEPART(DAY,       D),
+    TheDayName      = DATENAME(WEEKDAY,   D),
+    TheWeek         = DATEPART(WEEK,      D),
+    TheISOWeek      = DATEPART(ISO_WEEK,  D),
+    TheDayOfWeek    = DATEPART(WEEKDAY,   D),
+    TheMonth        = DATEPART(MONTH,     D),
+    TheMonthName    = DATENAME(MONTH,     D),
+    TheQuarter      = DATEPART(QUARTER,   D),
+    TheYear         = DATEPART(YEAR,      D),
     TheFirstOfMonth = DATEFromPARTS(YEAR(d), MONTH(d), 1),
     TheLastOfYear   = DATEFromPARTS(YEAR(d), 12, 31),
-    TheDayOfYear    = DATEPART(DAYOFYEAR, d)
-  From d
+    TheDayOfYear    = DATEPART(DAYOFYEAR, D)
+  FROM d
 )
 
 
-  Select
+  SELECT
     TheDate, 
     TheDay,
     TheDaySuffix        = CONVERT(char(2), CASE WHEN TheDay / 10 = 1 THEN 'th' ELSE 
@@ -241,169 +243,174 @@ src AS
     Style112            = CONVERT(char(8),  TheDate, 112),
     Style120            = CONVERT(char(10), TheDate, 120),
 
-	YearWeek			= cast(TheYear as varchar(4))+right('0'+cast(TheWeek as varchar(2)),2),
-	YearISOWeek			= cast(TheYear as varchar(4))+right('0'+cast(TheISOweek as varchar(2)),2),
-	YearMonth			= cast(TheYear as varchar(4))+right('0'+cast(TheMonth as varchar(2)),2)
-into ##BaseCalendar
-  From src
-  Order by TheDate asc
-  Option (MAXRECURSION 0);
+	YearWeek			= CAST(TheYear AS varchar(4))+RIGHT('0'+CAST(TheWeek AS varchar(2)),2),
+	YearISOWeek			= CAST(TheYear AS varchar(4))+RIGHT('0'+CAST(TheISOweek AS varchar(2)),2),
+	YearMonth			= CAST(TheYear AS varchar(4))+RIGHT('0'+CAST(TheMonth AS varchar(2)),2)
+INTO ##BaseCalendar
+  FROM src
+  ORDER BY TheDate ASC
+  OPTION (MAXRECURSION 0);
 
   ;
-With Holidays as
+WITH Holidays AS
                (
   -- For now, ONLY Dutch Public Holidays are in use. Therefore currently the only possible values for IsBankHoliday and IsPublicHoliday are 1 (yes) or 0 (no).
  
-	Select 
+	SELECT 
 		HolidayDate			= TheDate, 
-	    HolidayNameDutch	= Case
-								When (TheDate = TheFirstOfYear)
-	                                            Then 'Nieuwjaarsdag'
-	                             -- Prinsessedag op 31 augustus: t/m 1948 (Wilhelmina)
-	                             When (TheYear <= 1948 and TheMonth = 8 and TheDay = 31) 
-	                                            Then 'Prinsessedag'
-	                             -- Koninginnedag op 30 april: 1949-1979 (Juliana), behalve als zondag, dan 1 mei
-	                             -- Koninginnedag op 30 april: 1980-2013 (Juliana), behalve als zondag, dan 29 april
-	                             When (TheYear >= 1949 and TheYear <= 2013 and TheMonth = 4 and TheDay = 30 and TheDayOfWeek <> 7) OR
-	                                             (TheYear >= 1949 and TheYear <= 1979 and TheMonth = 5 and TheDay = 1 and TheDayOfWeek = 1) OR
-	                                             (TheYear >= 1980 and TheYear <= 2013 and TheMonth = 4 and TheDay = 29 and TheDayOfWeek = 6)
-	                                            Then 'Koninginnedag'
-	                             -- Koningsdag op 27 april: 2014- (Willem Alexander), behalve als zondag, dan 26 april
-	                             When (TheYear >= 2014 and TheMonth = 4 and TheDay = 27 and TheDayOfWeek <> 7) OR
-	                                             (TheYear >= 2014 and TheMonth = 4 and TheDay = 26 and TheDayOfWeek = 6)
-	                                            Then 'Koningsdag'
-	                             -- since 1990 liberation day is an official national holiday
-								-- *Note 5 may 2016 is both Liberation Day and Ascencion Day. This would create a duplicate record for that day (see union all below). This would create a duplicate record for that day (see union all below)
-	                             When (TheYear >= 1990 and TheMonth = 5 and TheDay = 5) -- HolidayText for 5th of May is always Liberation Day. It is however only a Public Holiday once every 5 year
-	                                            Then 'Bevrijdingsdag'
-	                             When (TheMonth = 12 and TheDay = 25)
-	                                            Then '1e Kerstdag'
-	                             When (TheMonth = 12 and TheDay = 26)
-	                                            Then '2e Kerstdag'
+	    HolidayNameDutch	= CASE
+								WHEN (TheDate = TheFirstOfYear)
+	                                            THEN 'Nieuwjaarsdag'
+	                        -- Prinsessedag op 31 augustus: t/m 1948 (Wilhelmina)
+	                             WHEN (TheYear <= 1948 AND TheMonth = 8 AND TheDay = 31) 
+	                                            THEN 'Prinsessedag'
+	                        -- Koninginnedag op 30 april: 1949-1979 (Juliana), behalve als zondag, dan 1 mei
+	                        -- Koninginnedag op 30 april: 1980-2013 (Juliana), behalve als zondag, dan 29 april
+	                             WHEN (TheYear >= 1949 AND TheYear <= 2013 AND TheMonth = 4 AND TheDay = 30 AND TheDayOfWeek <> 7) OR
+	                                             (TheYear >= 1949 AND TheYear <= 1979 AND TheMonth = 5 AND TheDay = 1 AND TheDayOfWeek = 1) OR
+	                                             (TheYear >= 1980 AND TheYear <= 2013 AND TheMonth = 4 AND TheDay = 29 AND TheDayOfWeek = 6)
+	                                            THEN 'Koninginnedag'
+	                        -- Koningsdag op 27 april: 2014- (Willem Alexander), behalve als zondag, dan 26 april
+	                             WHEN (TheYear >= 2014 AND TheMonth = 4 AND TheDay = 27 AND TheDayOfWeek <> 7) OR
+	                                             (TheYear >= 2014 AND TheMonth = 4 AND TheDay = 26 AND TheDayOfWeek = 6)
+	                                            THEN 'Koningsdag'
+							-- since 1990 liberation day is an official national holiday
+							-- *Note 5 may 2016 is both Liberation Day and Ascencion Day. This would create a duplicate record for that day (see union all below).
+							-- This would create a duplicate record for that day (see union all below)
+							-- HolidayText for 5th of May is always Liberation Day. It is however only a Public Holiday once every 5 year
+	                             WHEN (TheYear >= 1990 AND TheMonth = 5 AND TheDay = 5)
+	                                            THEN 'Bevrijdingsdag'
+	                             WHEN (TheMonth = 12 AND TheDay = 25)
+	                                            THEN '1e Kerstdag'
+	                             WHEN (TheMonth = 12 AND TheDay = 26)
+	                                            THEN '2e Kerstdag'
 	                             END,
-		HolidayName			= Case
-								When (TheDate = TheFirstOfYear)
-	                                            Then 'New Year''s Day'
-	                             -- Prinsessedag op 31 augustus: t/m 1948 (Wilhelmina)
-	                             When (TheYear <= 1948 and TheMonth = 8 and TheDay = 31) 
-	                                            Then 'Princess''s Day'
-	                             -- Koninginnedag op 30 april: 1949-1979 (Juliana), behalve als zondag, dan 1 mei
-	                             -- Koninginnedag op 30 april: 1980-2013 (Juliana), behalve als zondag, dan 29 april
-	                             When (TheYear >= 1949 and TheYear <= 2013 and TheMonth = 4 and TheDay = 30 and TheDayOfWeek <> 7) OR
-	                                             (TheYear >= 1949 and TheYear <= 1979 and TheMonth = 5 and TheDay = 1 and TheDayOfWeek = 1) OR
-	                                             (TheYear >= 1980 and TheYear <= 2013 and TheMonth = 4 and TheDay = 29 and TheDayOfWeek = 6)
-	                                            Then 'Queen''s Day'
-	                             -- Koningsdag op 27 april: 2014- (Willem Alexander), behalve als zondag, dan 26 april
-	                             When (TheYear >= 2014 and TheMonth = 4 and TheDay = 27 and TheDayOfWeek <> 7) OR
-	                                             (TheYear >= 2014 and TheMonth = 4 and TheDay = 26 and TheDayOfWeek = 6)
-	                                            Then 'King''s Day'
-	                             -- since 1990 liberation day is an official national holiday
-								-- *Note 5 may 2016 is both Liberation Day and Ascencion Day. This would create a duplicate record for that day (see union all below). This would create a duplicate record for that day (see union all below)
-	                             When (TheYear >= 1990 and TheMonth = 5 and TheDay = 5) -- HolidayText for 5th of May is always Liberation Day. It is however only a Public Holiday once every 5 year
-	                                            Then 'Liberation Day'
-	                             When (TheMonth = 12 and TheDay = 25)
-	                                            Then 'Christmas'
-	                             When (TheMonth = 12 and TheDay = 26)
-	                                            Then 'Boxing Day'
-	                             End,
-		IsBankHoliday		= Case
-	                             -- New Year's Day is only a bank holiday when it falls not in a weekend
-								When (TheDate = TheFirstOfYear  and TheDayOfWeek <=5)
-	                                            Then 1
-	                             -- Christmas is only a bank holiday when it falls not in a weekend
-								When (TheMonth = 12 and TheDay = 25 and TheDayOfWeek <=5)
-	                                            Then 1
-	                            When (TheMonth = 12 and TheDay = 26 and TheDayOfWeek <=5)
-	                                            Then 1
-								Else 0
-	                            End
-	    ,IsPublicHoliday	= Case
-	                             When (TheDate = TheFirstOfYear)
-	                                            Then 1
-	                             -- Prinsessedag op 31 augustus: t/m 1948 (Wilhelmina)
-	                             When (TheYear <= 1948 and TheMonth = 8 and TheDay = 31) 
-	                                            Then 1
-	                             -- Koninginnedag op 30 april: 1949-1979 (Juliana), behalve als zondag, dan 1 mei
-	                             -- Koninginnedag op 30 april: 1980-2013 (Juliana), behalve als zondag, dan 29 april
-	                             When (TheYear >= 1949 and TheYear <= 2013 and TheMonth = 4 and TheDay = 30 and TheDayOfWeek <> 7) OR
-	                                             (TheYear >= 1949 and TheYear <= 1979 and TheMonth = 5 and TheDay = 1 and TheDayOfWeek = 1) OR
-	                                             (TheYear >= 1980 and TheYear <= 2013 and TheMonth = 4 and TheDay = 29 and TheDayOfWeek = 6)
-	                                            Then 1
-	                             -- Koningsdag op 27 april: 2014- (Willem Alexander), behalve als zondag, dan 26 april
-	                             When (TheYear >= 2014 and TheMonth = 4 and TheDay = 27 and TheDayOfWeek <> 7) OR
-	                                             (TheYear >= 2014 and TheMonth = 4 and TheDay = 26 and TheDayOfWeek = 6)
-	                                            Then 1
-	                             -- Every 5 year liberation day is a public holiday if it falls on a weekday
-	                              -- *Note 5 may 2016 is both Liberation Day and Ascencion Day. This would create a duplicate record for that day (see union all below)
-								When (TheYear >= 1990 and TheYear % 5 = 0 and TheMonth = 5 and TheDay = 5 and TheDayOfWeek <=5)
-	                                            Then 1
-	                             When (TheMonth = 12 and TheDay = 25)
-	                                            Then 1
-	                             When (TheMonth = 12 and TheDay = 26)
-	                                            Then 1
+		HolidayName			= CASE
+								WHEN (TheDate = TheFirstOfYear)
+	                                            THEN 'New Year''s Day'
+	                    	-- Prinsessedag op 31 augustus: t/m 1948 (Wilhelmina)
+	                             WHEN (TheYear <= 1948 AND TheMonth = 8 AND TheDay = 31) 
+	                                            THEN 'Princess''s Day'
+	                        -- Koninginnedag op 30 april: 1949-1979 (Juliana), behalve als zondag, dan 1 mei
+	                        -- Koninginnedag op 30 april: 1980-2013 (Juliana), behalve als zondag, dan 29 april
+	                             WHEN (TheYear >= 1949 AND TheYear <= 2013 AND TheMonth = 4 AND TheDay = 30 AND TheDayOfWeek <> 7) OR
+	                                             (TheYear >= 1949 AND TheYear <= 1979 AND TheMonth = 5 AND TheDay = 1 AND TheDayOfWeek = 1) OR
+	                                             (TheYear >= 1980 AND TheYear <= 2013 AND TheMonth = 4 AND TheDay = 29 AND TheDayOfWeek = 6)
+	                                            THEN 'Queen''s Day'
+	                        -- Koningsdag op 27 april: 2014- (Willem Alexander), behalve als zondag, dan 26 april
+	                             WHEN (TheYear >= 2014 AND TheMonth = 4 AND TheDay = 27 AND TheDayOfWeek <> 7) OR
+	                                             (TheYear >= 2014 AND TheMonth = 4 AND TheDay = 26 AND TheDayOfWeek = 6)
+	                                            THEN 'King''s Day'
+	                        -- since 1990 liberation day is an official national holiday
+							-- *Note 5 may 2016 is both Liberation Day and Ascencion Day. This would create a duplicate record for that day (see union all below).
+							-- This would create a duplicate record for that day (see union all below)
+	                        -- HolidayText for 5th of May is always Liberation Day. It is however only a Public Holiday once every 5 year
+	                             WHEN (TheYear >= 1990 AND TheMonth = 5 AND TheDay = 5)
+	                                            THEN 'Liberation Day'
+	                             WHEN (TheMonth = 12 AND TheDay = 25)
+	                                            THEN 'Christmas'
+	                             WHEN (TheMonth = 12 AND TheDay = 26)
+	                                            THEN 'Boxing Day'
+	                             END,
+		IsBankHoliday		= CASE
+	                        -- New Year's Day is only a bank holiday when it falls not in a weekend
+								WHEN (TheDate = TheFirstOfYear  AND TheDayOfWeek <=5)
+	                                            THEN 1
+	                        -- Christmas is only a bank holiday when it falls not in a weekend
+								WHEN (TheMonth = 12 AND TheDay = 25 AND TheDayOfWeek <=5)
+	                                            THEN 1
+	                            WHEN (TheMonth = 12 AND TheDay = 26 AND TheDayOfWeek <=5)
+	                                            THEN 1
+								ELSE 0
+	                            END
+	    ,IsPublicHoliday	= CASE
+	                             WHEN (TheDate = TheFirstOfYear)
+	                                            THEN 1
+	                        -- Prinsessedag op 31 augustus: t/m 1948 (Wilhelmina)
+	                             WHEN (TheYear <= 1948 AND TheMonth = 8 AND TheDay = 31) 
+	                                            THEN 1
+	                        -- Koninginnedag op 30 april: 1949-1979 (Juliana), behalve als zondag, dan 1 mei
+	                        -- Koninginnedag op 30 april: 1980-2013 (Juliana), behalve als zondag, dan 29 april
+	                             WHEN (TheYear >= 1949 AND TheYear <= 2013 AND TheMonth = 4 AND TheDay = 30 AND TheDayOfWeek <> 7) OR
+	                                             (TheYear >= 1949 AND TheYear <= 1979 AND TheMonth = 5 AND TheDay = 1 AND TheDayOfWeek = 1) OR
+	                                             (TheYear >= 1980 AND TheYear <= 2013 AND TheMonth = 4 AND TheDay = 29 AND TheDayOfWeek = 6)
+	                                            THEN 1
+	                        -- Koningsdag op 27 april: 2014- (Willem Alexander), behalve als zondag, dan 26 april
+	                             WHEN (TheYear >= 2014 AND TheMonth = 4 AND TheDay = 27 AND TheDayOfWeek <> 7) OR
+	                                             (TheYear >= 2014 AND TheMonth = 4 AND TheDay = 26 AND TheDayOfWeek = 6)
+	                                            THEN 1
+	                        -- Every 5 year liberation day is a public holiday if it falls on a weekday
+	                        -- *Note 5 may 2016 is both Liberation Day and Ascencion Day.
+							-- This would create a duplicate record for that day (see union all below)
+								WHEN (TheYear >= 1990 AND TheYear % 5 = 0 AND TheMonth = 5 AND TheDay = 5 AND TheDayOfWeek <=5)
+	                                            THEN 1
+	                             WHEN (TheMonth = 12 AND TheDay = 25)
+	                                            THEN 1
+	                             WHEN (TheMonth = 12 AND TheDay = 26)
+	                                            THEN 1
 	                             END
-	               From   ##BaseCalendar cte
-	               Where 1=1
-								and TheDate = TheFirstOfYear -- 'New Year''s Day'
-	                              or (TheYear <= 1948 and TheMonth = 8 and TheDay = 31) -- 'Princess''s Day'
-	                              or (TheYear >= 1949 and TheYear <= 2013 and TheMonth = 4 and TheDay = 30 and TheDayOfWeek <> 7) -- 'Queen''s Day'
-	                              or (TheYear >= 1949 and TheYear <= 1979 and TheMonth = 5 and TheDay = 1 and TheDayOfWeek = 1)  -- 'Queen''s Day'
-	                              or (TheYear >= 1980 and TheYear <= 2013 and TheMonth = 4 and TheDay = 29 and TheDayOfWeek = 6) -- 'Queen''s Day'
-	                              or (TheYear >= 2014 and TheMonth = 4 and TheDay = 27 and TheDayOfWeek <> 7) -- 'King''s Day'
-	                              or (TheYear >= 2014 and TheMonth = 4 and TheDay = 26 and TheDayOfWeek = 6) -- 'King''s Day'
-								  or (TheYear >= 1990 and TheMonth = 5 and TheDay = 5) -- Liberation Day
-	                              or (TheMonth = 12 and TheDay = 25) -- Christmas
-	                              or (TheMonth = 12 and TheDay = 26) -- Boxing Day
+	               FROM   ##BaseCalendar cte
+	               WHERE 1=1
+								AND TheDate = TheFirstOfYear -- 'New Year''s Day'
+	                              OR (TheYear <= 1948 AND TheMonth = 8 AND TheDay = 31) -- 'Princess''s Day'
+	                              OR (TheYear >= 1949 AND TheYear <= 2013 AND TheMonth = 4 AND TheDay = 30 AND TheDayOfWeek <> 7) -- 'Queen''s Day'
+	                              OR (TheYear >= 1949 AND TheYear <= 1979 AND TheMonth = 5 AND TheDay = 1 AND TheDayOfWeek = 1)  -- 'Queen''s Day'
+	                              OR (TheYear >= 1980 AND TheYear <= 2013 AND TheMonth = 4 AND TheDay = 29 AND TheDayOfWeek = 6) -- 'Queen''s Day'
+	                              OR (TheYear >= 2014 AND TheMonth = 4 AND TheDay = 27 AND TheDayOfWeek <> 7) -- 'King''s Day'
+	                              OR (TheYear >= 2014 AND TheMonth = 4 AND TheDay = 26 AND TheDayOfWeek = 6) -- 'King''s Day'
+								  OR (TheYear >= 1990 AND TheMonth = 5 AND TheDay = 5) -- Liberation Day
+	                              OR (TheMonth = 12 AND TheDay = 25) -- Christmas
+	                              OR (TheMonth = 12 AND TheDay = 26) -- Boxing Day
 	
 	               UNION ALL
-				   Select 
+				   SELECT 
 						TheDate	 = e.HolidayDate
 						, e.HolidayNameDutch
 						, e.HolidayName
-						, IsBankHoliday = CASE e.HolidayName When 'Good Friday' Then 1 WHen 'Easter Monday' Then 1 Else 0 END
+						, IsBankHoliday = CASE e.HolidayName WHEN 'Good Friday' THEN 1 WHEN 'Easter Monday' THEN 1 ELSE 0 END
 						, IsPublicHoliday = 1
-					From ##Easter e
+					FROM ##Easter e
              
                )
-	, LWDM as  -- Last Workday Of Month
+	, LWDM AS  -- Last Workday Of Month
 		(
-		Select 
-			max(TheDate) TheLastWorkDayOfMonth, yearmonth as LWDM_Yearmonth 
-		From ##BaseCalendar d 
-		left join Holidays h on d.TheDate = h.HolidayDate
-		Where d.IsWeekend = 0  and h.HolidayDate is null
-		Group by d.YearMonth
+		SELECT 
+			max(TheDate) TheLastWorkDayOfMonth, yearmonth AS LWDM_Yearmonth 
+		FROM ##BaseCalendar d 
+		LEFT JOIN Holidays h ON d.TheDate = h.HolidayDate
+		WHERE d.IsWeekend = 0  AND h.HolidayDate IS null
+		GROUP BY d.YearMonth
 		)
-	, FWDM as  -- First Workday Of Month
+	, FWDM AS  -- First Workday Of Month
 		(
-		Select 
-			min(TheDate) TheFirstWorkDayOfMonth, yearmonth as FWDM_Yearmonth 
-		From ##BaseCalendar d 
-		left join Holidays h on d.TheDate = h.HolidayDate
-		Where d.IsWeekend = 0  and h.HolidayDate is null
-		Group by d.YearMonth
+		SELECT 
+			min(TheDate) TheFirstWorkDayOfMonth, yearmonth AS FWDM_Yearmonth 
+		FROM ##BaseCalendar d 
+		LEFT JOIN Holidays h ON d.TheDate = h.HolidayDate
+		WHERE d.IsWeekend = 0  AND h.HolidayDate IS null
+		GROUP BY d.YearMonth
 		)
-	, LFDM as  -- Last Friday Of Month
+	, LFDM AS  -- Last Friday Of Month
 		(
-		Select 
-			min(TheDate) TheLastWorkDayOfMonth, yearmonth as FWDM_Yearmonth 
-		From ##BaseCalendar d 
-		Where TheDayOfWeek = 5
-		Group by d.YearMonth
+		SELECT 
+			min(TheDate) TheLastWorkDayOfMonth, yearmonth AS FWDM_Yearmonth 
+		FROM ##BaseCalendar d 
+		WHERE TheDayOfWeek = 5
+		GROUP BY d.YearMonth
 		)
-	, WDM as (
-		select
+	, WDM AS (
+		SELECT
 			d.TheDate
 			, ROW_NUMBER() OVER (PARTITION BY d.yearmonth  ORDER BY d.TheDate) AS WorkDayOfMonth
 			, ROW_NUMBER() OVER (PARTITION BY 1  ORDER BY d.TheDate) AS WorkDayCounter
-		from ##BaseCalendar d
-		left join Holidays h on h.HolidayDate = d.TheDate
-		where d.IsWeekend = 0 
+		FROM ##BaseCalendar d
+		LEFT JOIN Holidays h ON h.HolidayDate = d.TheDate
+		WHERE d.IsWeekend = 0 
 		 AND isnull(h.IsPublicHoliday,0) = 0
 
 	)
 
-Insert into [adf].[DWH_Date]
+INSERT INTO [adf].[DWH_Date]
            (
 		     DateKey
 		   , TheDate
@@ -463,8 +470,8 @@ Insert into [adf].[DWH_Date]
 
 
 
-Select 
-	  [DateKey]							= convert(varchar(8),d.[TheDate],112)
+SELECT 
+	  [DateKey]							= CONVERT(varchar(8),d.[TheDate],112)
 	, d.[TheDate]
 	, d.[TheDay]
 	, d.[TheDaySuffix]
@@ -473,8 +480,8 @@ Select
 	, d.[TheDayOfWeekInMonth]
 	, d.[TheDayOfYear]
 	, d.[IsWeekend]
-	, [IsWorkDay]							= case when d.IsWeekend = 0 and isnull(h.IsPublicHoliday,0) = 0 then 1 else 0 end
-	, WorkDayOfMonth						= coalesce(wdm.WorkdayOfMonth,0)				
+	, [IsWorkDay]							= CASE WHEN d.IsWeekend = 0 AND isnull(h.IsPublicHoliday,0) = 0 THEN 1 ELSE 0 END
+	, WorkDayOfMonth						= COALESCE(wdm.WorkdayOfMonth,0)				
 	, d.[TheWeek]
 	, d.[TheISOweek]
 	, d.[TheFirstOfWeek]
@@ -507,45 +514,45 @@ Select
 	, d.[YearISOWeek]
 	, d.[YearMonth]
 
-	, [HolidayName]					= cast(Isnull(h.[HolidayName],'') as varchar(255))
+	, [HolidayName]					= CAST(Isnull(h.[HolidayName],'') AS varchar(255))
 	, [IsBankHoliday]				= isnull(h.[IsBankHoliday],0)
 	, [IsPublicHoliday]				= isnull(h.[IsPublicHoliday],0)
 
-	, [HolidayNameDutch]			= cast(isnull(h.[HolidayNameDutch],'') as varchar(255))
-	, TheDayName_NL					= case 
-										when d.[TheDayOfWeek] = 1 then 'maandag'
-										when d.[TheDayOfWeek] = 2 then 'dinsdag'
-										when d.[TheDayOfWeek] = 3 then 'woensdag'
-										when d.[TheDayOfWeek] = 4 then 'donderdag'
-										when d.[TheDayOfWeek] = 5 then 'vrijdag'
-										when d.[TheDayOfWeek] = 6 then 'zaterdag'
-										when d.[TheDayOfWeek] = 7 then 'zondag'
-										else ''
-										end
-	, TheMonthName_NL				= case 
-										when d.[TheMonth] = 1  then 'januari'
-										when d.[TheMonth] = 2  then 'februari'
-										when d.[TheMonth] = 3  then 'maart'
-										when d.[TheMonth] = 4  then 'april'
-										when d.[TheMonth] = 5  then 'mei'
-										when d.[TheMonth] = 6  then 'juni'
-										when d.[TheMonth] = 7  then 'juli'
-										when d.[TheMonth] = 8  then 'augustus'
-										when d.[TheMonth] = 9  then 'september'
-										when d.[TheMonth] = 10 then 'oktober'
-										when d.[TheMonth] = 11 then 'november'
-										when d.[TheMonth] = 12 then 'december'
-										else ''
-										end
-	, DayCounter					= ROW_NUMBER() Over (order by d.thedate asc)
-	, WorkDayCounter				= coalesce ( -- coalesce is needed if the calendare starts with a weekend or an holiday
+	, [HolidayNameDutch]			= CAST(isnull(h.[HolidayNameDutch],'') AS varchar(255))
+	, TheDayName_NL					= CASE 
+										WHEN d.[TheDayOfWeek] = 1 THEN 'maandag'
+										WHEN d.[TheDayOfWeek] = 2 THEN 'dinsdag'
+										WHEN d.[TheDayOfWeek] = 3 THEN 'woensdag'
+										WHEN d.[TheDayOfWeek] = 4 THEN 'donderdag'
+										WHEN d.[TheDayOfWeek] = 5 THEN 'vrijdag'
+										WHEN d.[TheDayOfWeek] = 6 THEN 'zaterdag'
+										WHEN d.[TheDayOfWeek] = 7 THEN 'zondag'
+										ELSE ''
+										END
+	, TheMonthName_NL				= CASE 
+										WHEN d.[TheMonth] = 1  THEN 'januari'
+										WHEN d.[TheMonth] = 2  THEN 'februari'
+										WHEN d.[TheMonth] = 3  THEN 'maart'
+										WHEN d.[TheMonth] = 4  THEN 'april'
+										WHEN d.[TheMonth] = 5  THEN 'mei'
+										WHEN d.[TheMonth] = 6  THEN 'juni'
+										WHEN d.[TheMonth] = 7  THEN 'juli'
+										WHEN d.[TheMonth] = 8  THEN 'augustus'
+										WHEN d.[TheMonth] = 9  THEN 'september'
+										WHEN d.[TheMonth] = 10 THEN 'oktober'
+										WHEN d.[TheMonth] = 11 THEN 'november'
+										WHEN d.[TheMonth] = 12 THEN 'december'
+										ELSE ''
+										END
+	, DayCounter					= ROW_NUMBER() OVER (ORDER BY d.thedate ASC)
+	, WorkDayCounter				= COALESCE ( -- coalesce is needed if the calendare starts with a weekend or an holiday
 											MAX(wdm.WorkDayCounter) OVER (ORDER BY d.thedate ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
 											,0
 											)
 										
-From ##BaseCalendar	d
-Left join	LWDM		on LWDM.LWDM_Yearmonth	= d.YearMonth
-Left join	FWDM		on FWDM.FWDM_Yearmonth	= d.YearMonth
-Left join	Holidays h	on h.HolidayDate		= d.TheDate
-left join	WDM			on WDM.TheDate			= d.TheDate
-Order by TheDate asc
+FROM ##BaseCalendar	d
+LEFT JOIN	LWDM		ON LWDM.LWDM_Yearmonth	= d.YearMonth
+LEFT JOIN	FWDM		ON FWDM.FWDM_Yearmonth	= d.YearMonth
+LEFT JOIN	Holidays h	ON h.HolidayDate		= d.TheDate
+LEFT JOIN	WDM			ON WDM.TheDate			= d.TheDate
+ORDER BY TheDate ASC

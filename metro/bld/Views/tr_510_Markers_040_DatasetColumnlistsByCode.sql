@@ -1,9 +1,6 @@
 ﻿
  -- noqa: LT05
-
-
-
-
+ -- noqa: PRS
 
 
 
@@ -296,9 +293,6 @@ UNION ALL
 		  src.bk_dataset		
 		, src.code
 		, marker				= '<!<TGT_ColumnList_bk_data>>'
-		-- example value:
-		--  [Id],  [Name],  [ProductCode],  [Description],  [QuantityScheduleType],  [QuantityInstallmentPeriod],  [NumberOfQuantityInstallments],  [RevenueScheduleType],  [RevenueInstallmentPeriod],  [NumberOfRevenueInstallments],  [CanUseQuantitySchedule],  [CanUseRevenueSchedule],  [IsActive],  [CreatedDate],  [CreatedbyId],  [LastModifiedDate],  [LastModifiedbyId],  [SystemModstamp],  [Family],  [ExternalDataSourceId],  [ExternalId],  [DisplayUrl],  [QuantityUnitOfMeasure],  [IsDeleted],  [IsArchived],  [LastViewedDate],  [LastReferencedDate],  [StockKeepingUnit],  [External_Id__c],  [Product_Id__c],  [SLA_hours__c]
-			
 		, markervalue			=  (
 						SELECT TRIM(
 							',' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) + CHAR(9)
@@ -322,10 +316,6 @@ UNION ALL
 		  src.bk_dataset		
 		, src.code
 		, marker				= '<!<SRC_ColumnList_SRC_bk_data>>'
-		
-		-- example values:
-		--  SRC.[Id], SRC.[Name], SRC.[ProductCode], SRC.[Description], SRC.[QuantityScheduleType], SRC.[QuantityInstallmentPeriod], SRC.[NumberOfQuantityInstallments], SRC.[RevenueScheduleType], SRC.[RevenueInstallmentPeriod], SRC.[NumberOfRevenueInstallments], SRC.[CanUseQuantitySchedule], SRC.[CanUseRevenueSchedule], SRC.[IsActive], SRC.[CreatedDate], SRC.[CreatedbyId], SRC.[LastModifiedDate], SRC.[LastModifiedbyId], SRC.[SystemModstamp], SRC.[Family], SRC.[ExternalDataSourceId], SRC.[ExternalId], SRC.[DisplayUrl], SRC.[QuantityUnitOfMeasure], SRC.[IsDeleted], SRC.[IsArchived], SRC.[LastViewedDate], SRC.[LastReferencedDate], SRC.[StockKeepingUnit], SRC.[External_Id__c], SRC.[Product_Id__c], SRC.[SLA_hours__c]
-		
 		, markervalue = (
 						SELECT TRIM(
 							',' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) + CHAR(9)
@@ -334,11 +324,6 @@ UNION ALL
 								',' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) + CHAR(9)
 							) WITHIN GROUP (ORDER BY CAST(a.ordinalposition AS INT))
 						))
-		--, markervalue			= STRING_AGG(
-		--									'src.' + CONVERT(VARCHAR(MAX), QUOTENAME(A.AttributeName)),
-		--									+ ',' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) + CHAR(9) 
-		--								) WITHIN GROUP (ORDER BY CAST(A.OrdinalPosition AS INT)) + CHAR(13) + CHAR(10)
-							
 		, markerdescription		= ''
 	FROM base src
 	JOIN bld.vw_attribute a ON src.bk_dataset = a.bk_dataset
@@ -356,9 +341,6 @@ UNION ALL
 		  src.bk_dataset		
 		, src.code
 		, marker				= '<!<TGT_ColumnList_data>>'
-		
-		-- Example value:
-		--  [Name],  [ProductCode],  [Description],  [QuantityScheduleType],  [QuantityInstallmentPeriod],  [NumberOfQuantityInstallments],  [RevenueScheduleType],  [RevenueInstallmentPeriod],  [NumberOfRevenueInstallments],  [CanUseQuantitySchedule],  [CanUseRevenueSchedule],  [IsActive],  [CreatedDate],  [CreatedbyId],  [LastModifiedDate],  [LastModifiedbyId],  [SystemModstamp],  [Family],  [ExternalDataSourceId],  [ExternalId],  [DisplayUrl],  [QuantityUnitOfMeasure],  [IsDeleted],  [IsArchived],  [LastViewedDate],  [LastReferencedDate],  [StockKeepingUnit],  [External_Id__c],  [Product_Id__c],  [SLA_hours__c]
 		, markervalue			= STRING_AGG(
 											CONVERT(VARCHAR(MAX), QUOTENAME(a.attributename)),
 											+ ',' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) + CHAR(9) 
@@ -380,8 +362,6 @@ UNION ALL
 		, src.code
 		, marker				= '<!<SRC_ColumnList_SRC_data>>'
 		
-		-- example value:
-		--  src.[Name],  src.[ProductCode],  src.[Description],  src.[QuantityScheduleType],  src.[QuantityInstallmentPeriod],  src.[NumberOfQuantityInstallments],  src.[RevenueScheduleType],  src.[RevenueInstallmentPeriod],  src.[NumberOfRevenueInstallments],  src.[CanUseQuantitySchedule],  src.[CanUseRevenueSchedule],  src.[IsActive],  src.[CreatedDate],  src.[CreatedbyId],  src.[LastModifiedDate],  src.[LastModifiedbyId],  src.[SystemModstamp],  src.[Family],  src.[ExternalDataSourceId],  src.[ExternalId],  src.[DisplayUrl],  src.[QuantityUnitOfMeasure],  src.[IsDeleted],  src.[IsArchived],  src.[LastViewedDate],  src.[LastReferencedDate],  src.[StockKeepingUnit],  src.[External_Id__c],  src.[Product_Id__c],  src.[SLA_hours__c]
 		, markervalue			= STRING_AGG(
 											'src.' + CONVERT(VARCHAR(MAX), QUOTENAME(a.attributename)),
 											+ ',' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) + CHAR(9) 
@@ -565,6 +545,3 @@ FROM markerbuild mb
 JOIN bld.vw_dataset tgt ON mb.code = tgt.code
 LEFT JOIN [bld].[vw_MarkersSmartLoad] diff ON mb.code = diff.code 
 WHERE 1=1
---and marker = '<!<TGT_ColumnList_TryCast>>'
---and tgt.bk = 'DWH|cds||ODF|Wholesale|'
---order by MB.Marker asc

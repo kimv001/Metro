@@ -1,28 +1,4 @@
-﻿
-/* BEGIN COMMENT-->
-{
-  "Description": 
-	[
-    "Create DataType syntax for table creation - redesigned from 2011",
-	"First parameter is the AttributeID, the second paramter @GetIsNullable gives the option to get Nullbale information, Default set to 1 (give nullable information)",
-	"The third @AddAs gives you the possibility to make sql statements like cast([Kim] AS [int])"
-	],
-	"Example": "Select [rep].[GetDummyValueByAttributeId](441232,'-1', '<Empty>','1900-01-01')",
-	"Fail Example": "Select [rep].[GetDataTypeSyntaxByAttributeId](-1)",
-  "Log": [
-    {"Change date": "20190923", "Author":"Tijs van Rinsum"      , "Description":"Initial"},
-    {"Change date": "20211205", "Author":"Kim Vermeij"          , "Description":"Code Review"}
-    ]
-}
-select 
-STRING_AGG(
-										CONVERT(VARCHAR(max),
-											[rep].[GetDummyValueByAttributeBK](a.BK,'-1', '<Empty>','1900-01-01') +' AS '+ QUOTENAME(A.AttributeName)
-										) 
-									
-									,',' ) WITHIN GROUP (ORDER BY  cast(a.OrdinalPosition as int))	
-<--END COMMENT */
-
+﻿ -- noqa: PRS
 
 CREATE FUNCTION [rep].[GetDummyValueByAttributeBK]
 (      

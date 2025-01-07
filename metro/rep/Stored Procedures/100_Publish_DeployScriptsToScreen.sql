@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [rep].[100_Publish_DeployScriptsToScreen] @TGT_ObjectName varchar(8000) = ''
+﻿CREATE PROCEDURE [rep].[100_Publish_DeployScriptsToScreen] @TGT_ObjectName varchar(8000) = ''  -- noqa: PRS
 	,@LayerName varchar(8000) = ''
 	,@SchemaName varchar(8000) = ''
 	,@GroupName varchar(8000) = ''
@@ -130,7 +130,7 @@ IF OBJECT_ID('tempdb..#DeployScripts') IS NOT null
 WITH base
 AS (
 	SELECT
-		--	  DeployOrder				= dense_rank() over (partition by  d.Code order by d.ShortName,d.BK_Group, cast(isnull(fl.SortOrder,'1000') as int) asc,   cast(src.ObjectTypeDeployOrder as int) asc) -- rank() OVER (partition by d.SchemaName order by  cast(src.ObjectTypeDeployOrder as int) asc )
+		
 		DeployOrder = DENSE_RANK() OVER (
 			PARTITION BY d.Code ORDER BY d.ShortName
 				,d.BK_Group
