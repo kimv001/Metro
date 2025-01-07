@@ -9,7 +9,7 @@ Description:			(Re)Create views on the [stg_rep] tables with meta columns:
 						- mta_BKH		(Stores the hash of the Businesskey of the table)
 						- mta_RH		(Stores the hash of the full row)
 						- mta_RowNum	actually only needed for the view [rep].[vw_XlsTabsToLoad] so i could make an easy loop in this procedure
-
+-- can be removed
 Change log:
 Date					Author				Description
 20220915 00:00			K. Vermeij			Initial version
