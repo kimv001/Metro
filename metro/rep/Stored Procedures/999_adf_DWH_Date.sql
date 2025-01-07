@@ -1,4 +1,5 @@
-﻿CREATE procedure [rep].[999_adf_DWH_Date] as
+﻿ -- noqa: PRS
+ CREATE procedure [rep].[999_adf_DWH_Date] as
 /* 
 === Comments =========================================
 

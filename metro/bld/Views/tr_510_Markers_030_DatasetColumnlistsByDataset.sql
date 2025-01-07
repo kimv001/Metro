@@ -1,9 +1,5 @@
-﻿ -- noqa: LT05
-
-
-
-
-
+﻿ -- noqa: PRS
+ -- noqa: LT05
 
 
 CREATE VIEW [bld].[tr_510_Markers_030_DatasetColumnlistsByDataset] AS 

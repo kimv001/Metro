@@ -1,4 +1,4 @@
-﻿
+﻿ -- noqa: PRS
 CREATE PROCEDURE rep.[999_adf_DWH_Time] AS
 /* 
 === Comments =========================================
