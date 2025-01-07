@@ -1,26 +1,18 @@
 ﻿
-CREATE VIEW [adf].[vw_datasource] AS
-SELECT src.bk_datasource,
 
-       src.isdwh,
 
-       src.isrep,
+CREATE  VIEW [adf].[vw_Datasource] AS
 
-       src.datasourceserver,
-
-       src.datasourcedatabase,
-
-       src.datasourceurl,
-
-       src.datasourceusr,
-
-       src.environment,
-
-       rt.code AS repositorystatus
-
-  FROM adf.vw_datasourceproperties_sdtap_values src
-
-  JOIN rep.vw_reftype rt
-    ON rt.name = src.environment
-
- WHERE src.isdwh = 1
+	SELECT 
+		src.BK_DataSource
+		, src.IsDWH
+		, src.isRep
+		, src.DataSourceServer
+		, src.DataSourceDatabase
+		, src.DataSourceURL
+		, src.DataSourceUSR
+		, src.Environment
+		, rt.code AS RepositoryStatus
+	FROM adf.vw_DataSourceProperties_SDTAP_Values src
+	JOIN rep.vw_RefType rt ON rt.name = src.Environment
+	WHERE src.IsDWH = 1

@@ -1,7 +1,7 @@
 ﻿
 
 
-CREATE view [bld].[tr_100_Dataset_040_AliasViews] as 
+CREATE VIEW [bld].[tr_100_Dataset_040_AliasViews] AS 
 /* 
 === Comments =========================================
 
@@ -16,102 +16,102 @@ Date		time		Author					Description
 20230406	1023		K. Vermeij				Added "ToDeploy	= 1", it will be used to determine if a deployscript has to be generated
 =======================================================
 */
-WITH  AliasViews as (
+WITH  ALIASVIEWS AS (
 	SELECT 
-		  BK							= a.bk
-		, Code							= d.code 
-		, DatasetName					= Quotename(s.SchemaName)+'.'+Quotename(isnull(a.Prefix+'_','')+a.SRC_GroupName+'_'+a.TGT_ShortName+isnull('_'+a.postfix,''))
+		  BK							= A.BK
+		, CODE							= D.CODE 
+		, DATASETNAME					= Quotename(S.SCHEMANAME)+'.'+Quotename(isnull(A.PREFIX+'_','')+A.SRC_GROUPNAME+'_'+A.TGT_SHORTNAME+isnull('_'+A.POSTFIX,''))
 
-		, SchemaName					= s.SchemaName
-		, LayerName						= s.LayerName
-		, LayerOrder					= s.LayerOrder
-		, DataSource					= d.DataSource
-		, BK_Schema						= s.BK
-		, BK_Group						= d.BK_Group
-		, Shortname						= d.ShortName
-		, dwhTargetShortName			= a.TGT_ShortName
-		, Prefix						= a.Prefix
-		, Postfix						= a.Postfix
-		, Description					= d.Description
-		, BK_Flow						= d.BK_Flow
-		, TimeStamp						= d.TimeStamp
-		, BusinessDate					= null
-		, WhereFilter					= d.WhereFilter
-		, PartitionStatement			= d.PartitionStatement
-		, [BK_RefType_ObjectType]		= (select BK from rep.vw_Reftype where RefType='ObjectType' and [Name] = 'View')
-		, FullLoad						= null
-		, InsertOnly					= null
-		, BigData						= null
-		, BK_Template_Load				= null
-		, BK_Template_Create			= a.BK_Template_Create
-		, CustomStagingView				= null
-		, ReplaceAttributeNames			= a.ReplaceAttributeNames
-		, BK_RefType_RepositoryStatus	= a.BK_RefType_RepositoryStatus
-		, IsSystem						= d.IsSystem
-		, s.isDWH								
-		, s.isSRC								
-		, s.isTGT
-		, s.IsRep
-		, mta_RowNum					= Row_Number() over (order by d.BK)
+		, SCHEMANAME					= S.SCHEMANAME
+		, LAYERNAME						= S.LAYERNAME
+		, LAYERORDER					= S.LAYERORDER
+		, DATASOURCE					= D.DATASOURCE
+		, BK_SCHEMA						= S.BK
+		, BK_GROUP						= D.BK_GROUP
+		, SHORTNAME						= D.SHORTNAME
+		, DWHTARGETSHORTNAME			= A.TGT_SHORTNAME
+		, PREFIX						= A.PREFIX
+		, POSTFIX						= A.POSTFIX
+		, DESCRIPTION					= D.DESCRIPTION
+		, BK_FLOW						= D.BK_FLOW
+		, TIMESTAMP						= D.TIMESTAMP
+		, BUSINESSDATE					= null
+		, WHEREFILTER					= D.WHEREFILTER
+		, PARTITIONSTATEMENT			= D.PARTITIONSTATEMENT
+		, [BK_RefType_ObjectType]		= (SELECT BK FROM REP.VW_REFTYPE WHERE REFTYPE='ObjectType' AND [Name] = 'View')
+		, FULLLOAD						= null
+		, INSERTONLY					= null
+		, BIGDATA						= null
+		, BK_TEMPLATE_LOAD				= null
+		, BK_TEMPLATE_CREATE			= A.BK_TEMPLATE_CREATE
+		, CUSTOMSTAGINGVIEW				= null
+		, REPLACEATTRIBUTENAMES			= A.REPLACEATTRIBUTENAMES
+		, BK_REFTYPE_REPOSITORYSTATUS	= A.BK_REFTYPE_REPOSITORYSTATUS
+		, ISSYSTEM						= D.ISSYSTEM
+		, S.ISDWH								
+		, S.ISSRC								
+		, S.ISTGT
+		, S.ISREP
+		, MTA_ROWNUM					= ROW_NUMBER() OVER (ORDER BY D.BK)
 
-	FROM rep.vw_AliasViews a
-	join [bld].[vw_Dataset] D on d.bk			=  a.BK_DatasetTrn
+	FROM REP.VW_ALIASVIEWS A
+	JOIN [bld].[vw_Dataset] D ON D.BK			=  A.BK_DATASETTRN
 
-	Join bld.vw_Schema		S	on S.bk			= d.BK_Schema
-	join rep.vw_RefType		RT	on RT.BK		= D.[BK_RefType_ObjectType]
+	JOIN BLD.VW_SCHEMA		S	ON S.BK			= D.BK_SCHEMA
+	JOIN REP.VW_REFTYPE		RT	ON RT.BK		= D.[BK_RefType_ObjectType]
 	WHERE 1 = 1
 
 
 			)
-Select 
-	  src.[BK]
-	, src.[Code]
-	, src.[DatasetName]
-	, src.[SchemaName]
-	, src.[DataSource]
-	, ss.BK_LinkedService
-	, LinkedServiceName					= ss.LinkedServiceName
-	, ss.BK_DataSource
-	, ss.BK_Layer
-	, src.LayerName
-	, src.[BK_Schema]
-	, src.[BK_Group]
-	, src.[Shortname]
-	, src.[dwhTargetShortName]
-	, [Prefix]							= src.Prefix
-	, [PostFix]							= src.Postfix
-	, src.[Description]
-	, src.[BK_Flow]
-	, FlowOrder							= cast(isnull(src.LayerOrder,0) as int) + ((fl.SortOrder * 10) + 5) -- (src.LayerOrder + ((fl.SortOrder * 100) + 2))
-	, src.[TimeStamp]
-	, src.[BusinessDate]
-	, src.[WhereFilter]
-	, src.[PartitionStatement]
-	, src.[BK_RefType_ObjectType]
-	, src.[FullLoad]
-	, src.[InsertOnly]
-	, src.[BigData]
-	, src.[BK_Template_Load]
-	, src.[BK_Template_Create]
-	, src.[CustomStagingView]
-	, src.ReplaceAttributeNames
-	, src.[BK_RefType_RepositoryStatus]
-	, src.IsSystem
-	, src.isDWH								
-	, src.isSRC								
-	, src.isTGT
-	, src.IsRep
-	, FirstDefaultDWHView				= 0
-	, ObjectType						= rtOT.[Name]
-	, RepositoryStatusName				= rtRS.[Name]
-	, RepositoryStatusCode				= rtRS.Code
-	, ToDeploy							= 1
-from AliasViews src
-left join bld.vw_Schema			ss		on ss.BK			= src.BK_Schema
+SELECT 
+	  SRC.[BK]
+	, SRC.[Code]
+	, SRC.[DatasetName]
+	, SRC.[SchemaName]
+	, SRC.[DataSource]
+	, SS.BK_LINKEDSERVICE
+	, LINKEDSERVICENAME					= SS.LINKEDSERVICENAME
+	, SS.BK_DATASOURCE
+	, SS.BK_LAYER
+	, SRC.LAYERNAME
+	, SRC.[BK_Schema]
+	, SRC.[BK_Group]
+	, SRC.[Shortname]
+	, SRC.[dwhTargetShortName]
+	, [Prefix]							= SRC.PREFIX
+	, [PostFix]							= SRC.POSTFIX
+	, SRC.[Description]
+	, SRC.[BK_Flow]
+	, FLOWORDER							= CAST(isnull(SRC.LAYERORDER,0) AS int) + ((FL.SORTORDER * 10) + 5) -- (src.LayerOrder + ((fl.SortOrder * 100) + 2))
+	, SRC.[TimeStamp]
+	, SRC.[BusinessDate]
+	, SRC.[WhereFilter]
+	, SRC.[PartitionStatement]
+	, SRC.[BK_RefType_ObjectType]
+	, SRC.[FullLoad]
+	, SRC.[InsertOnly]
+	, SRC.[BigData]
+	, SRC.[BK_Template_Load]
+	, SRC.[BK_Template_Create]
+	, SRC.[CustomStagingView]
+	, SRC.REPLACEATTRIBUTENAMES
+	, SRC.[BK_RefType_RepositoryStatus]
+	, SRC.ISSYSTEM
+	, SRC.ISDWH								
+	, SRC.ISSRC								
+	, SRC.ISTGT
+	, SRC.ISREP
+	, FIRSTDEFAULTDWHVIEW				= 0
+	, OBJECTTYPE						= RTOT.[Name]
+	, REPOSITORYSTATUSNAME				= RTRS.[Name]
+	, REPOSITORYSTATUSCODE				= RTRS.CODE
+	, TODEPLOY							= 1
+FROM ALIASVIEWS SRC
+LEFT JOIN BLD.VW_SCHEMA			SS		ON SS.BK			= SRC.BK_SCHEMA
 
-left join rep.vw_FlowLayer		fl		on fl.BK_Flow		= src.BK_Flow 
-											and fl.BK_Layer = ss.BK_Layer 
-											and (src.BK_Schema = fl.BK_Schema  OR fl.BK_Schema is null) 
-join rep.vw_RefType				rtOT	on rtOT.BK			= src.BK_RefType_ObjectType
-join rep.vw_RefType				rtRS	on rtRS.BK			= src.BK_RefType_RepositoryStatus
-where 1=1
+LEFT JOIN REP.VW_FLOWLAYER		FL		ON FL.BK_FLOW		= SRC.BK_FLOW 
+											AND FL.BK_LAYER = SS.BK_LAYER 
+											AND (SRC.BK_SCHEMA = FL.BK_SCHEMA  OR FL.BK_SCHEMA IS null) 
+JOIN REP.VW_REFTYPE				RTOT	ON RTOT.BK			= SRC.BK_REFTYPE_OBJECTTYPE
+JOIN REP.VW_REFTYPE				RTRS	ON RTRS.BK			= SRC.BK_REFTYPE_REPOSITORYSTATUS
+WHERE 1=1

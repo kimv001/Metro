@@ -1,9 +1,11 @@
-﻿
-CREATE TABLE [rep].[flow] ([bk] NVARCHAR (MAX) NULL,
-                                               [code] NVARCHAR (MAX) NULL,
-                                                                     [name] NVARCHAR (MAX) NULL,
-                                                                                           [description] NVARCHAR (MAX) NULL,
-                                                                                                                        [active] NVARCHAR (MAX) NULL,
-                                                                                                                                                [issystem] NVARCHAR (MAX) NULL,
-                                                                                                                                                                          [mta_source] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                      [mta_loaddate] NVARCHAR (MAX) NULL);
+﻿CREATE TABLE [rep].[Flow] (
+    [BK]           NVARCHAR (MAX) NULL,
+    [Code]         NVARCHAR (MAX) NULL,
+    [Name]         NVARCHAR (MAX) NULL,
+    [Description]  NVARCHAR (MAX) NULL,
+    [Active]       NVARCHAR (MAX) NULL,
+    [IsSystem]     NVARCHAR (MAX) NULL,
+    [mta_Source]   NVARCHAR (MAX) NULL,
+    [mta_LoadDate] NVARCHAR (MAX) NULL
+);
+

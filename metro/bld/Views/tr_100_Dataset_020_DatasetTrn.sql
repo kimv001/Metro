@@ -3,7 +3,7 @@
 
 
 
-CREATE view [bld].[tr_100_Dataset_020_DatasetTrn] as 
+CREATE VIEW [bld].[tr_100_Dataset_020_DatasetTrn] AS 
 /* 
 === Comments =========================================
 
@@ -17,22 +17,22 @@ Date		time		Author					Description
 20230406	1023		K. Vermeij				Added "ToDeploy	= 0", it will be used to determine if a deployscript has to be generated
 =======================================================
 */
-with view_logic as (
-select
-	  [dataset_name]							= lower(concat('[',src.ObjectSchema,'].[',src.ObjectName,']'))
-	, [view_defintion_contains_business_logic]	= src.ObjectDefinition_contains_business_logic
-    , [view_defintion]							= cast(src.ObjectDefinition as varchar(max))
-from [stg].[DWH_ObjectDefinitions] src 
+WITH view_logic AS (
+SELECT
+	  [dataset_name]							= lower(concat('[',src.objectschema,'].[',src.objectname,']'))
+	, [view_defintion_contains_business_logic]	= src.objectdefinition_contains_business_logic
+    , [view_defintion]							= CAST(src.objectdefinition AS varchar(MAX))
+FROM [stg].[DWH_ObjectDefinitions] src 
 )
 
-, Base as (
+, base AS (
 	
 		SELECT  
 		  trn.[BK]
 		, [Code] = trn.[BK]
-		, DatasetName = trn.[Name]
+		, datasetname = trn.[Name]
 		--, trn.[Layer]
-		, SchemaName						= trn.[Schema]
+		, schemaname						= trn.[Schema]
 		, trn.[DataSource]
 		, trn.[BK_Schema]
 		, trn.[BK_Group]
@@ -51,7 +51,7 @@ from [stg].[DWH_ObjectDefinitions] src
 		, trn.[WhereFilter]
 		, trn.[PartitionStatement]
 		, trn.[BK_RefType_ObjectType]
-		, SCD								=  isnull(SCD.Code,'1')
+		, scd								=  isnull(scd.code,'1')
 		, trn.[FullLoad]
 		, trn.[InsertOnly]
 		, trn.[BigData]
@@ -66,66 +66,66 @@ from [stg].[DWH_ObjectDefinitions] src
 		, trn.[mta_RH]
 		, trn.[mta_Source]
 		, trn.[mta_Loaddate]
-	From [rep].[vw_DatasetTrn]	trn
-	left join bld.vw_RefType			SCD on trn.BK_RefType_SCD = SCD.BK
+	FROM [rep].[vw_DatasetTrn]	trn
+	LEFT JOIN bld.vw_reftype			scd ON trn.bk_reftype_scd = scd.bk
 	)
-select 
-	  src.BK
-	, src.Code
-	, src.DatasetName
-	, src.SchemaName
-	, LayerName							= ss.LayerName
-	, src.DataSource
-	, ss.BK_LinkedService
-	, LinkedServiceName					= ss.LinkedServiceName
-	, ss.BK_DataSource
-	, ss.BK_Layer
-	, src.BK_Schema
-	, src.BK_Group
+SELECT 
+	  src.bk
+	, src.code
+	, src.datasetname
+	, src.schemaname
+	, layername							= ss.layername
+	, src.datasource
+	, ss.bk_linkedservice
+	, linkedservicename					= ss.linkedservicename
+	, ss.bk_datasource
+	, ss.bk_layer
+	, src.bk_schema
+	, src.bk_group
 	, src.[BK_Segment]					
 	, src.[BK_Bucket]					
-	, src.ShortName
-	, src.dwhTargetShortName
-	, src.Prefix
-	, src.PostFix
+	, src.shortname
+	, src.dwhtargetshortname
+	, src.prefix
+	, src.postfix
 	, src.[Description]
-	, src.BK_ContactGroup
-	, src.BK_Flow
-	, FlowOrder							= cast(isnull(ss.LayerOrder,0) as int) + cast(isnull(fl.SortOrder,0) as int)
+	, src.bk_contactgroup
+	, src.bk_flow
+	, floworder							= CAST(isnull(ss.layerorder,0) AS int) + CAST(isnull(fl.sortorder,0) AS int)
 	, src.[TimeStamp]
-	, src.BusinessDate
-	, src.SCD
-	, src.WhereFilter
-	, src.PartitionStatement
-	, src.BK_RefType_ObjectType
-	, src.FullLoad
-	, src.InsertOnly
-	, src.BigData
-	, src.BK_Template_Load
-	, src.BK_Template_Create
-	, src.CustomStagingView
-	, src.BK_RefType_RepositoryStatus
-	, src.IsSystem
-	, FirstDefaultDWHView				= 0
-	, DatasetType						= Cast('TRN' as varchar(5))
-	, ObjectType						= rtOT.[Name]
-	, RepositoryStatusName				= rtRS.[Name]
-	, RepositoryStatusCode				= rtRS.Code
-	, isDWH								= ss.isDWH
-	, isSRC								= ss.isSRC
-	, isTGT								= ss.isTGT
-	, IsRep								= ss.IsRep
+	, src.businessdate
+	, src.scd
+	, src.wherefilter
+	, src.partitionstatement
+	, src.bk_reftype_objecttype
+	, src.fullload
+	, src.insertonly
+	, src.bigdata
+	, src.bk_template_load
+	, src.bk_template_create
+	, src.customstagingview
+	, src.bk_reftype_repositorystatus
+	, src.issystem
+	, firstdefaultdwhview				= 0
+	, datasettype						= CAST('TRN' AS varchar(5))
+	, objecttype						= rtot.[Name]
+	, repositorystatusname				= rtrs.[Name]
+	, repositorystatuscode				= rtrs.code
+	, isdwh								= ss.isdwh
+	, issrc								= ss.issrc
+	, istgt								= ss.istgt
+	, isrep								= ss.isrep
 	, [view_defintion_contains_business_logic]	= vl.[view_defintion_contains_business_logic]
 	, [view_defintion]							= vl.[view_defintion]
-	, ToDeploy							= 0
-	, CreateDummies						= ss.CreateDummies
-from base src
-join bld.vw_Schema			ss		on ss.BK			= src.BK_Schema
-join rep.vw_FlowLayer		fl		on fl.BK_Flow		= src.BK_Flow 
-										and fl.BK_Layer = ss.BK_Layer 
-										and (src.BK_Schema = fl.BK_Schema  OR fl.BK_Schema is null) 
-join rep.vw_RefType			rtOT	on rtOT.BK				= src.BK_RefType_ObjectType
-join rep.vw_RefType			rtRS	on rtRS.BK				= src.BK_RefType_RepositoryStatus
-left join view_logic		vl		on vl.dataset_name		= src.DatasetName
-Where 1=1
+	, todeploy							= 0
+	, createdummies						= ss.createdummies
+FROM base src
+JOIN bld.vw_schema			ss		ON ss.bk			= src.bk_schema
+JOIN rep.vw_flowlayer		fl		ON fl.bk_flow		= src.bk_flow 
+										AND fl.bk_layer = ss.bk_layer 
+										AND (src.bk_schema = fl.bk_schema  OR fl.bk_schema IS null) 
+JOIN rep.vw_reftype			rtot	ON rtot.bk				= src.bk_reftype_objecttype
+JOIN rep.vw_reftype			rtrs	ON rtrs.bk				= src.bk_reftype_repositorystatus
+LEFT JOIN view_logic		vl		ON vl.dataset_name		= src.datasetname
+WHERE 1=1
 --and src.code  = 'DWH|dim|trvs|Wes|Location|'

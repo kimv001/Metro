@@ -7,7 +7,7 @@
 
 
 
-CREATE view [adf].[vw_DWH_Date] as
+CREATE VIEW [adf].[vw_DWH_Date] AS
 
 /* 
 Description:
@@ -16,13 +16,13 @@ Description:
 
 */
 
-select
+SELECT
 	 src.* 
 
 	, RepositoryStatusName	= SDTAP.RepositoryStatus
 	, RepositoryStatusCode	= SDTAP.RepositoryStatusCode 
 	, Environment			= SDTAP.RepositoryStatus
-from  [adf].[DWH_Date]   src
-Cross join [adf].[vw_SDTAP] SDTAP
-where 1=1
-and SDTAP.RepositoryStatusCode > -2
+FROM  [adf].[DWH_Date]   src
+CROSS JOIN [adf].[vw_SDTAP] SDTAP
+WHERE 1=1
+AND SDTAP.RepositoryStatusCode > -2

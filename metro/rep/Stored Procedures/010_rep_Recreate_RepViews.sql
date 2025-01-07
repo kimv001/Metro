@@ -33,7 +33,7 @@ BEGIN
         DROP TABLE #XlsTabsToLoad
 
     -- Create temporary table with row numbers
-    SELECT TableName as Table_Name, BK,
+    SELECT TableName AS Table_Name, BK,
            ROW_NUMBER() OVER (ORDER BY [BK] ASC) AS mta_RowNum
     INTO #XlsTabsToLoad
     FROM rep.XlsTabsToLoad
@@ -76,16 +76,16 @@ BEGIN
         WHERE mta_RowNum = @CounterNr
 
         -- Generate the column list with transformations
-        SELECT @ColumnList = STRING_AGG('LTRIM(RTRIM(CAST([' + c.[COLUMN_NAME] + '] as varchar(' + case 
-				when c.[COLUMN_NAME] like '%desc'
-					or c.[COLUMN_NAME] like '%expression'
-					or c.[COLUMN_NAME] like '%script'
-					or c.[COLUMN_NAME] like '%RecordSrcDate'
-					or c.[COLUMN_NAME] like '%BusinessDate'
-					or c.[COLUMN_NAME] like '%value'
-					then 'max'
-				else '255'
-				end + ')))) as [' + c.[COLUMN_NAME] + ']', ', ')
+        SELECT @ColumnList = STRING_AGG('LTRIM(RTRIM(CAST([' + c.[COLUMN_NAME] + '] as varchar(' + CASE 
+				WHEN c.[COLUMN_NAME] LIKE '%desc'
+					OR c.[COLUMN_NAME] LIKE '%expression'
+					OR c.[COLUMN_NAME] LIKE '%script'
+					OR c.[COLUMN_NAME] LIKE '%RecordSrcDate'
+					OR c.[COLUMN_NAME] LIKE '%BusinessDate'
+					OR c.[COLUMN_NAME] LIKE '%value'
+					THEN 'max'
+				ELSE '255'
+				END + ')))) as [' + c.[COLUMN_NAME] + ']', ', ')
         FROM INFORMATION_SCHEMA.COLUMNS c
         WHERE TABLE_SCHEMA = @SrcSchema
           AND TABLE_NAME = @TableName

@@ -1,18 +1,20 @@
-﻿
-CREATE TABLE [aud].[jobruns] ([flowid] NVARCHAR (900) NOT NULL,
-                                                      [flowrunguid] NVARCHAR (36) NOT NULL,
-                                                                                  [jobid] NVARCHAR (900) NOT NULL,
-                                                                                                         [jobname] NVARCHAR (280) NOT NULL,
-                                                                                                                                  [jobdescription] NVARCHAR (MAX) NOT NULL,
-                                                                                                                                                                  [jobtype] NVARCHAR (MAX) NOT NULL,
-                                                                                                                                                                                           [jobrunguid] NVARCHAR (36) NOT NULL,
-                                                                                                                                                                                                                      [runstart] datetime2 (7) NULL,
-                                                                                                                                                                                                                                               [runend] datetime2 (7) NULL,
-                                                                                                                                                                                                                                                                      [runduration] INT NULL,
-                                                                                                                                                                                                                                                                                        [runstatus] NVARCHAR (10) NULL,
-                                                                                                                                                                                                                                                                                                                  [checkpoint] datetime2 (7) NULL,
-                                                                                                                                                                                                                                                                                                                                             [rowsinserted] INT NULL,
-                                                                                                                                                                                                                                                                                                                                                                [rowsupdated] INT NULL,
-                                                                                                                                                                                                                                                                                                                                                                                  [rowsdeleted] INT NULL,
-                                                                                                                                                                                                                                                                                                                                                                                                    [logdatetime] datetime2 (7) NULL,
-                                                                                                                                                                                                                                                                                                                                                                                                                                [logfullmessage] NVARCHAR (MAX) NULL);
+﻿CREATE TABLE [aud].[JobRuns] (
+    [FlowId]         NVARCHAR (900) NOT NULL,
+    [FlowRunGUID]    NVARCHAR (36)  NOT NULL,
+    [JobId]          NVARCHAR (900) NOT NULL,
+    [JobName]        NVARCHAR (280) NOT NULL,
+    [JobDescription] NVARCHAR (MAX) NOT NULL,
+    [JobType]        NVARCHAR (MAX) NOT NULL,
+    [JobRunGUID]     NVARCHAR (36)  NOT NULL,
+    [RunStart]       DATETIME2 (7)  NULL,
+    [RunEnd]         DATETIME2 (7)  NULL,
+    [RunDuration]    INT            NULL,
+    [RunStatus]      NVARCHAR (10)  NULL,
+    [CheckPoint]     DATETIME2 (7)  NULL,
+    [RowsInserted]   INT            NULL,
+    [RowsUpdated]    INT            NULL,
+    [RowsDeleted]    INT            NULL,
+    [LogDateTime]    DATETIME2 (7)  NULL,
+    [LogFullMessage] NVARCHAR (MAX) NULL
+);
+

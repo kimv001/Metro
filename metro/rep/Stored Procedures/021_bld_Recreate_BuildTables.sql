@@ -1,7 +1,8 @@
 ﻿
-CREATE PROCEDURE [rep].[021_bld_recreate_buildtables] @table_name varchar(255) = NULL,
-
-       @tgt_table_name varchar(255) = NULL AS BEGIN /*
+CREATE PROCEDURE [rep].[021_bld_Recreate_BuildTables] @table_name VARCHAR(255) = NULL, @tgt_table_name VARCHAR(255) = NULL
+AS
+BEGIN
+    /*
     Developed by:            metro
     Description:             (Re)Create tables in the [stg_bld] schema based on the [bld] schema
 
@@ -13,53 +14,59 @@ CREATE PROCEDURE [rep].[021_bld_recreate_buildtables] @table_name varchar(255) =
     Change log:
     Date                    Author              Description
     20220916 20:15          K. Vermeij          Initial version
-    */ DECLARE @logprocname varchar(255) = '[bld].[021_bld_Recreate_BuildTables]' DECLARE @logsql varchar(255) DECLARE @srcschema varchar(255) = 'bld' DECLARE @tgtschema varchar(255) = 'bld' DECLARE @counternr INT DECLARE @maxnr INT DECLARE @sqldrop nvarchar(MAX) DECLARE @sqlcreate nvarchar(MAX) DECLARE @tablename varchar(255) DECLARE @msg varchar(255) DECLARE @columnlist nvarchar(MAX) DECLARE @src_table_name varchar(255) BEGIN try -- Drop temporary table if it exists
- IF object_id('tempdb..#BuildTables') IS NOT NULL
-DROP TABLE #buildtables; -- Create temporary table with row numbers
- ;WITH base AS
+    */
+    DECLARE @LogProcName VARCHAR(255) = '[bld].[021_bld_Recreate_BuildTables]'
+    DECLARE @LogSQL VARCHAR(255)
+    DECLARE @SrcSchema VARCHAR(255) = 'bld'
+    DECLARE @TgtSchema VARCHAR(255) = 'bld'
+    DECLARE @CounterNr INT
+    DECLARE @MaxNr INT
+    DECLARE @sqlDrop NVARCHAR(MAX)
+    DECLARE @sqlCreate NVARCHAR(MAX)
+    DECLARE @TableName VARCHAR(255)
+    DECLARE @Msg VARCHAR(255)
+    DECLARE @ColumnList NVARCHAR(MAX)
+    DECLARE @src_table_name VARCHAR(255)
+    
 
-        (SELECT table_catalog = t.[table_catalog],
+    BEGIN TRY
+        -- Drop temporary table if it exists
+        IF OBJECT_ID('tempdb..#BuildTables') IS NOT NULL
+            DROP TABLE #BuildTables;
 
-               src_table_schema = t.[table_schema],
+        -- Create temporary table with row numbers
+        ;WITH base AS (
+            SELECT 
+                table_catalog = t.[TABLE_CATALOG],
+                src_table_schema = t.[TABLE_SCHEMA],
+                src_table_name = t.[TABLE_NAME],
+                src_table_type = t.[TABLE_TYPE],
+                tgt_table_name = rep.[GetNamePart](REPLACE(t.[TABLE_NAME], 'tr_', ''), 2),
+                RowNum = ROW_NUMBER() OVER (
+                    PARTITION BY rep.[GetNamePart](REPLACE(t.[TABLE_NAME], 'tr_', ''), 2) 
+                    ORDER BY t.[TABLE_NAME]
+                )
+            FROM [INFORMATION_SCHEMA].[TABLES] t
+            WHERE 1 = 1
+                AND TABLE_TYPE = 'VIEW'
+                AND LEFT(t.[TABLE_NAME], 3) = 'tr_'
+				AND ( rep.[GetNamePart](REPLACE(t.[TABLE_NAME], 'tr_', ''), 2) = @tgt_table_name OR @tgt_table_name IS null)
+                AND t.TABLE_SCHEMA = @SrcSchema
+				AND (@table_name IS null OR rep.[GetNamePart](REPLACE(t.[TABLE_NAME], 'tr_', ''), 2) = @table_name)
+        )
+        SELECT *,
+            ProcessSequence = ROW_NUMBER() OVER (ORDER BY tgt_table_name)
+        INTO #BuildTables
+        FROM base
+        WHERE RowNum = 1
 
-               src_table_name = t.[table_name],
+        -- Initialize loop variables
+        SELECT @CounterNr = MIN(ProcessSequence),
+               @MaxNr = MAX(ProcessSequence)
+        FROM #BuildTables
 
-               src_table_type = t.[table_type],
-
-               tgt_table_name = rep.[getnamepart](replace(t.[table_name], 'tr_', ''), 2), RowNum = row_number() OVER (PARTITION BY rep.[getnamepart](replace(t.[table_name], 'tr_', ''), 2)
-                                                                                                                 ORDER BY t.[table_name])
-
-          FROM [information_schema].[tables] t
-
-         WHERE 1 = 1
-
-           AND table_type = 'VIEW'
-
-           AND left(t.[table_name], 3) = 'tr_'
-
-           AND (rep.[getnamepart](replace(t.[table_name], 'tr_', ''), 2) = @tgt_table_name
-          OR @tgt_table_name IS NULL)
-
-           AND t.table_schema = @srcschema
-
-           AND (@table_name IS NULL
-          OR rep.[getnamepart](replace(t.[table_name], 'tr_', ''), 2) = @table_name)
-       )
-SELECT *,
-
-       processsequence = row_number() OVER (
-                                            ORDER BY tgt_table_name) INTO #buildtables
-
-  FROM base
-
- WHERE RowNum = 1 -- Initialize loop variables
-
-  SELECT @counternr = min(processsequence),
-
-       @maxnr = max(processsequence)
-
-  FROM #buildtables -- Define the table creation template
- DECLARE @tabletemplate nvarchar(MAX) = '
+        -- Define the table creation template
+        DECLARE @TableTemplate NVARCHAR(MAX) = '
         IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.[TABLES] WHERE table_schema = ''{TgtSchema}'' AND table_name = ''{tgt_table_name}'' AND TABLE_TYPE = ''BASE TABLE'')
         BEGIN
             DROP TABLE [{TgtSchema}].[{tgt_table_name}];
@@ -81,49 +88,69 @@ SELECT *,
 
         CREATE CLUSTERED INDEX Cix_{TgtSchema}_{tgt_table_name}
         ON [{TgtSchema}].[{tgt_table_name}] ([BK] ASC, [mta_BKH] ASC, [Code] ASC, [mta_RH] ASC, [mta_Createdate] DESC);
-        ' -- Loop through each row in the temporary table
- WHILE @counternr IS NOT NULL
+        '
 
-   AND @counternr <= @maxnr BEGIN -- Get the current table name
+        -- Loop through each row in the temporary table
+        WHILE @CounterNr IS NOT NULL AND @CounterNr <= @MaxNr
+        BEGIN
+            -- Get the current table name
+            SELECT @src_table_name = src_table_name,
+                   @tgt_table_name = tgt_table_name
+            FROM #BuildTables
+            WHERE ProcessSequence = @CounterNr
 
-  SELECT @src_table_name = src_table_name,
+            -- Generate the column list with transformations
+            SELECT @ColumnList = STRING_AGG('[' + c.[COLUMN_NAME] + '] VARCHAR(' + CASE 
+                WHEN
+                    c.[COLUMN_NAME] LIKE '%desc'
+                    OR c.[COLUMN_NAME] LIKE '%expression'
+                    OR c.[COLUMN_NAME] LIKE '%script'
+                    OR c.[COLUMN_NAME] LIKE '%RecordSrcDate'
+                    OR c.[COLUMN_NAME] LIKE '%BusinessDate'
+                    OR c.[COLUMN_NAME] LIKE '%value'
+                    OR c.[COLUMN_NAME] = 'view_defintion'
+                    THEN 'MAX'
+                ELSE '255'
+                END + ') NULL', ', ')
+            FROM INFORMATION_SCHEMA.COLUMNS c
+            WHERE c.TABLE_SCHEMA = @SrcSchema
+              AND c.TABLE_NAME = @src_table_name
+              AND LEFT(c.[COLUMN_NAME], 3) != 'mta'
 
-       @tgt_table_name = tgt_table_name
+            -- Replace placeholders in the table template
+            SET @sqlCreate = REPLACE(REPLACE(REPLACE(REPLACE(
+                @TableTemplate,
+                '{TgtSchema}', @TgtSchema),
+                '{tgt_table_name}', @tgt_table_name),
+                '{ColumnList}', @ColumnList),
+                '{GeneratedAt}', CONVERT(VARCHAR, GETDATE(), 120)
+            )
 
-  FROM #buildtables
+            -- Execute the table creation script
+            PRINT @sqlCreate
+            EXEC sp_executesql @sqlCreate
 
- WHERE processsequence = @counternr -- Generate the column list with transformations
+            -- Move to the next row
+            SET @CounterNr = @CounterNr + 1
+        END
 
-    SELECT @columnlist = string_agg('[' + c.[column_name] + '] VARCHAR(' + CASE
-                                                                               WHEN c.[column_name] LIKE '%desc'
-                                                                                    OR c.[column_name] LIKE '%expression'
-                                                                                    OR c.[column_name] LIKE '%script'
-                                                                                    OR c.[column_name] LIKE '%RecordSrcDate'
-                                                                                    OR c.[column_name] LIKE '%BusinessDate'
-                                                                                    OR c.[column_name] LIKE '%value'
-                                                                                    OR c.[column_name] = 'view_defintion' THEN 'MAX'
-                                                                               ELSE '255'
-                                                                           END + ') NULL', ', ')
+        -- Log the procedure execution
+        SET @LogSQL = 'exec ' + @TgtSchema + '.' + @LogProcName
 
-  FROM information_schema.columns c
- WHERE c.table_schema = @srcschema
+        EXEC [aud].[proc_Log_Procedure] 
+            @LogAction = 'INFO',
+            @LogNote = '(Re)Created tables in the [stg_bld] schema based on the [bld] schema',
+            @LogProcedure = @LogProcName,
+            @LogSQL = @LogSQL,
+            @LogRowCount = @MaxNr
+    END TRY
 
-   AND c.table_name = @src_table_name
+    BEGIN CATCH
+        -- Handle errors
+        DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE()
+        DECLARE @ErrorSeverity INT = ERROR_SEVERITY()
+        DECLARE @ErrorState INT = ERROR_STATE()
 
-   AND left(c.[column_name], 3) != 'mta' -- Replace placeholders in the table template
-
-   SET @sqlcreate = replace(replace(replace(replace(@tabletemplate, '{TgtSchema}', @tgtschema), '{tgt_table_name}', @tgt_table_name), '{ColumnList}', @columnlist), '{GeneratedAt}', convert(VARCHAR, getdate(), 120)) -- Execute the table creation script
- PRINT @sqlcreate EXEC sp_executesql @sqlcreate -- Move to the next row
-
-   SET @counternr = @counternr + 1 END -- Log the procedure execution
-
-   SET @logsql = 'exec ' + @tgtschema + '.' + @logprocname EXEC [aud].[proc_log_procedure] @logaction = 'INFO',
-
-       @lognote = '(Re)Created tables in the [stg_bld] schema based on the [bld] schema',
-
-       @logprocedure = @logprocname,
-
-       @logsql = @logsql,
-
-       @logrowcount = @maxnr END try BEGIN catch -- Handle errors
- DECLARE @errormessage nvarchar(4000) = error_message() DECLARE @errorseverity INT = error_severity() DECLARE @errorstate INT = error_state() raiserror (@errormessage, @errorseverity, @errorstate) END catch END
+        RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState)
+    END CATCH
+END

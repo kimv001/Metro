@@ -2,7 +2,7 @@
 
 
 
-CREATE view [bld].[tr_020_ContactGroup_010_Default] as
+CREATE VIEW [bld].[tr_020_ContactGroup_010_Default] AS
 /* 
 === Comments =========================================
 
@@ -14,13 +14,13 @@ Date		time		Author					Description
 20241004	1603		K. Vermeij				Initial
 =======================================================
 */
-select 
+SELECT 
 	 src.[BK]
 	,src.[Code]
 	,src.[Name]
 	,src.[Description]
 	,src.[Active]
-from [rep].[vw_ContactGroup] src
-Where 1=1
-  and isnull( src.Active,'1')=1
-  and src.bk is not null
+FROM [rep].[vw_ContactGroup] src
+WHERE 1=1
+  AND isnull( src.active,'1')=1
+  AND src.bk IS NOT null

@@ -1,5 +1,5 @@
 ﻿
-CREATE view [bld].[tr_400_DatasetDependency_010_SrcToTgt] as
+CREATE VIEW [bld].[tr_400_DatasetDependency_010_SrcToTgt] AS
 /* 
 === Comments =========================================
 
@@ -11,7 +11,7 @@ Date		time		Author					Description
 20220804	0000		K. Vermeij				Initial
 =======================================================
 */
-With base as 
+WITH base AS 
 	(
 	SELECT 
 		  d.[BK]
@@ -19,8 +19,8 @@ With base as
 
 		, d.[DatasetName]
       
-		, [FlowOrder]					= cast(d.[FlowOrder] as int)
-		, [DependencyOrder]				= cast(RANK() over (partition by d.[Code]  order by cast(d.[FlowOrder] as int) asc) as int)
+		, [FlowOrder]					= CAST(d.[FlowOrder] AS int)
+		, [DependencyOrder]				= CAST(RANK() OVER (PARTITION BY d.[Code]  ORDER BY CAST(d.[FlowOrder] AS int) ASC) AS int)
 		--, [DependencyOrder]				= cast(dense_RANK() over (partition by d.[Code]  order by cast(d.[FlowOrder] as int) asc) as int)
 		, d.[BK_RefType_ObjectType]
 		, d.[BK_RefType_RepositoryStatus]
@@ -28,7 +28,7 @@ With base as
 		, d.[mta_BKH]
       
 	  FROM [bld].[vw_Dataset] d
-	where 1=1
+	WHERE 1=1
 	--and d.code = 'BI|Base||IB|AggregatedPc4|'
 	--and d.bk = 'DWH|stg||IB|AggregatedPc4|'
 	--and d.code = 'DWH|aud_dim|trvs|monitor|schedule|'
@@ -37,45 +37,45 @@ With base as
 	  --and d.[BK_RefType_TableType] != 'OT|V|View'
 	  
 	  )
-,  Hierarchie aS (
+,  hierarchie AS (
 	-- 
 	SELECT 
 		
-		  BK_Child			= cast('SRC' as varchar(255))
-		, BK_Parent			= P.[BK] 
-		, Code				= P.Code
-		, TableTypeChild	= cast('SRC' as varchar(255))
-		, TableTypeParent	= p.[BK_RefType_ObjectType]
-		, P.[DependencyOrder] 
+		  bk_child			= CAST('SRC' AS varchar(255))
+		, bk_parent			= p.[BK] 
+		, code				= p.code
+		, tabletypechild	= CAST('SRC' AS varchar(255))
+		, tabletypeparent	= p.[BK_RefType_ObjectType]
+		, p.[DependencyOrder] 
 		
-	From base P
-	Where [DependencyOrder] = 1
-	UNION all
+	FROM base p
+	WHERE [DependencyOrder] = 1
+	UNION ALL
 
-	Select 
+	SELECT 
 		   
-		BK_Child			= P.BK_Parent
-		, BK_Parent			= c.BK
-		, Code				= c.Code
-		, TableTypeSource	= p.TableTypeParent
-		, TableTypeParent	= c.[BK_RefType_ObjectType]
-		, C.[DependencyOrder]
-	from base c
-	join Hierarchie P on C.Code = P.Code
+		bk_child			= p.bk_parent
+		, bk_parent			= c.bk
+		, code				= c.code
+		, tabletypesource	= p.tabletypeparent
+		, tabletypeparent	= c.[BK_RefType_ObjectType]
+		, c.[DependencyOrder]
+	FROM base c
+	JOIN hierarchie p ON c.code = p.code
 					
-					and c.[DependencyOrder] = p.[DependencyOrder] +1
+					AND c.[DependencyOrder] = p.[DependencyOrder] +1
 	)
 	--select * from Hierarchie
-select 
-	BK			= H.BK_Child+'|'+BK_Parent
+SELECT 
+	bk			= h.bk_child+'|'+bk_parent
 	
-	, BK_Parent	 = BK_Child
-	, BK_Child	 = BK_Parent
+	, bk_parent	 = bk_child
+	, bk_child	 = bk_parent
 	, [Code]
-	, TableTypeParent = TableTypeChild
-	, TableTypeChild = TableTypeParent
+	, tabletypeparent = tabletypechild
+	, tabletypechild = tabletypeparent
 
 	
-	, DependencyType = 'SrcToTgt'
+	, dependencytype = 'SrcToTgt'
 
-from Hierarchie H
+FROM hierarchie h

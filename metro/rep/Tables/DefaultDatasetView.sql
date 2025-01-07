@@ -1,17 +1,19 @@
-﻿
-CREATE TABLE [rep].[defaultdatasetview] ([bk] NVARCHAR (MAX) NULL,
-                                                             [code] NVARCHAR (MAX) NULL,
-                                                                                   [name] NVARCHAR (MAX) NULL,
-                                                                                                         [description] NVARCHAR (MAX) NULL,
-                                                                                                                                      [active] NVARCHAR (MAX) NULL,
-                                                                                                                                                              [bk_schema] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                         [bk_group] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                   [prefix] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                           [postfix] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                                                    [tabletype] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                                                                               [bk_schemabasedon] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                                                                                                                 [bk_reftype_tabletypebasedon] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                                                                                                                                                              [bk_template_create] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                                                                                                                                                                                                  [issystem] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                                                                                                                                                                                                                            [mta_source] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                        [mta_loaddate] NVARCHAR (MAX) NULL);
+﻿CREATE TABLE [rep].[DefaultDatasetView] (
+    [BK]                          NVARCHAR (MAX) NULL,
+    [Code]                        NVARCHAR (MAX) NULL,
+    [Name]                        NVARCHAR (MAX) NULL,
+    [Description]                 NVARCHAR (MAX) NULL,
+    [Active]                      NVARCHAR (MAX) NULL,
+    [BK_Schema]                   NVARCHAR (MAX) NULL,
+    [BK_Group]                    NVARCHAR (MAX) NULL,
+    [Prefix]                      NVARCHAR (MAX) NULL,
+    [Postfix]                     NVARCHAR (MAX) NULL,
+    [TableType]                   NVARCHAR (MAX) NULL,
+    [BK_SchemaBasedOn]            NVARCHAR (MAX) NULL,
+    [BK_RefType_TableTypeBasedOn] NVARCHAR (MAX) NULL,
+    [BK_Template_Create]          NVARCHAR (MAX) NULL,
+    [IsSystem]                    NVARCHAR (MAX) NULL,
+    [mta_Source]                  NVARCHAR (MAX) NULL,
+    [mta_LoadDate]                NVARCHAR (MAX) NULL
+);
+

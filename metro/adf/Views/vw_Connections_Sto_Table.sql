@@ -20,22 +20,23 @@ AS (
 		FROM rep.vw_LinkedService ls
 		JOIN rep.vw_LinkedServiceProperties lsp ON ls.BK = lsp.BK_LinkedService
 	)
-, cte_DataSourceProperties_SDTAP_Values as (
-	select 
+, cte_DataSourceProperties_SDTAP_Values AS (
+	SELECT 
 		src.BK_DataSource
 		, src.DataSourceServer
 		, src.DataSourceDatabase
 		, src.DataSourceURL
 		, src.DataSourceUSR
 		, src.Environment
-	from adf.vw_DataSourceProperties_SDTAP_Values src
+	FROM adf.vw_DataSourceProperties_SDTAP_Values src
 )
 SELECT
 	-- first attribute [SRCConnectionName] is legacy
 	  [SRCConnectionName]						= src.GroupShortName
 	, LinkedServiceName							= dsl.[Name]
 	, [DWHGroupnameShortname]					= src.[GroupShortName]
-	, [Prefix_Groupname_Shortname]				= concat(ds.prefix,'_',ds.bk_group,'_',ds.shortname)  --replace(replace(replace(replace(src.DatasetName,src.SchemaName,''),'.',''),'[',''),']','')
+	--replace(replace(replace(replace(src.DatasetName,src.SchemaName,''),'.',''),'[',''),']','')
+	, [Prefix_Groupname_Shortname]				= concat(ds.prefix,'_',ds.bk_group,'_',ds.shortname)
 	, [DWHGroupname]							= src.GroupName
 	-- SRC	
 	, [SRC_BK_Dataset]							= src.BK_Dataset
@@ -88,7 +89,7 @@ LEFT JOIN LinkedServiceProperties dslp_s ON dslp_s.BK_LinkedService = dsl.BK
 	AND dslp_s.LinkedServicePropertiesName = 'FQ_SQLServerName'
 LEFT JOIN LinkedServiceProperties dslp_d ON dslp_d.BK_LinkedService = dsl.BK
 	AND dslp_d.LinkedServicePropertiesName = 'DatabaseName'
-left join cte_DataSourceProperties_SDTAP_Values DSPV on dt.BK_DataSource = DSPV.BK_DataSource and src.Environment = DSPV.Environment
+LEFT JOIN cte_DataSourceProperties_SDTAP_Values DSPV ON dt.BK_DataSource = DSPV.BK_DataSource AND src.Environment = DSPV.Environment
 LEFT JOIN [adf].[vw_DataSourceProperties] dspL ON dt.BK_DataSource = dspl.BK_Datasource 
 	AND dspL.[DataSourcePropertiesName] = 'linkedservicename'
 WHERE 1 = 1

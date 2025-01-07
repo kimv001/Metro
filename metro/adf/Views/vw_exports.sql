@@ -1,89 +1,56 @@
 ﻿
+
+
+
+
+
+
 CREATE VIEW [adf].[vw_exports] AS
-SELECT src.[exportsid],
+SELECT 
+	 src.[ExportsId]
+	,src.[bk]
+	,src.[code]
+	,src.[export_name]
+	,src.[bk_dataset]
+	,src.[bk_schema]
+	,src.[src_datasetname]
+	,src.[src_schema]
+	,src.[src_dataset]
+	,[bk_schedule] = 'Not applicable over here'
+	,src.[container]
+	,src.[folder]
+	,src.[filename]
+	,src.[datetime]
+	,src.[bk_fileformat]
+	,src.[where_filter]
+	,src.[order_by]
+	,src.[split_by]
+	,src.[FF_Name]
+	,src.[FF_Fileformat]
+	,src.[FF_ColumnDelimiter]
+	,src.[FF_RowDelimiter]
+	,src.[FF_QuoteCharacter]
+	,src.[FF_CompressionLevel]
+	,src.[FF_CompressionType]
+	,src.[FF_EnableCDC]
+	,src.[FF_EscapeCharacter]
+	,src.[FF_FileEncoding]
+	,src.[FF_FirstRow]
+	,src.[FF_FirstRowAsHeader]
+	,src.[mta_RecType]
+	,src.[mta_CreateDate]
+	,src.[mta_Source]
+	,src.[mta_BK]
+	,src.[mta_BKH]
+	,src.[mta_RH]
+	,src.[mta_IsDeleted]
+ 
 
-       src.[bk],
+  	, RepositoryStatusName	= SDTAP.RepositoryStatus
+	, RepositoryStatusCode	= SDTAP.RepositoryStatusCode 
+	, Environment			= SDTAP.RepositoryStatus
 
-       src.[code],
-
-       src.[export_name],
-
-       src.[bk_dataset],
-
-       src.[bk_schema],
-
-       src.[src_datasetname],
-
-       src.[src_schema],
-
-       src.[src_dataset],
-
-       [bk_schedule] = 'Not applicable over here',
-
-       src.[container],
-
-       src.[folder],
-
-       src.[filename],
-
-       src.[datetime],
-
-       src.[bk_fileformat],
-
-       src.[where_filter],
-
-       src.[order_by],
-
-       src.[split_by],
-
-       src.[ff_name],
-
-       src.[ff_fileformat],
-
-       src.[ff_columndelimiter],
-
-       src.[ff_rowdelimiter],
-
-       src.[ff_quotecharacter],
-
-       src.[ff_compressionlevel],
-
-       src.[ff_compressiontype],
-
-       src.[ff_enablecdc],
-
-       src.[ff_escapecharacter],
-
-       src.[ff_fileencoding],
-
-       src.[ff_firstrow],
-
-       src.[ff_firstrowasheader],
-
-       src.[mta_rectype],
-
-       src.[mta_createdate],
-
-       src.[mta_source],
-
-       src.[mta_bk],
-
-       src.[mta_bkh],
-
-       src.[mta_rh],
-
-       src.[mta_isdeleted],
-
-       repositorystatusname = sdtap.repositorystatus,
-
-       repositorystatuscode = sdtap.repositorystatuscode,
-
-       environment = sdtap.repositorystatus
-
-  FROM [bld].[vw_exports] src
-
- CROSS JOIN adf.vw_sdtap sdtap
-
- WHERE 1 = 1
-
-   AND sdtap.repositorystatuscode > -2
+FROM [bld].[vw_Exports] src
+CROSS JOIN ADF.vw_SDTAP SDTAP
+WHERE 1=1
+	AND SDTAP.RepositoryStatusCode > -2

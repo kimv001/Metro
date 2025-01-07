@@ -1,7 +1,7 @@
 ﻿
 
 
-CREATE procedure [rep].[Helper_RefreshMetroViews] as
+CREATE PROCEDURE [rep].[Helper_RefreshMetroViews] AS
 
 /* 
 === Comments =========================================
@@ -31,6 +31,6 @@ INNER JOIN sys.sql_expression_dependencies AS sed
     ON so.object_id = sed.referencing_id   
 	WHERE so.type = 'V'
 
-print (@sqlcmd)
+PRINT (@sqlcmd)
 
 EXEC(@sqlcmd)

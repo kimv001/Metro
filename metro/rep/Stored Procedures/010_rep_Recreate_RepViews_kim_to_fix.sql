@@ -34,12 +34,12 @@ BEGIN
         DROP TABLE #XlsTabsToLoad
 
     -- Create temporary table with row numbers
-    SELECT TableName as Table_Name, BK,
+    SELECT TableName AS Table_Name, BK,
            ROW_NUMBER() OVER (ORDER BY [BK] ASC) AS mta_RowNum
     INTO #XlsTabsToLoad
     FROM rep.XlsTabsToLoad
     WHERE BK IS NOT NULL
-	and tablename like '%trn%'
+	AND tablename LIKE '%trn%'
 
     -- Initialize loop variables
     SELECT @CounterNr = MIN(mta_RowNum),
@@ -78,29 +78,29 @@ BEGIN
 
         -- Generate the column list with transformations
         SELECT @ColumnList = STRING_AGG('ISNULL(LTRIM(RTRIM(CAST([' + COLUMN_NAME + '] AS VARCHAR(' + CASE 
-           when c.[COLUMN_NAME] like '%desc'
-					or c.[COLUMN_NAME] like '%expression'
-					or c.[COLUMN_NAME] like '%script'
-					or c.[COLUMN_NAME] like '%RecordSrcDate'
-					or c.[COLUMN_NAME] like '%BusinessDate'
-					or c.[COLUMN_NAME] like '%value'
-					then 'max'
-				else '255' 
-				end + ')))) as [' + c.[COLUMN_NAME] + ']', ',')
+           WHEN c.[COLUMN_NAME] LIKE '%desc'
+					OR c.[COLUMN_NAME] LIKE '%expression'
+					OR c.[COLUMN_NAME] LIKE '%script'
+					OR c.[COLUMN_NAME] LIKE '%RecordSrcDate'
+					OR c.[COLUMN_NAME] LIKE '%BusinessDate'
+					OR c.[COLUMN_NAME] LIKE '%value'
+					THEN 'max'
+				ELSE '255' 
+				END + ')))) as [' + c.[COLUMN_NAME] + ']', ',')
         FROM INFORMATION_SCHEMA.COLUMNS c
         WHERE TABLE_SCHEMA = @SrcSchema
           AND TABLE_NAME = @TableName
 
         -- Generate the column hash list
         SELECT @ColumnHashList = STRING_AGG('ISNULL(LTRIM(RTRIM(CAST([' + COLUMN_NAME + '] AS VARCHAR(' + CASE 
-           when c.[COLUMN_NAME] like '%desc'
-					or c.[COLUMN_NAME] like '%expression'
-					or c.[COLUMN_NAME] like '%script'
-					or c.[COLUMN_NAME] like '%RecordSrcDate'
-					or c.[COLUMN_NAME] like '%BusinessDate'
-					or c.[COLUMN_NAME] like '%value'
-					then '8000'
-				else '255'
+           WHEN c.[COLUMN_NAME] LIKE '%desc'
+					OR c.[COLUMN_NAME] LIKE '%expression'
+					OR c.[COLUMN_NAME] LIKE '%script'
+					OR c.[COLUMN_NAME] LIKE '%RecordSrcDate'
+					OR c.[COLUMN_NAME] LIKE '%BusinessDate'
+					OR c.[COLUMN_NAME] LIKE '%value'
+					THEN '8000'
+				ELSE '255'
             END + ')))),''-'')', ' + ''|'' + ')
         FROM INFORMATION_SCHEMA.COLUMNS c
         WHERE TABLE_SCHEMA = @SrcSchema

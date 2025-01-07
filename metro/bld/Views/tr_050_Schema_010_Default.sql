@@ -1,6 +1,6 @@
 ﻿
 
-CREATE view [bld].[tr_050_Schema_010_Default] as
+CREATE VIEW [bld].[tr_050_Schema_010_Default] AS
 /* 
 === Comments =========================================
 
@@ -15,41 +15,41 @@ Date		time		Author					Description
 
 
 
-select 
-	BK						= s.[BK]
-	, Code					= s.[Code]
-	, [Name]				= s.[Name]
-	, BK_Schema				= s.[BK]
-	, BK_Layer				= s.[BK_Layer]
-	, BK_DataSource			= s.[BK_DataSource]
-	, BK_LinkedService		= ds.[BK_LinkedService]
-	, SchemaCode			= s.[Code]
-	, SchemaName			= s.[Name]
-	, DataSourceCode		= ds.[Code]
-	, DataSourceName		= ds.[Name]
-	, BK_DataSourceType		= dst.[BK]
-	, DataSourceTypeCode	= dst.[Code]
-	, DataSourceTypeName	= dst.[Name]
-	, LayerCode				= l.[Code]
-	, LayerName				= l.[Name]
-	, LayerOrder			= isnull(cast(l.[LayerOrder] as int),0) + (isnull(cast([process_order_in_layer] as int), 0)*10)
-	, ProcessOrderLayer		= s.[process_order_in_layer]
-	, ProcessParallel		= s.[process_parallel]
-	, isDWH					= l.[isDWH]
-	, isSRC					= l.[isSRC]
-	, isTGT					= l.[isTGT]
-	, IsRep					= ds.[IsRep]
-	, CreateDummies			= s.[CreateDummies]
+SELECT 
+	BK						= S.[BK]
+	, CODE					= S.[Code]
+	, [Name]				= S.[Name]
+	, BK_SCHEMA				= S.[BK]
+	, BK_LAYER				= S.[BK_Layer]
+	, BK_DATASOURCE			= S.[BK_DataSource]
+	, BK_LINKEDSERVICE		= DS.[BK_LinkedService]
+	, SCHEMACODE			= S.[Code]
+	, SCHEMANAME			= S.[Name]
+	, DATASOURCECODE		= DS.[Code]
+	, DATASOURCENAME		= DS.[Name]
+	, BK_DATASOURCETYPE		= DST.[BK]
+	, DATASOURCETYPECODE	= DST.[Code]
+	, DATASOURCETYPENAME	= DST.[Name]
+	, LAYERCODE				= L.[Code]
+	, LAYERNAME				= L.[Name]
+	, LAYERORDER			= isnull(CAST(L.[LayerOrder] AS int),0) + (isnull(CAST([process_order_in_layer] AS int), 0)*10)
+	, PROCESSORDERLAYER		= S.[process_order_in_layer]
+	, PROCESSPARALLEL		= S.[process_parallel]
+	, ISDWH					= L.[isDWH]
+	, ISSRC					= L.[isSRC]
+	, ISTGT					= L.[isTGT]
+	, ISREP					= DS.[IsRep]
+	, CREATEDUMMIES			= S.[CreateDummies]
 
-	, LinkedServiceCode		= ls.[Code]
-	, LinkedServiceName		= ls.[Name]
+	, LINKEDSERVICECODE		= LS.[Code]
+	, LINKEDSERVICENAME		= LS.[Name]
 
-	, s.BK_Template_Create
-	, s.BK_Template_Load
-	, s.BK_RefType_ToChar
+	, S.BK_TEMPLATE_CREATE
+	, S.BK_TEMPLATE_LOAD
+	, S.BK_REFTYPE_TOCHAR
 
-from rep.vw_Schema			s	
-join rep.vw_Layer			l	on l.BK			= s.BK_Layer
-join rep.vw_DataSource		ds	on ds.BK		= s.BK_DataSource
-join bld.vw_RefType			dst	on dst.BK		= ds.BK_RefType_DataSourceType
-join rep.vw_LinkedService	ls	on ls.BK		= ds.BK_LinkedService
+FROM REP.VW_SCHEMA			S	
+JOIN REP.VW_LAYER			L	ON L.BK			= S.BK_LAYER
+JOIN REP.VW_DATASOURCE		DS	ON DS.BK		= S.BK_DATASOURCE
+JOIN BLD.VW_REFTYPE			DST	ON DST.BK		= DS.BK_REFTYPE_DATASOURCETYPE
+JOIN REP.VW_LINKEDSERVICE	LS	ON LS.BK		= DS.BK_LINKEDSERVICE

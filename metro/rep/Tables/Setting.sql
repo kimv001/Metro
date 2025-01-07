@@ -1,12 +1,14 @@
-﻿
-CREATE TABLE [rep].[setting] ([bk] NVARCHAR (MAX) NULL,
-                                                  [code] NVARCHAR (MAX) NULL,
-                                                                        [name] NVARCHAR (MAX) NULL,
-                                                                                              [description] NVARCHAR (MAX) NULL,
-                                                                                                                           [group] NVARCHAR (MAX) NULL,
-                                                                                                                                                  [defaultvalue] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                [currentvalue] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                              [active] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                      [issystem] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                                                [mta_source] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                                                                            [mta_loaddate] NVARCHAR (MAX) NULL);
+﻿CREATE TABLE [rep].[Setting] (
+    [BK]           NVARCHAR (MAX) NULL,
+    [Code]         NVARCHAR (MAX) NULL,
+    [Name]         NVARCHAR (MAX) NULL,
+    [Description]  NVARCHAR (MAX) NULL,
+    [Group]        NVARCHAR (MAX) NULL,
+    [DefaultValue] NVARCHAR (MAX) NULL,
+    [CurrentValue] NVARCHAR (MAX) NULL,
+    [Active]       NVARCHAR (MAX) NULL,
+    [IsSystem]     NVARCHAR (MAX) NULL,
+    [mta_Source]   NVARCHAR (MAX) NULL,
+    [mta_LoadDate] NVARCHAR (MAX) NULL
+);
+

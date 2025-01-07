@@ -1,3 +1,5 @@
-﻿
-CREATE TABLE [adf].[dwh_time] ([time_hh_mm_ss] TIME (7) NULL,
-                                                        [time_int] INT NULL);
+﻿CREATE TABLE [adf].[DWH_Time] (
+    [Time_HH_MM_SS] TIME (7) NULL,
+    [Time_Int]      INT      NULL
+);
+

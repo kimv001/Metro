@@ -1,68 +1,44 @@
 ﻿
-CREATE VIEW [adf].[vw_testrule] AS WITH cte_datasourceproperties_sdtap_values AS
+CREATE  VIEW [adf].[vw_TestRule] AS
+WITH cte_DataSourceProperties_SDTAP_Values AS (
+	SELECT 
+		src.BK_DataSource
+		, src.DataSourceServer
+		, src.DataSourceDatabase
+		, src.DataSourceURL
+		, src.DataSourceUSR
+		, src.Environment
+	FROM adf.vw_DataSourceProperties_SDTAP_Values src
+)
 
-        (SELECT src.bk_datasource,
 
-               src.datasourceserver,
 
-               src.datasourcedatabase,
-
-               src.datasourceurl,
-
-               src.datasourceusr,
-
-               src.environment
-
-          FROM adf.vw_datasourceproperties_sdtap_values src
-       )
-SELECT src.[testrulesid],
-
-       src.[code],
-
-       bk_testrule = src.[bk],
-
-       src.[bk_dataset],
-
-       src.[bk_reftype_repositorystatus],
-
-       src.[testdefintion],
-
-       src.[adfpipeline],
-
-       src.[getattributes],
-
-       src.[tresholdvalue],
-
-       src.[specificattribute],
-
-       src.[attributename],
-
-       src.[expectedvalue],
-
-       src.[mta_rectype],
-
-       src.[mta_createdate],
-
-       src.[mta_source],
-
-       src.[mta_bk],
-
-       src.[mta_bkh],
-
-       src.[mta_rh],
-
-       src.[mta_isdeleted],
-
-       env.environment,
-
-       [repositorystatuscode] = rt.code
-
-  FROM [bld].[vw_testrules] src
-
-  LEFT JOIN bld.vw_reftype rt
-    ON src.bk_reftype_repositorystatus = rt.bk
-
- CROSS JOIN [adf].[vw_sdtap] env --on env.BK_RepositoryStatus = src.[BK_RefType_RepositoryStatus]
-
- WHERE 1 = 1 --and BK_Dataset = 'SA_DWH|src_file||Grafana|LWAP|'
+SELECT  
+ src.[TestRulesId]
+,src.[Code]
+,BK_Testrule					= src.[BK]
+,src.[BK_Dataset]
+,src.[BK_RefType_RepositoryStatus]
+,src.[TestDefintion]
+,src.[ADFPipeline]
+,src.[GetAttributes]
+,src.[TresholdValue]
+,src.[SpecificAttribute]
+,src.[AttributeName]
+,src.[ExpectedValue]
+,src.[mta_RecType]
+,src.[mta_CreateDate]
+,src.[mta_Source]
+,src.[mta_BK]
+,src.[mta_BKH]
+,src.[mta_RH]
+,src.[mta_IsDeleted]
+	, env.Environment
+	
+	, [RepositoryStatusCode]	= rt.Code
+  FROM [bld].[vw_TestRules] src
+  LEFT JOIN bld.vw_RefType rt ON src.BK_RefType_RepositoryStatus = rt.BK
+  CROSS JOIN [adf].[vw_SDTAP]  env --on env.BK_RepositoryStatus = src.[BK_RefType_RepositoryStatus]
+ WHERE 1=1
+ --and BK_Dataset = 'SA_DWH|src_file||Grafana|LWAP|'
  -- order by BK_Dataset, [TestDefintion]

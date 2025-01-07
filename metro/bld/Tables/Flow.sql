@@ -1,26 +1,33 @@
-﻿
-CREATE TABLE [bld].[flow] ([flowid] INT IDENTITY (1,
-                                                  1) NOT NULL,
-                                                     [bk] VARCHAR (255) NULL,
-                                                                        [code] VARCHAR (255) NULL,
-                                                                                             [bk_flow] VARCHAR (255) NULL,
-                                                                                                                     [flow_name] VARCHAR (255) NULL,
-                                                                                                                                               [flow_description] VARCHAR (255) NULL,
-                                                                                                                                                                                [flow_layer_step_name] VARCHAR (255) NULL,
-                                                                                                                                                                                                                     [flow_layer_step_description] VARCHAR (255) NULL,
-                                                                                                                                                                                                                                                                 [flow_layer_step_order] VARCHAR (255) NULL,
-                                                                                                                                                                                                                                                                                                       [bk_layer] VARCHAR (255) NULL,
-                                                                                                                                                                                                                                                                                                                                [bk_schema] VARCHAR (255) NULL,
-                                                                                                                                                                                                                                                                                                                                                          [readfromview] VARCHAR (255) NULL,
-                                                                                                                                                                                                                                                                                                                                                                                       [bk_template_load] VARCHAR (255) NULL,
-                                                                                                                                                                                                                                                                                                                                                                                                                        [bk_template_create] VARCHAR (255) NULL,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                           [mta_createdate] datetime2 (7) DEFAULT (getdate()) NULL,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              [mta_rectype] SMALLINT DEFAULT ((1)) NULL,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   [mta_bk] CHAR (255) NULL,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       [mta_bkh] CHAR (128) NULL,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            [mta_rh] CHAR (128) NULL,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                [mta_source] VARCHAR (255) NULL);GO
-CREATE UNIQUE nonclustered INDEX [uix_bld_flow]
-    ON [bld].[flow]([mta_bkh] DESC, [mta_rh] DESC, [mta_createdate] DESC);GO
-CREATE clustered INDEX [cix_bld_flow]
-    ON [bld].[flow]([bk] ASC, [mta_bkh] ASC, [code] ASC, [mta_rh] ASC, [mta_createdate] DESC);
+﻿CREATE TABLE [bld].[Flow] (
+    [FlowId]                      INT           IDENTITY (1, 1) NOT NULL,
+    [BK]                          VARCHAR (255) NULL,
+    [Code]                        VARCHAR (255) NULL,
+    [BK_Flow]                     VARCHAR (255) NULL,
+    [Flow_Name]                   VARCHAR (255) NULL,
+    [Flow_Description]            VARCHAR (255) NULL,
+    [Flow_Layer_Step_Name]        VARCHAR (255) NULL,
+    [Flow_Layer_Step_Description] VARCHAR (255) NULL,
+    [Flow_Layer_Step_Order]       VARCHAR (255) NULL,
+    [BK_Layer]                    VARCHAR (255) NULL,
+    [BK_Schema]                   VARCHAR (255) NULL,
+    [ReadFromView]                VARCHAR (255) NULL,
+    [BK_Template_Load]            VARCHAR (255) NULL,
+    [BK_Template_Create]          VARCHAR (255) NULL,
+    [mta_Createdate]              DATETIME2 (7) DEFAULT (getdate()) NULL,
+    [mta_RecType]                 SMALLINT      DEFAULT ((1)) NULL,
+    [mta_BK]                      CHAR (255)    NULL,
+    [mta_BKH]                     CHAR (128)    NULL,
+    [mta_RH]                      CHAR (128)    NULL,
+    [mta_Source]                  VARCHAR (255) NULL
+);
+
+
+GO
+CREATE UNIQUE NONCLUSTERED INDEX [Uix_bld_Flow]
+    ON [bld].[Flow]([mta_BKH] DESC, [mta_RH] DESC, [mta_Createdate] DESC);
+
+
+GO
+CREATE CLUSTERED INDEX [Cix_bld_Flow]
+    ON [bld].[Flow]([BK] ASC, [mta_BKH] ASC, [Code] ASC, [mta_RH] ASC, [mta_Createdate] DESC);
+

@@ -1,4 +1,3 @@
-﻿
-CREATE SCHEMA [stg]
+﻿CREATE SCHEMA [stg]
+    AUTHORIZATION [dbo];
 
-AUTHORIZATION [dbo];

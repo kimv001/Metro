@@ -1,23 +1,30 @@
-﻿
-CREATE TABLE [bld].[schedules] ([schedulesid] INT IDENTITY (1,
-                                                            1) NOT NULL,
-                                                               [bk] VARCHAR (255) NULL,
-                                                                                  [schedules_group] VARCHAR (255) NULL,
-                                                                                                                  [dependend_on_schedules_group] VARCHAR (255) NULL,
-                                                                                                                                                               [code] VARCHAR (255) NULL,
-                                                                                                                                                                                    [bk_schedule] VARCHAR (255) NULL,
-                                                                                                                                                                                                                [targettoload] VARCHAR (255) NULL,
-                                                                                                                                                                                                                                             [scheduletype] VARCHAR (255) NULL,
-                                                                                                                                                                                                                                                                          [excludefromalllevel] VARCHAR (255) NULL,
-                                                                                                                                                                                                                                                                                                              [excludefromallother] VARCHAR (255) NULL,
-                                                                                                                                                                                                                                                                                                                                                  [processsourcedependencies] VARCHAR (255) NULL,
-                                                                                                                                                                                                                                                                                                                                                                                            [mta_createdate] datetime2 (7) DEFAULT (getdate()) NULL,
-                                                                                                                                                                                                                                                                                                                                                                                                                                               [mta_rectype] SMALLINT DEFAULT ((1)) NULL,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    [mta_bk] CHAR (255) NULL,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        [mta_bkh] CHAR (128) NULL,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             [mta_rh] CHAR (128) NULL,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 [mta_source] VARCHAR (255) NULL);GO
-CREATE UNIQUE nonclustered INDEX [uix_bld_schedules]
-    ON [bld].[schedules]([mta_bkh] DESC, [mta_rh] DESC, [mta_createdate] DESC);GO
-CREATE clustered INDEX [cix_bld_schedules]
-    ON [bld].[schedules]([bk] ASC, [mta_bkh] ASC, [code] ASC, [mta_rh] ASC, [mta_createdate] DESC);
+﻿CREATE TABLE [bld].[Schedules] (
+    [SchedulesId]                  INT           IDENTITY (1, 1) NOT NULL,
+    [BK]                           VARCHAR (255) NULL,
+    [schedules_group]              VARCHAR (255) NULL,
+    [dependend_on_schedules_group] VARCHAR (255) NULL,
+    [Code]                         VARCHAR (255) NULL,
+    [BK_Schedule]                  VARCHAR (255) NULL,
+    [TargetToLoad]                 VARCHAR (255) NULL,
+    [ScheduleType]                 VARCHAR (255) NULL,
+    [ExcludeFromAllLevel]          VARCHAR (255) NULL,
+    [ExcludeFromAllOther]          VARCHAR (255) NULL,
+    [ProcessSourceDependencies]    VARCHAR (255) NULL,
+    [mta_Createdate]               DATETIME2 (7) DEFAULT (getdate()) NULL,
+    [mta_RecType]                  SMALLINT      DEFAULT ((1)) NULL,
+    [mta_BK]                       CHAR (255)    NULL,
+    [mta_BKH]                      CHAR (128)    NULL,
+    [mta_RH]                       CHAR (128)    NULL,
+    [mta_Source]                   VARCHAR (255) NULL
+);
+
+
+GO
+CREATE UNIQUE NONCLUSTERED INDEX [Uix_bld_Schedules]
+    ON [bld].[Schedules]([mta_BKH] DESC, [mta_RH] DESC, [mta_Createdate] DESC);
+
+
+GO
+CREATE CLUSTERED INDEX [Cix_bld_Schedules]
+    ON [bld].[Schedules]([BK] ASC, [mta_BKH] ASC, [Code] ASC, [mta_RH] ASC, [mta_Createdate] DESC);
+

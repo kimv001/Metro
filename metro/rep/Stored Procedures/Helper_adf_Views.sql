@@ -23,7 +23,7 @@ Examples
 EXEC [rep].[Helper_adf_Views]  @table  = 'Connections_Sto_Table' , @schemaname = 'adf' ,@env = -1   --alles voor DEV
 EXEC [rep].[Helper_adf_Views]  @table  = '[Dependencies]' , @schemaname = '[adf]' ,@env = 1         -- alleen PRD
 */
-DECLARE @sql VARCHAR(max)
+DECLARE @sql VARCHAR(MAX)
 
 SET @sql = '
 	SELECT * 

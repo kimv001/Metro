@@ -1,22 +1,18 @@
 ﻿
-CREATE VIEW [adf].[vw_schedules] AS
-SELECT src.bk,
+CREATE VIEW [adf].[vw_Schedules] AS 
+SELECT 
+	
+	  src.BK
+	, src.Code
+	, src.BK_Schedule
+	, src.TargetToLoad
+	, src.ScheduleType
+	--, src.ReloadIfAlreadyLoaded
 
-       src.code,
+	, RepositoryStatusName	= SDTAP.RepositoryStatus
+	, RepositoryStatusCode	= SDTAP.RepositoryStatusCode 
+	, Environment			= SDTAP.Environment
 
-       src.bk_schedule,
 
-       src.targettoload,
-
-       src.scheduletype --, src.ReloadIfAlreadyLoaded
-,
-
-       repositorystatusname = sdtap.repositorystatus,
-
-       repositorystatuscode = sdtap.repositorystatuscode,
-
-       environment = sdtap.environment
-
-  FROM bld.vw_schedules src
-
- CROSS JOIN adf.vw_sdtap sdtap
+  FROM bld.vw_Schedules src
+  CROSS JOIN adf.vw_SDTAP SDTAP

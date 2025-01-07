@@ -4,7 +4,7 @@
 
 
 
-CREATE view [bld].[tr_025_Contact_010_Default] as
+CREATE VIEW [bld].[tr_025_Contact_010_Default] AS
 /* 
 === Comments =========================================
 
@@ -16,8 +16,8 @@ Date		time		Author					Description
 20241004	1603		K. Vermeij				Initial
 =======================================================
 */
-with ContactRoles as (
-select [BK]
+WITH CONTACTROLES AS (
+SELECT [BK]
       ,[Code]
       ,[Name]
      
@@ -25,33 +25,33 @@ select [BK]
       ,[RefType]
       ,[RefTypeAbbr]
       ,[SortOrder]
-from [rep].[vw_RefType]
-where [RefTypeAbbr] = 'CR'
+FROM [rep].[vw_RefType]
+WHERE [RefTypeAbbr] = 'CR'
 
 
 )
-, final as (
-select 
-	src.bk
-	, src.code
-	, src.bk_contactgroup
-	, contactgroup						= cg.[name]
-	, contactrole						= cr.[name]
-	, main_contact						= src.main_contact
-	, alert_contact						= src.alert_contact
-	, contactperson_name				= cp.[contact_name]
-	, contactperson_department			= cp.[contact_department]
-	, contacperson_phonenumber			= cp.[contact_phone_number]
-	, contactperson_mailadress			= cp.[contact_mail_address]
-	, contactperson_active				= cp.[Active]
-	, rn_contact						= row_number() over (partition by src.bk order by src.bk asc)
+, FINAL AS (
+SELECT 
+	SRC.BK
+	, SRC.CODE
+	, SRC.BK_CONTACTGROUP
+	, CONTACTGROUP						= CG.[name]
+	, CONTACTROLE						= CR.[name]
+	, MAIN_CONTACT						= SRC.MAIN_CONTACT
+	, ALERT_CONTACT						= SRC.ALERT_CONTACT
+	, CONTACTPERSON_NAME				= CP.[contact_name]
+	, CONTACTPERSON_DEPARTMENT			= CP.[contact_department]
+	, CONTACPERSON_PHONENUMBER			= CP.[contact_phone_number]
+	, CONTACTPERSON_MAILADRESS			= CP.[contact_mail_address]
+	, CONTACTPERSON_ACTIVE				= CP.[Active]
+	, RN_CONTACT						= ROW_NUMBER() OVER (PARTITION BY SRC.BK ORDER BY SRC.BK ASC)
 	-- select *
-from [rep].[vw_Contact] src
-join rep.vw_contactgroup cg on src.bk_contactgroup = cg.bk
-left join [rep].[vw_ContactPerson] cp on src.bk_contactperson = cp.bk
-left join ContactRoles cr on src.bk_contactrole = cr.bk
-Where 1=1
-  and isnull( src.Active,'1')=1
-  and src.bk is not null
+FROM [rep].[vw_Contact] SRC
+JOIN REP.VW_CONTACTGROUP CG ON SRC.BK_CONTACTGROUP = CG.BK
+LEFT JOIN [rep].[vw_ContactPerson] CP ON SRC.BK_CONTACTPERSON = CP.BK
+LEFT JOIN CONTACTROLES CR ON SRC.BK_CONTACTROLE = CR.BK
+WHERE 1=1
+  AND isnull( SRC.ACTIVE,'1')=1
+  AND SRC.BK IS NOT null
   )
-  select * from final where rn_contact = 1
+  SELECT * FROM FINAL WHERE RN_CONTACT = 1

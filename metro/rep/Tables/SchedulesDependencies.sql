@@ -1,8 +1,10 @@
-﻿
-CREATE TABLE [rep].[schedulesdependencies] ([bk] NVARCHAR (MAX) NULL,
-                                                                [bk_schedules] NVARCHAR (MAX) NULL,
-                                                                                              [bk_schedules_dependson] NVARCHAR (MAX) NULL,
-                                                                                                                                      [active] NVARCHAR (MAX) NULL,
-                                                                                                                                                              [bk_reftype_repositorystatus] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                           [mta_source] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                       [mta_loaddate] NVARCHAR (MAX) NULL);
+﻿CREATE TABLE [rep].[SchedulesDependencies] (
+    [BK]                          NVARCHAR (MAX) NULL,
+    [BK_Schedules]                NVARCHAR (MAX) NULL,
+    [BK_Schedules_DependsOn]      NVARCHAR (MAX) NULL,
+    [Active]                      NVARCHAR (MAX) NULL,
+    [BK_RefType_RepositoryStatus] NVARCHAR (MAX) NULL,
+    [mta_Source]                  NVARCHAR (MAX) NULL,
+    [mta_LoadDate]                NVARCHAR (MAX) NULL
+);
+

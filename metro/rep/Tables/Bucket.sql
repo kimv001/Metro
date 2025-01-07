@@ -1,9 +1,11 @@
-﻿
-CREATE TABLE [rep].[bucket] ([bk] NVARCHAR (MAX) NULL,
-                                                 [code] NVARCHAR (MAX) NULL,
-                                                                       [name] NVARCHAR (MAX) NULL,
-                                                                                             [description] NVARCHAR (MAX) NULL,
-                                                                                                                          [active] NVARCHAR (MAX) NULL,
-                                                                                                                                                  [issytstem] NVARCHAR (MAX) NULL,
-                                                                                                                                                                             [mta_source] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                         [mta_loaddate] NVARCHAR (MAX) NULL);
+﻿CREATE TABLE [rep].[Bucket] (
+    [BK]           NVARCHAR (MAX) NULL,
+    [Code]         NVARCHAR (MAX) NULL,
+    [Name]         NVARCHAR (MAX) NULL,
+    [Description]  NVARCHAR (MAX) NULL,
+    [Active]       NVARCHAR (MAX) NULL,
+    [IsSytstem]    NVARCHAR (MAX) NULL,
+    [mta_Source]   NVARCHAR (MAX) NULL,
+    [mta_LoadDate] NVARCHAR (MAX) NULL
+);
+

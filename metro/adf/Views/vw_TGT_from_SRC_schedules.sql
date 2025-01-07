@@ -1,102 +1,61 @@
-﻿
-CREATE VIEW adf.vw_tgt_from_src_schedules AS WITH schedule_all AS
+﻿CREATE VIEW adf.vw_TGT_from_SRC_schedules AS
+WITH 
+schedule_all AS (
+	SELECT 
+		TGT_new = concat('schedule : ',s.BK)
+		, s.ExcludeFromAllLevel
+		, s.ExcludeFromAllOther
+		, ts.*
+	FROM bld.vw_Schedules s
+	JOIN [adf].[vw_TGT_from_SRC_base] ts ON s.TargetToLoad = ts.TGT
+	WHERE s.ScheduleType = 'DWH' -- All
+)
+, 
+schedule_other AS (
+	SELECT 
+		TGT_new = concat('schedule : ',s.BK)
+		, s.ExcludeFromAllLevel
+		, s.ExcludeFromAllOther
+		, ts.*
+	FROM bld.vw_Schedules s
+	JOIN [adf].[vw_TGT_from_SRC_base] ts ON s.TargetToLoad = ts.TGT
+	WHERE s.ScheduleType != 'DWH' 
+)
+, 
+final_schedules AS  (
+-- all
+	SELECT 
+		s_a.* 
+	FROM schedule_all s_a
+	LEFT JOIN schedule_other s_o ON s_a.SRC_Dataset = s_o.SRC_Dataset AND s_a.Environment = s_o.Environment AND s_o.ExcludeFromAllLevel = 1 
+	WHERE s_o.TGT_new IS  null
 
-        (SELECT tgt_new = concat('schedule : ', s.bk),
+UNION ALL
 
-               s.excludefromalllevel,
+-- other
+	SELECT 
+		s_a.* 
+	FROM schedule_other s_a
+	LEFT JOIN schedule_other s_o ON s_a.TGT!= s_o.TGT AND  s_a.SRC_Dataset = s_o.SRC_Dataset AND s_a.Environment = s_o.Environment AND s_o.ExcludeFromAllOther = 1 
+	WHERE s_o.TGT_new IS  null
 
-               s.excludefromallother,
-
-               ts.*
-
-          FROM bld.vw_schedules s
-
-          JOIN [adf].[vw_tgt_from_src_base] ts
-            ON s.targettoload = ts.tgt
-
-         WHERE s.scheduletype = 'DWH' -- All
-
-       ),
-
-       schedule_other AS
-
-        (SELECT tgt_new = concat('schedule : ', s.bk),
-
-               s.excludefromalllevel,
-
-               s.excludefromallother,
-
-               ts.*
-
-          FROM bld.vw_schedules s
-
-          JOIN [adf].[vw_tgt_from_src_base] ts
-            ON s.targettoload = ts.tgt
-
-         WHERE s.scheduletype != 'DWH'
-       ),
-
-       final_schedules AS
-
-        (-- all
- SELECT s_a.*
-
-          FROM schedule_all s_a
-
-          LEFT JOIN schedule_other s_o
-            ON s_a.src_dataset = s_o.src_dataset
-
-           AND s_a.environment = s_o.environment
-
-           AND s_o.excludefromalllevel = 1
-
-         WHERE s_o.tgt_new IS NULL
-
-     UNION ALL -- other
- SELECT s_a.*
-
-          FROM schedule_other s_a
-
-          LEFT JOIN schedule_other s_o
-            ON s_a.tgt != s_o.tgt
-
-           AND s_a.src_dataset = s_o.src_dataset
-
-           AND s_a.environment = s_o.environment
-
-           AND s_o.excludefromallother = 1
-
-         WHERE s_o.tgt_new IS NULL
-       )
-SELECT tgt = tgt_new --, TGT_old = TGT
-,
-
-       src_bk_dataset,
-
-       src_dataset,
-
-       src_shortname,
-
-       src_group,
-
-       src_schema,
-
-       src_layer,
-
-       [source],
-
-       src_datasettype,
-
-       tgt_datasettype,
-
-       generation_number,
-
-       dependencytype,
-
-       repositorystatusname,
-
-       repositorystatuscode,
-
-       environment
-
-  FROM final_schedules --where TGT != 'All' and Environment = 'prd'
+)
+SELECT 
+	TGT = TGT_new
+	--, TGT_old = TGT
+	, SRC_BK_DataSet
+	, SRC_Dataset
+	, SRC_ShortName
+	, SRC_Group
+	, SRC_Schema
+	, SRC_Layer
+	, [Source]
+	, SRC_DatasetType
+	, TGT_DatasetType
+	, generation_number
+	, DependencyType
+	, RepositoryStatusName
+	, RepositoryStatusCode
+	, Environment
+FROM final_schedules
+--where TGT != 'All' and Environment = 'prd'

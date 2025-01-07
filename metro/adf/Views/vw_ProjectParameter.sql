@@ -1,19 +1,12 @@
-﻿
-CREATE VIEW adf.vw_projectparameter AS
-SELECT [projectparameterid] = src.[projectparameterid],
+﻿CREATE VIEW adf.vw_ProjectParameter AS 
 
-       [projectparametername] = src.[projectparametername],
-
-       [projectparametervalue] = src.[projectparametervalue],
-
-       [projectparameterjobtype] = src.[projectparameterjobtype],
-
-       [projectparameterdescription] = src.[projectparameterdescription],
-
-       [projectid] = src.[projectid],
-
-       environment = env.environment
-
-  FROM [adf].[projectparameters] src
-
- CROSS JOIN [adf].[vw_sdtap] env
+SELECT 
+	[projectparameterid]			= src.[ProjectParameterId],
+	[projectparametername]			= src.[ProjectParameterName],
+	[projectparametervalue]			= src.[ProjectParameterValue],
+	[projectparameterjobtype]		= src.[ProjectParameterJobType],
+	[projectparameterdescription]	= src.[ProjectParameterDescription],
+	[projectid]						= src.[ProjectId],
+	environment						= env.Environment
+  FROM [adf].[ProjectParameters] src
+CROSS JOIN [adf].[vw_SDTAP]  env

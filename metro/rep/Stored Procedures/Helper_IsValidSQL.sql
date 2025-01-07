@@ -1,5 +1,9 @@
 ﻿
-CREATE PROCEDURE rep.[helper_isvalidsql] (@sql varchar(8000), @exec bit = 0) AS /*
+
+
+CREATE PROCEDURE rep.[Helper_IsValidSQL] (@sql varchar(8000), @exec bit=0) AS
+
+/* 
 === Comments =========================================
 
 Description:
@@ -12,11 +16,45 @@ exec  rep.Helper_IsValidSQL @sql=@sqlnew, @exec=0
 
 NOK:
 
+
+
 Changelog:
 Date		time		Author					Description
 20220804	0000		K. Vermeij				Initial
 =======================================================
-*/ BEGIN DECLARE @parsesql AS varchar(8000) = @sql DECLARE @errormessage AS varchar(8000) BEGIN try
+*/
 
-   SET @parsesql = 'set parseonly on;' +@ parsesql; exec(@parsesql); PRINT '-- SQL Syntax OK' END try BEGIN catch PRINT'-- SQL Syntax NOT OK' return(1); END catch; IF @exec = 1 BEGIN try EXEC (@sql) END try BEGIN catch
-SELECT @errormessage = error_message(); PRINT '' PRINT '-- Error in executing SQL:' PRINT @errormessage PRINT '' PRINT '-- Executed SQL:' PRINT (@sql) return(1); END catch; return(0); END;
+
+BEGIN
+
+DECLARE @ParseSQL AS varchar(8000)  = @sql
+DECLARE @ErrorMessage AS varchar(8000) 
+
+    BEGIN TRY
+        SET @ParseSQL = 'set parseonly on;'+@ParseSQL;
+        EXEC(@ParseSQL);
+		PRINT '-- SQL Syntax OK'
+    END TRY
+    BEGIN CATCH
+	PRINT'-- SQL Syntax NOT OK'
+        RETURN(1);
+    END CATCH;
+
+IF @exec = 1
+	BEGIN TRY	
+ 		EXEC (@sql)
+	END TRY
+    BEGIN CATCH
+	
+		SELECT @ErrorMessage= ERROR_MESSAGE(); 
+		PRINT ''
+		PRINT '-- Error in executing SQL:'
+		PRINT  @ErrorMessage 
+		PRINT  ''
+		PRINT '-- Executed SQL:'
+		PRINT (@sql)
+		RETURN(1);
+
+    END CATCH;	
+RETURN(0);
+END;

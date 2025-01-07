@@ -2,7 +2,7 @@
 
 
 
-CREATE view [bld].[tr_010_RefType_010_Default] as
+CREATE VIEW [bld].[tr_010_RefType_010_Default] AS
 /* 
 === Comments =========================================
 
@@ -15,25 +15,25 @@ Date		time		Author					Description
 20230326	1315		K. Vermeij				Added [isDefault]
 =======================================================
 */
-Select   
-	  rt.BK
-	, rt.Code
+SELECT   
+	  rt.bk
+	, rt.code
 	, rt.[Name]
 	, rt.[Description]
-	, rt.RefType
-	, rt.RefTypeAbbr
-	, rt.SortOrder
-	, rt.LinkedReftype
-	, rt.BK_LinkedRefType
-	, LinkedRefTypeCode			= rtP.[Code]
-	, LinkedRefTypeName			= rtP.[Name]
-	, LinkedRefTypeDecription	= rtP.[Description]
-	, DefaultValue				= case when  rt.RefType = 'DataType' then rt.[Default] else null end
-	, isDefault					= case when  rt.RefType = 'DataType' then null else rt.[Default] end
+	, rt.reftype
+	, rt.reftypeabbr
+	, rt.sortorder
+	, rt.linkedreftype
+	, rt.bk_linkedreftype
+	, linkedreftypecode			= rtp.[Code]
+	, linkedreftypename			= rtp.[Name]
+	, linkedreftypedecription	= rtp.[Description]
+	, defaultvalue				= CASE WHEN  rt.reftype = 'DataType' THEN rt.[Default] ELSE null END
+	, isdefault					= CASE WHEN  rt.reftype = 'DataType' THEN null ELSE rt.[Default] END
 	
-From rep.vw_RefType rt
-left join rep.vw_RefType rtP on rt.LinkedReftype = rtP.RefTypeAbbr and rt.BK_LinkedRefType = rtP.BK
-Where 1=1
-  and isnull( rt.Active,'1')=1
-  and rt.bk is not null
+FROM rep.vw_reftype rt
+LEFT JOIN rep.vw_reftype rtp ON rt.linkedreftype = rtp.reftypeabbr AND rt.bk_linkedreftype = rtp.bk
+WHERE 1=1
+  AND isnull( rt.active,'1')=1
+  AND rt.bk IS NOT null
  -- and (rt.BK = 'DST|SQL_SYN|' or rt.BK = 'SL|SQLSYN|')
