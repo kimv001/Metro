@@ -1,57 +1,65 @@
-﻿
-CREATE VIEW [adf].[getalljobparametersjson] AS WITH allparameters AS
+﻿CREATE VIEW [adf].[GetAllJobParametersJSON]
 
-        (SELECT [jobs].[jobid],
+AS
 
-               [projects].[projectparametername] AS parametername,
+WITH    AllParameters
 
-               [projects].[projectparametervalue] AS parametervalue,
+AS      (
+            SELECT   [Jobs].[JobId]
+                    ,[Projects].[ProjectParameterName] AS ParameterName
+                    ,[Projects].[ProjectParameterValue] AS ParameterValue
+                    ,2 AS OrderValue
 
-               2 AS ordervalue
+            FROM    [adf].[Jobs] AS Jobs
 
-          FROM [adf].[jobs] AS jobs
+            LEFT JOIN [adf].[JobParameters] AS JobParameters
+                ON [Jobs].[JobId] = [JobParameters].[JobId]
 
-          LEFT JOIN [adf].[jobparameters] AS jobparameters
-            ON [jobs].[jobid] = [jobparameters].[jobid]
+			LEFT JOIN [adf].[Flows] AS Flows
+				ON [Jobs].[FlowId] = [Flows].[FlowId]
 
-          LEFT JOIN [adf].[flows] AS flows
-            ON [jobs].[flowid] = [flows].[flowid]
+            INNER JOIN [adf].[ProjectParameters] AS Projects
+                ON [Jobs].[JobType] = [Projects].[ProjectParameterJobType] 
+				AND 
+				   [Flows].[ProjectId] = [Projects].[ProjectId] 
 
-         INNER JOIN [adf].[projectparameters] AS projects
-            ON [jobs].[jobtype] = [projects].[projectparameterjobtype]
+            UNION 
 
-           AND [flows].[projectid] = [projects].[projectid]
+            SELECT   [JobParameters2].[JobId]
+                    ,[JobParameters2].[JobParameterName] AS ParameterName
+                    ,[JobParameters2].[JobParameterValue] AS ParameterValue
+                    ,1 AS OrderValue
+            FROM [adf].[JobParameters] AS JobParameters2
+        ),
 
-         UNION SELECT [jobparameters2].[jobid],
+        AllParametersWithDuplicateCount
+         
+AS      (
 
-               [jobparameters2].[jobparametername] AS parametername,
+            SELECT   [JobId] 
+                    ,[ParameterName]
+                    ,[ParameterValue]
+                    ,ROW_NUMBER() OVER( PARTITION BY    [JobId], 
+                                                        [ParameterName] 
+                                        ORDER BY        [OrderValue] ASC) 
+                                  AS    DuplicateCount
+            
+            FROM    [AllParameters]
+        )
 
-               [jobparameters2].[jobparametervalue] AS parametervalue,
-
-               1 AS ordervalue
-
-          FROM [adf].[jobparameters] AS jobparameters2
-       ),
-
-       allparameterswithduplicatecount AS
-
-        (SELECT [jobid],
-
-               [parametername],
-
-               [parametervalue],
-
-               row_number() over(PARTITION BY [jobid], [parametername]
-                            ORDER BY [ordervalue] ASC) AS duplicatecount
-
-          FROM [allparameters]
-       )
-SELECT [jobid],
-
-       '{' + string_agg ('"' + [parametername] + '": "' + [parametervalue] + '"', ',') + '}' AS jobparameters
-
-  FROM [allparameterswithduplicatecount]
-
- WHERE [duplicatecount] = 1
-
- GROUP BY [jobid]
+ SELECT     [JobId],
+            '{' + 
+            STRING_AGG  (   '"' + 
+                                [ParameterName] + 
+                                '": "' + 
+                                [ParameterValue] + 
+                                '"' ,
+                                ','
+                            ) 
+            + '}' AS JobParameters
+ 
+ FROM       [AllParametersWithDuplicateCount]
+ 
+ WHERE      [DuplicateCount] = 1
+ 
+ GROUP BY   [JobId]

@@ -38,7 +38,7 @@ BEGIN
        DECLARE @Result nvarchar(255)
             
        
-set  @Result=  reverse(parsename(replace(reverse(@Name), '_', '.'), @Position)) 
+SET  @Result=  reverse(parsename(replace(reverse(@Name), '_', '.'), @Position)) 
 
 IF(@Result = '')
        BEGIN 

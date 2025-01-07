@@ -1,135 +1,135 @@
 ﻿
-CREATE
-FUNCTION [rep].[getcolumnlistperdatasetbk] (@datasetbk varchar(255), @option int = 1, @type varchar(7), @prefixa varchar(MAX) = '', @postfixa varchar(MAX) = '', @prefixds varchar(MAX) = '', @postfixds varchar(MAX) = '', @seperator varchar(MAX) = '', @useexpression int = 0) RETURNS varchar(MAX) AS BEGIN -- Declare the return variable here
- DECLARE @result varchar(MAX),
 
-       @lenseperator int = len(@seperator)-0 IF @option = -1 -- column cast as datatype ordered by ordinal position
+CREATE FUNCTION [rep].[GetColumnListPerDatasetBK]
+(
+	@DatasetBK varchar(255),
+	@Option int = 1,
+	@Type varchar(7),
+	@prefixA varchar(max) = '',
+	@postfixA varchar(max) = '',
+	@prefixDS varchar(max) = '',
+	@postfixDS varchar(max) = '',
+	@seperator varchar(max) = '',
+	@UseExpression int = 0
+)
+RETURNS VARCHAR(MAX)
+AS
 
-SELECT @result = @prefixds + stuff(
-                                     (SELECT @seperator + char(10) + isnull(@prefixa + isnull(CASE
-                                                                                                  WHEN @useexpression = 1 THEN isnull(cast(a.expression AS varchar(MAX)), quotename(a.attributename))
-                                                                                                  WHEN @useexpression = 0 THEN quotename(a.attributename)
-                                                                                              END, '') +@ postfixa, 'N/A')
-                                      FROM bld.vw_attribute a
-                                      WHERE 1 = 1
-                                        AND a.bk_dataset = @datasetbk
-                                        AND ((iif(@type = '', 'all', @type) = 'all')
-                                             OR (@type = 'bk_data'
-                                                 AND cast(isnull(a.ismta, 0) AS int) = 0)
-                                             OR (@type = 'bk'
-                                                 AND cast(a.businesskey AS int) > 0)
-                                             OR (@type = 'data'
-                                                 AND cast(a.businesskey AS int) = 0
-                                                 AND cast(isnull(a.ismta, 0) AS int) = 0)
-                                             OR (@type = 'rh'
-                                                 AND cast(a.businesskey AS int) = 0
-                                                 AND isnull(a.ismta, 0) = 0
-                                                 AND cast(isnull(a.notinrh, 0) AS int) = 0)
-                                             OR (@type = 'mta'
-                                                 AND cast(isnull(a.ismta, 0) AS int) = 1))
-                                      ORDER BY CASE
-                                                   WHEN @type = 'bk' THEN cast(a.businesskey AS int)
-                                                   ELSE cast(a.ordinalposition AS int)
-                                               END ASC
-                                      FOR XML path(''), TYPE).value('.', 'VARCHAR(MAX)'), 1, @lenseperator, '') + @postfixds IF @option = -2 -- column cast as datatype ordered by ordinal position
+BEGIN
+	-- Declare the return variable here
+	DECLARE @Result VARCHAR(max),
+		@lenSeperator int = len(@seperator)-0
 
-SELECT @result = @prefixds + stuff(
-                                     (SELECT @seperator + char(10) + isnull(@prefixa + quotename(a.attributename) + ' ' + a.[ddl_type2] +@ postfixa, 'N/A')
-                                      FROM bld.vw_attribute a
-                                      WHERE 1 = 1
-                                        AND a.bk_dataset = @datasetbk
-                                        AND ((iif(@type = '', 'all', @type) = 'all')
-                                             OR (@type = 'bk_data'
-                                                 AND cast(isnull(a.ismta, 0) AS int) = 0)
-                                             OR (@type = 'bk'
-                                                 AND a.businesskey IS NOT NULL)
-                                             OR (@type = 'data'
-                                                 AND a.businesskey IS NULL
-                                                 AND cast(isnull(a.ismta, 0) AS int) = 0)
-                                             OR (@type = 'rh'
-                                                 AND a.businesskey IS NULL
-                                                 AND cast(isnull(a.ismta, 0) AS int) = 0
-                                                 AND cast(isnull(a.notinrh, 0) AS int) = 0)
-                                             OR (@type = 'mta'
-                                                 AND cast(isnull(a.ismta, 0) AS int) = 1))
-                                      ORDER BY CASE
-                                                   WHEN @type = 'bk' THEN cast(a.businesskey AS int)
-                                                   ELSE cast(a.ordinalposition AS int)
-                                               END ASC
-                                      FOR XML path(''), TYPE).value('.', 'VARCHAR(MAX)'), 1, @lenseperator, '') + @postfixds IF @option = -4 -- column cast as datatype ordered by ordinal position
 
-SELECT @result = @prefixds + stuff(
-                                     (SELECT @seperator + char(10) + isnull(@prefixa + isnull(cast(a.expression AS varchar(MAX)), quotename(a.attributename)) + ' ' + a.[ddl_type3] +@ postfixa + ' ' + quotename(cast(a.attributename AS varchar(MAX))), 'N/A')
-                                      FROM bld.vw_attribute a
-                                      WHERE 1 = 1
-                                        AND a.bk_dataset = @datasetbk
-                                        AND ((iif(@type = '', 'all', @type) = 'all')
-                                             OR (@type = 'bk_data'
-                                                 AND isnull(a.ismta, 0) = 0)
-                                             OR (@type = 'bk'
-                                                 AND cast(a.businesskey AS int) > 0)
-                                             OR (@type = 'data'
-                                                 AND cast(a.businesskey AS int) = 0
-                                                 AND cast(isnull(a.ismta, 0) AS int) = 0)
-                                             OR (@type = 'rh'
-                                                 AND cast(a.businesskey AS int) = 0
-                                                 AND cast(isnull(a.ismta, 0) AS int) = 0
-                                                 AND cast(isnull(a.notinrh, 0) AS int) = 0)
-                                             OR (@type = 'mta'
-                                                 AND cast(isnull(a.ismta, 0) AS int) = 1))
-                                      ORDER BY CASE
-                                                   WHEN @type = 'bk' THEN (isnull(cast(a.businesskey AS int), 100) * 1000) + cast(a.ordinalposition AS int)
-                                                   ELSE cast(a.ordinalposition AS int)
-                                               END ASC
-                                      FOR XML path(''), TYPE).value('.', 'VARCHAR(MAX)'), 1, @lenseperator, '') + @postfixds IF @option = -7 --- Empty Dummies
+if @Option = -1	-- column cast as datatype ordered by ordinal position
+	SELECT @Result =    @prefixDS+ STUFF((
+					SELECT @seperator +CHAR(10)+ 
+					ISNULL(@prefixA+ISNULL(CASE WHEN @UseExpression=1 THEN ISNULL(cast(A.Expression as varchar(max)),QUOTENAME(A.AttributeName))
+												WHEN @UseExpression=0 THEN QUOTENAME(A.AttributeName)
+												END
+												, '')
+													
+													+@postfixA,'N/A')
+						
+						FROM bld.vw_Attribute A
+						where 1=1
+						 and A.BK_Dataset = @DatasetBK
+						AND (
+													(iif(@Type='','all',@Type) = 'all' )
+													OR (@Type = 'bk_data'	and cast(isnull(a.Ismta,0) as int) = 0)
+													OR (@Type = 'bk'		and cast(A.BusinessKey as int) > 0)
+													OR (@Type = 'data'		and cast(A.BusinessKey as int) = 0 and cast(isnull(a.IsMta,0) as int) = 0)
+													OR (@Type = 'rh'		and cast(A.BusinessKey as int) = 0 and isnull(a.IsMta,0) = 0 and cast(isnull(a.NotInRH,0) as int)=0)
+													OR (@Type = 'mta'		and cast(isnull(a.IsMta,0) as int) = 1)
+													)
+       ORDER BY case when @Type='bk' then cast(a.businesskey as int) else cast(a.OrdinalPosition as int) end asc
+						 FOR XML PATH(''), TYPE).value('.', 'VARCHAR(MAX)'
+						), 1, @lenSeperator, '') + @postfixDS
+													
 
-SELECT @result = replace(replace(@prefixds + stuff(
-                                                     (SELECT @seperator + isnull(@prefixa + [rep].[getdummyvaluebyattributebk](a.bk, '-1', '<Empty>', '1900-01-01') + ' AS ' + quotename(a.attributename) +@ postfixa, '')
-                                                      FROM bld.vw_attribute a
-                                                      WHERE 1 = 1
-                                                        AND a.bk_dataset = @datasetbk
-                                                        AND ((iif(@type = '', 'all', @type) = 'all')
-                                                             OR (@type = 'bk_data'
-                                                                 AND cast(isnull(a.ismta, 0) AS int) = 0)
-                                                             OR (@type = 'bk'
-                                                                 AND a.businesskey IS NOT NULL)
-                                                             OR (@type = 'data'
-                                                                 AND a.businesskey IS NULL
-                                                                 AND cast(isnull(a.ismta, 0) AS int) = 0)
-                                                             OR (@type = 'rh'
-                                                                 AND a.businesskey IS NULL
-                                                                 AND cast(isnull(a.ismta, 0) AS int) = 0
-                                                                 AND cast(a.notinrh AS int) = 0)
-                                                             OR (@type = 'mta'
-                                                                 AND cast(isnull(a.ismta, 0) AS int) = 1))
-                                                      ORDER BY CASE
-                                                                   WHEN @type = 'bk' THEN (isnull(cast(a.businesskey AS int), 100) * 1000) + cast(a.ordinalposition AS int)
-                                                                   ELSE cast(a.ordinalposition AS int)
-                                                               END ASC
-                                                      FOR XML path(''), TYPE).value('.', 'VARCHAR(MAX)'), 1, @lenseperator, '') + @postfixds, '&lt;', '<'), '&gt;', '>') IF @option = -8 --- Empty Unknown
 
-SELECT @result = replace(replace(@prefixds + stuff(
-                                                     (SELECT @seperator + isnull(@prefixa + [rep].[getdummyvaluebyattributebk](a.bk, '-2', '<Unknown>', '1900-01-01') + ' AS ' + quotename(a.attributename) +@ postfixa, '')
-                                                      FROM bld.vw_attribute a
-                                                      WHERE 1 = 1
-                                                        AND a.bk_dataset = @datasetbk
-                                                        AND ((iif(@type = '', 'all', @type) = 'all')
-                                                             OR (@type = 'bk_data'
-                                                                 AND isnull(a.ismta, 0) = 0)
-                                                             OR (@type = 'bk'
-                                                                 AND a.businesskey IS NOT NULL)
-                                                             OR (@type = 'data'
-                                                                 AND a.businesskey IS NULL
-                                                                 AND cast(isnull(a.ismta, 0) AS int) = 0)
-                                                             OR (@type = 'rh'
-                                                                 AND a.businesskey IS NULL
-                                                                 AND cast(isnull(a.ismta, 0) AS int) = 0
-                                                                 AND cast(a.notinrh AS int) = 0)
-                                                             OR (@type = 'mta'
-                                                                 AND cast(isnull(a.ismta, 0) AS int) = 1))
-                                                      ORDER BY CASE
-                                                                   WHEN @type = 'bk' THEN (isnull(cast(a.businesskey AS int), 100) * 1000) + cast(a.ordinalposition AS int)
-                                                                   ELSE cast(a.ordinalposition AS int)
-                                                               END ASC
-                                                      FOR XML path(''), TYPE).value('.', 'VARCHAR(MAX)'), 1, @lenseperator, '') + @postfixds, '&lt;', '<'), '&gt;', '>') -- Return the result of the function
- RETURN @result END
+if @Option = -2	-- column cast as datatype ordered by ordinal position
+
+	SELECT @Result =    @prefixDS+ STUFF((
+					SELECT @seperator +CHAR(10) + ISNULL(@prefixA+QUOTENAME(A.AttributeName)+' ' +a.[DDL_Type2]+@postfixA ,'N/A')
+						FROM bld.vw_Attribute A
+						where 1=1
+						 and A.BK_Dataset = @DatasetBK
+						AND (
+													(iif(@Type='','all',@Type) = 'all' )
+													OR (@Type = 'bk_data'	and cast(isnull(a.IsMta,0) as int) = 0)
+													OR (@Type = 'bk'		and A.BusinessKey is not null)
+													OR (@Type = 'data'		and A.BusinessKey is null and cast(isnull(a.IsMta,0) as int) = 0)
+													OR (@Type = 'rh'		and A.BusinessKey is null and cast(isnull(a.IsMta,0)  as int) = 0 and cast(isnull(a.NotInRH,0) as int)=0)
+													OR (@Type = 'mta'		and cast(isnull(a.IsMta,0) as int) = 1)
+													)
+      ORDER BY case when @Type='bk' then cast(a.businesskey as int) else cast(a.OrdinalPosition as int) end asc
+						 FOR XML PATH(''), TYPE).value('.', 'VARCHAR(MAX)'
+						), 1, @lenSeperator, '') + @postfixDS
+	
+if @Option = -4	-- column cast as datatype ordered by ordinal position
+
+	SELECT @Result = 
+					@prefixDS+ 
+					STUFF((
+					SELECT @seperator +CHAR(10) + ISNULL(@prefixA+ISNULL(cast(A.Expression as varchar(max)),QUOTENAME(A.AttributeName))+' ' +a.[DDL_Type3]+@postfixA+' ' +QUOTENAME(cast(A.AttributeName as varchar(max))),'N/A')
+						FROM bld.vw_Attribute A
+						where 1=1
+						 and A.BK_Dataset = @DatasetBK
+						AND (
+													(iif(@Type='','all',@Type) = 'all' )
+													OR (@Type = 'bk_data'	and isnull(a.IsMta,0) = 0)
+													OR (@Type = 'bk'		and cast(A.BusinessKey as int)>0)
+													OR (@Type = 'data'		and cast(A.BusinessKey as int) = 0 and cast(isnull(a.IsMta,0) as int) = 0)
+													OR (@Type = 'rh'		and cast(A.BusinessKey as int) = 0 and cast(isnull(a.IsMta,0) as int) = 0 and cast(isnull(a.NotInRH,0) as int)=0)
+													OR (@Type = 'mta'		and cast(isnull(a.IsMta,0) as int) = 1)
+													)
+       ORDER BY case when @Type='bk' then (ISNULL(cast(a.businesskey as int),100)*1000)+ cast(a.OrdinalPosition as int)  else cast(a.OrdinalPosition as int) end asc
+						 FOR XML PATH(''), TYPE).value('.', 'VARCHAR(MAX)'
+						), 1, @lenSeperator, '')
+						+ @postfixDS
+
+
+if @Option = -7 --- Empty Dummies
+	SELECT @Result =  REPLACE( REPLACE(  @prefixDS+ STUFF((
+					SELECT @seperator + ISNULL(@prefixA + [rep].[GetDummyValueByAttributeBK](a.BK,'-1', '<Empty>','1900-01-01') +' AS '+ QUOTENAME(A.AttributeName)+@postfixA ,'')
+						FROM bld.vw_Attribute A
+						where 1=1
+						 and A.BK_Dataset = @DatasetBK
+						AND (
+													(iif(@Type='','all',@Type) = 'all' )
+													OR (@Type = 'bk_data'	and cast(isnull(a.IsMta,0) as int) = 0)
+													OR (@Type = 'bk'		and A.BusinessKey is not null)
+													OR (@Type = 'data'		and A.BusinessKey is null and cast(isnull(a.IsMta,0) as int) = 0)
+													OR (@Type = 'rh'		and A.BusinessKey is null and cast(isnull(a.IsMta,0) as int) = 0 and cast(a.NotInRH as int)=0)
+													OR (@Type = 'mta'		and cast(isnull(a.IsMta,0) as int) = 1)
+													)
+       ORDER BY case when @Type='bk' then (ISNULL(cast(a.businesskey as int),100)*1000)+ cast(a.OrdinalPosition as int)  else cast(a.OrdinalPosition as int) end asc
+
+						 FOR XML PATH(''), TYPE).value('.', 'VARCHAR(MAX)'
+						), 1, @lenSeperator, '') + @postfixDS
+						, '&lt;','<'), '&gt;','>')
+						
+if @Option = -8 --- Empty Unknown
+	SELECT @Result =  REPLACE( REPLACE(  @prefixDS+ STUFF((
+					SELECT @seperator + ISNULL(@prefixA + [rep].[GetDummyValueByAttributeBK](a.BK,'-2', '<Unknown>','1900-01-01') +' AS '+ QUOTENAME(A.AttributeName)+@postfixA ,'')
+						FROM bld.vw_Attribute A
+						where 1=1
+						 and A.BK_Dataset = @DatasetBK
+						AND (
+													(iif(@Type='','all',@Type) = 'all' )
+													OR (@Type = 'bk_data'	and isnull(a.IsMta,0) = 0)
+													OR (@Type = 'bk'		and A.BusinessKey is not null)
+													OR (@Type = 'data'		and A.BusinessKey is null and cast(isnull(a.IsMta,0) as int) = 0)
+													OR (@Type = 'rh'		and A.BusinessKey is null and cast(isnull(a.IsMta,0)  as int) = 0 and cast(a.NotInRH  as int)=0)
+													OR (@Type = 'mta'		and cast(isnull(a.IsMta,0) as int) = 1)
+													)
+        ORDER BY case when @Type='bk' then (ISNULL(cast(a.businesskey as int),100)*1000)+ cast(a.OrdinalPosition as int)  else cast(a.OrdinalPosition as int) end asc
+						 FOR XML PATH(''), TYPE).value('.', 'VARCHAR(MAX)'
+						), 1, @lenSeperator, '') + @postfixDS
+						, '&lt;','<'), '&gt;','>')
+					
+	-- Return the result of the function
+	RETURN @Result
+
+END

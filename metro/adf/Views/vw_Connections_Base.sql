@@ -1,74 +1,44 @@
 ﻿
-CREATE VIEW [adf].[vw_connections_base] AS WITH cte_datasourceproperties_sdtap_values AS
+ CREATE  VIEW [adf].[vw_Connections_Base] AS
+WITH cte_DataSourceProperties_SDTAP_Values AS (
+	SELECT 
+		src.BK_DataSource
+		, src.DataSourceServer
+		, src.DataSourceDatabase
+		, src.DataSourceURL
+		, src.DataSourceUSR
+		, src.Environment
+	FROM adf.vw_DataSourceProperties_SDTAP_Values src
+)
 
-        (SELECT src.bk_datasource,
 
-               src.datasourceserver,
 
-               src.datasourcedatabase,
-
-               src.datasourceurl,
-
-               src.datasourceusr,
-
-               src.environment
-
-          FROM adf.vw_datasourceproperties_sdtap_values src
-       )
-SELECT bk_dataset = d.bk,
-
-       datasetname = d.datasetname,
-
-       active = 1,
-
-       datasetshortname = d.shortname,
-
-       groupshortname = d.bk_group + '_' + d.shortname,
-
-       groupname = d.bk_group,
-
-       schemaname = d.schemaname,
-
-       datasettype = d.objecttype,
-
-       objecttype = d.objecttype,
-
-       datasourcename = d.datasource,
-
-       bk_datasource = d.bk_datasource,
-
-       bk_linkedservice = d.bk_linkedservice,
-
-       linkedservicename = d.linkedservicename,
-
-       datasourceserver = dspv.datasourceserver,
-
-       datasourcedatabase = dspv.datasourcedatabase,
-
-       datasourceurl = dspv.datasourceurl,
-
-       datasourceusr = dspv.datasourceusr,
-
-       layername = d.layername,
-
-       stg_container = 'staging',
-
-       tgt_container = iif(d.schemaname = 'pre_file', 'import', 'archive'),
-
-       corecount = 8 --> sorry nog geen veld voor
-,
-
-       mta_source = d.mta_source,
-
-       repositorystatusname = d.repositorystatusname,
-
-       repositorystatuscode = d.repositorystatuscode,
-
-       bigdata = isnull(bigdata, 0),
-
-       environment = dspv.environment
-
-  FROM bld.vw_dataset d
-
-  LEFT JOIN cte_datasourceproperties_sdtap_values dspv
-    ON d.bk_datasource = dspv.bk_datasource
+SELECT 
+	BK_Dataset					= d.BK
+	, DatasetName				= d.DatasetName
+	, Active					= 1
+	, DatasetShortName			= d.ShortName
+	, GroupShortName			= d.BK_Group + '_' + d.ShortName
+	, GroupName					= d.BK_Group
+	, SchemaName				= d.SchemaName
+	, DatasetType				= d.ObjectType
+	, ObjectType				= d.ObjectType
+	, DataSourceName			= d.DataSource
+	, BK_DataSource				= d.BK_DataSource
+	, BK_LinkedService			= d.BK_LinkedService
+	, LinkedServiceName			= d.LinkedServiceName
+	, DataSourceServer			= DSPV.DataSourceServer
+	, DataSourceDatabase		= DSPV.DataSourceDatabase
+	, DataSourceURL				= DSPV.DataSourceURL
+	, DataSourceUSR				= DSPV.DataSourceUSR
+	, LayerName					= d.LayerName
+	, STG_Container				= 'staging'
+	, TGT_Container				= IIF(d.SchemaName = 'pre_file', 'import', 'archive')
+	, CoreCount					= 8 --> sorry nog geen veld voor
+	, mta_source				= d.mta_source
+	, RepositoryStatusName		= d.RepositoryStatusName
+	, RepositoryStatusCode		= d.RepositoryStatusCode
+	, Bigdata					= isnull(Bigdata, 0 )
+	, Environment				= DSPV.Environment
+FROM bld.vw_Dataset			d
+LEFT JOIN cte_DataSourceProperties_SDTAP_Values DSPV ON d.BK_DataSource = DSPV.BK_DataSource

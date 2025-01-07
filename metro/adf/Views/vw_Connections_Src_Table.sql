@@ -12,24 +12,24 @@ AS (
 		FROM rep.vw_LinkedService ls
 		JOIN rep.vw_LinkedServiceProperties lsp ON ls.BK = lsp.BK_LinkedService
 	)
-, cte_DataSourceProperties_SDTAP_Values as (
-	select 
+, cte_DataSourceProperties_SDTAP_Values AS (
+	SELECT 
 		src.BK_DataSource
 		, src.DataSourceServer
 		, src.DataSourceDatabase
 		, src.DataSourceURL
 		, src.DataSourceUSR
 		, src.Environment
-	from adf.vw_DataSourceProperties_SDTAP_Values src
+	FROM adf.vw_DataSourceProperties_SDTAP_Values src
 )
 SELECT
 	-- first attribute SRCConnectionName is legacy
-	  SRCConnectionName							= case when dt.LayerName = 'his' then CONCAT (
+	  SRCConnectionName							= CASE WHEN dt.LayerName = 'his' THEN CONCAT (
 	 													src.GroupName
 	 													,'_'
 	 													,dt.ShortName
 	 													)
-													else src.GroupShortName end
+													ELSE src.GroupShortName END
 	, LinkedServiceName							= dsl.[Name]
 
 	-- SRC	
@@ -86,7 +86,7 @@ LEFT JOIN LinkedServiceProperties dslp_s ON dslp_s.BK_LinkedService = dsl.BK
 	AND dslp_s.LinkedServicePropertiesName = 'FQ_SQLServerName'
 LEFT JOIN LinkedServiceProperties dslp_d ON dslp_d.BK_LinkedService = dsl.BK
 	AND dslp_d.LinkedServicePropertiesName = 'DatabaseName'
-left join cte_DataSourceProperties_SDTAP_Values DSPV on dt.BK_DataSource = DSPV.BK_DataSource and (src.Environment = DSPV.Environment or src.Environment = 'X')
+LEFT JOIN cte_DataSourceProperties_SDTAP_Values DSPV ON dt.BK_DataSource = DSPV.BK_DataSource AND (src.Environment = DSPV.Environment OR src.Environment = 'X')
 WHERE 1 = 1
 	AND src.LayerName = 'src'
 	AND src.DatasetType = 'Table'

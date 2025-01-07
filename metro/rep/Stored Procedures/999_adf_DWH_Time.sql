@@ -1,5 +1,5 @@
 ﻿
-CREATE procedure rep.[999_adf_DWH_Time] as
+CREATE PROCEDURE rep.[999_adf_DWH_Time] AS
 /* 
 === Comments =========================================
 
@@ -12,36 +12,36 @@ Date		time		Author					Description
 =======================================================
 */
 
-iF not EXISTS (	Select 1 
-				From INFORMATION_SCHEMA.TABLES 
-				Where TABLE_TYPE='BASE TABLE' AND TABLE_NAME='DWH_Time') 
+IF NOT EXISTS (	SELECT 1 
+				FROM INFORMATION_SCHEMA.TABLES 
+				WHERE TABLE_TYPE='BASE TABLE' AND TABLE_NAME='DWH_Time') 
 
-Create table [adf].[DWH_Time](
+CREATE TABLE [adf].[DWH_Time](
 						[Time_HH_MM_SS] [time](7) NULL,
 						[Time_Int] [int] NULL
 					) ON [PRIMARY]
 ;
 
 
-truncate table [adf].[DWH_Time]
+TRUNCATE TABLE [adf].[DWH_Time]
 
 ;
 
 
-  with Hours as
+  WITH Hours AS
   (
-       select DATEADD(
-        dd, 0, DATEDIFF(
-              dd, 0,  getDate() )
-      ) as dtHr
-    union all
-      select  DATEADD (minute , 1 , dtHr ) 
-        from Hours
+       SELECT DATEADD(
+        DD, 0, DATEDIFF(
+              DD, 0,  getDate() )
+      ) AS dtHr
+    UNION ALL
+      SELECT  DATEADD (MINUTE , 1 , dtHr ) 
+        FROM Hours
 		
-        where dtHr < DATEADD(
-            dd, 0, DATEDIFF(
-                  dd, 0, DATEADD (
-                        d , 1 , getDate() 
+        WHERE dtHr < DATEADD(
+            DD, 0, DATEDIFF(
+                  DD, 0, DATEADD (
+                        D , 1 , getDate() 
                       )
                 )
         )
@@ -52,6 +52,6 @@ truncate table [adf].[DWH_Time]
            ,[Time_Int])
      
   
-  select distinct cast(dtHr as time) Time_HH_MM_SS , (DATEPART(hour, cast(dtHr as time)) * 60) + (DATEPART(minute, cast(dtHr as time)) ) Time_Int
+  SELECT DISTINCT CAST(dtHr AS time) Time_HH_MM_SS , (DATEPART(HOUR, CAST(dtHr AS time)) * 60) + (DATEPART(MINUTE, CAST(dtHr AS time)) ) Time_Int
 
-  from Hours option (maxrecursion 0)
+  FROM Hours OPTION (MAXRECURSION 0)

@@ -1,6 +1,6 @@
 ﻿
 
-CREATE view [bld].[tr_350_Exports_010_default] as 
+CREATE VIEW [bld].[tr_350_Exports_010_default] AS 
 
 /* 
 === Comments =========================================
@@ -13,20 +13,20 @@ Date		time		Author					Description
 202400821	1400		K. Vermeij				Initial
 =======================================================
 */
-select
+SELECT
 	  e.[bk]
 	, e.[code]
 	, export_name					= e.[name]
-	, BK_ContactGroup				= e.BK_ContactGroup
+	, bk_contactgroup				= e.bk_contactgroup
 	
 	, [bk_dataset]					= ds.bk
-	, src_datasetname				= ds.DatasetName
-	, src_schema					= s.SchemaName
-	, src_dataset					= concat(ds.BK_Group,'_', ds.ShortName)
-	, src_shortName					= ds.ShortName
-	, src_group						= ds.BK_Group
+	, src_datasetname				= ds.datasetname
+	, src_schema					= s.schemaname
+	, src_dataset					= concat(ds.bk_group,'_', ds.shortname)
+	, src_shortname					= ds.shortname
+	, src_group						= ds.bk_group
 	, src_layer						= 'out'-- ds.LayerName
-	, src_DatasetType				= rt.[Name]
+	, src_datasettype				= rt.[Name]
 	, [bk_schedule] = ''
 	, e.[bk_schema]
 	, e.[container]
@@ -39,28 +39,28 @@ select
 	, e.[split_by]
 	
 	-- FileFormat FF
-	, FF_Name					= ff.[name]
-	, FF_Fileformat				= ff.Fileformat
-	, FF_ColumnDelimiter		= ff.ColumnDelimiter
-	, FF_RowDelimiter			= ff.RowDelimiter
-	, FF_QuoteCharacter			= isnull(ff.QuoteCharacter,'')
-	, FF_CompressionLevel		= ff.CompressionLevel
-	, FF_CompressionType		= ff.CompressionType
-	, FF_EnableCDC				= ff.EnableCDC
-	, FF_EscapeCharacter		= ff.EscapeCharacter
-	, FF_FileEncoding			= ff.FileEncoding
-	, FF_FirstRow				= ff.[FirstRow]
-	, FF_FirstRowAsHeader		= ff.FirstRowAsHeader
+	, ff_name					= ff.[name]
+	, ff_fileformat				= ff.fileformat
+	, ff_columndelimiter		= ff.columndelimiter
+	, ff_rowdelimiter			= ff.rowdelimiter
+	, ff_quotecharacter			= isnull(ff.quotecharacter,'')
+	, ff_compressionlevel		= ff.compressionlevel
+	, ff_compressiontype		= ff.compressiontype
+	, ff_enablecdc				= ff.enablecdc
+	, ff_escapecharacter		= ff.escapecharacter
+	, ff_fileencoding			= ff.fileencoding
+	, ff_firstrow				= ff.[FirstRow]
+	, ff_firstrowasheader		= ff.firstrowasheader
 
 	--
-	, RepositoryStatusName				= rtRS.[Name]
-	, RepositoryStatusCode				= rtRS.Code
+	, repositorystatusname				= rtrs.[Name]
+	, repositorystatuscode				= rtrs.code
 		-- select *
- from [rep].[vw_export] e
- left join [rep].[vw_DatasetSrcFileFormat] ff on e.bk_fileformat = ff.bk
- left join bld.vw_Dataset ds on ds.datasetname = e.bk_dataset  and ds.BK_RefType_ObjectType = 'OT|T|Table'
- left join bld.vw_Schema s on ds.BK_Schema = s.BK
- left join bld.vw_RefType rt on ds.BK_RefType_ObjectType	= rt.BK
- join rep.vw_RefType			rtRS	on rtRS.BK				= e.BK_RefType_RepositoryStatus
+ FROM [rep].[vw_export] e
+ LEFT JOIN [rep].[vw_DatasetSrcFileFormat] ff ON e.bk_fileformat = ff.bk
+ LEFT JOIN bld.vw_dataset ds ON ds.datasetname = e.bk_dataset  AND ds.bk_reftype_objecttype = 'OT|T|Table'
+ LEFT JOIN bld.vw_schema s ON ds.bk_schema = s.bk
+ LEFT JOIN bld.vw_reftype rt ON ds.bk_reftype_objecttype	= rt.bk
+ JOIN rep.vw_reftype			rtrs	ON rtrs.bk				= e.bk_reftype_repositorystatus
 
  ;

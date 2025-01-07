@@ -1,16 +1,18 @@
-﻿
-CREATE TABLE [rep].[layer] ([bk] NVARCHAR (MAX) NULL,
-                                                [code] NVARCHAR (MAX) NULL,
-                                                                      [name] NVARCHAR (MAX) NULL,
-                                                                                            [description] NVARCHAR (MAX) NULL,
-                                                                                                                         [active] NVARCHAR (MAX) NULL,
-                                                                                                                                                 [isdwh] NVARCHAR (MAX) NULL,
-                                                                                                                                                                        [issrc] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                               [istgt] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                      [isrep] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                             [isaudit] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                                                      [isdwhhelper] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                                                                                   [issystem] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                                                                                                             [layerorder] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                                                                                                                                         [mta_source] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                                                                                                                                                                     [mta_loaddate] NVARCHAR (MAX) NULL);
+﻿CREATE TABLE [rep].[Layer] (
+    [BK]           NVARCHAR (MAX) NULL,
+    [Code]         NVARCHAR (MAX) NULL,
+    [Name]         NVARCHAR (MAX) NULL,
+    [Description]  NVARCHAR (MAX) NULL,
+    [Active]       NVARCHAR (MAX) NULL,
+    [isDWH]        NVARCHAR (MAX) NULL,
+    [isSRC]        NVARCHAR (MAX) NULL,
+    [isTGT]        NVARCHAR (MAX) NULL,
+    [isRep]        NVARCHAR (MAX) NULL,
+    [isAudit]      NVARCHAR (MAX) NULL,
+    [isDWHhelper]  NVARCHAR (MAX) NULL,
+    [IsSystem]     NVARCHAR (MAX) NULL,
+    [LayerOrder]   NVARCHAR (MAX) NULL,
+    [mta_Source]   NVARCHAR (MAX) NULL,
+    [mta_LoadDate] NVARCHAR (MAX) NULL
+);
+

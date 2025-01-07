@@ -9,7 +9,7 @@
 
 
 
-CREATE view [bld].[tr_100_Dataset_035_CustomStagingViews] as 
+CREATE VIEW [bld].[tr_100_Dataset_035_CustomStagingViews] AS 
 
 /* 
 === Comments =========================================
@@ -24,48 +24,50 @@ Date		time		Author					Description
 =======================================================
 */
 
-with view_logic as (
-select
-	  [dataset_name]							= lower(concat('[',src.ObjectSchema,'].[',src.ObjectName,']'))
-	, [view_defintion_contains_business_logic]	= src.ObjectDefinition_contains_business_logic
-    , [view_defintion]							= cast(src.ObjectDefinition as varchar(max))
-from [stg].[DWH_ObjectDefinitions] src 
+WITH view_logic AS (
+SELECT
+	  [dataset_name]							= lower(concat('[',src.objectschema,'].[',src.objectname,']'))
+	, [view_defintion_contains_business_logic]	= src.objectdefinition_contains_business_logic
+    , [view_defintion]							= CAST(src.objectdefinition AS varchar(MAX))
+FROM [stg].[DWH_ObjectDefinitions] src 
 )
 
-,  CustomStagingViews as (
+,  customstagingviews AS (
 	SELECT 
-		  BK							= Concat(s.bk,'|','vw_','|', d.BK_Group,'|', iif(isnull(D.dwhTargetShortName,'')='', replace(d.ShortName,'_',''),D.dwhTargetShortName),'|','Custom' )
-		, Code							= d.code 
+		  bk							= Concat(
+		      s.bk,'|','vw_','|', d.bk_group,'|', iif(isnull(d.dwhtargetshortname,'')='', replace(d.shortname,'_',''),d.dwhtargetshortname),'|','Custom'
+		  )
+		, code							= d.code 
 --		, DatasetName					= Quotename('stg')+'.'+Quotename(d.bk_Group+'_'+iif(isnull(D.dwhTargetShortName,'')='', replace(d.ShortName,'_',''),D.dwhTargetShortName))
-		, DatasetName					= QUOTENAME(s.SchemaName) + '.[vw_'  + d.BK_Group + '_' + replace(d.shortname,'_','') + '_Custom' + ']'
-		, SchemaName					= s.SchemaName
-		, LayerName						= s.LayerName
-		, LayerOrder					= s.LayerOrder
-		, DataSource					= d.DataSource
-		, BK_Schema						= s.BK
-		, BK_Group						= d.BK_Group
-		, Shortname						= iif(isnull(D.dwhTargetShortName,'')='', replace(d.ShortName,'_',''),D.dwhTargetShortName) 
-		, dwhTargetShortName			= d.dwhTargetShortName
-		, Description					= d.Description
-		, BK_Flow						= d.BK_Flow
-		, TimeStamp						= d.TimeStamp
-		, BusinessDate					= d.BusinessDate
-		, WhereFilter					= d.WhereFilter
-		, PartitionStatement			= d.PartitionStatement
-		, [BK_RefType_ObjectType]		= (select BK from rep.vw_Reftype where RefType='ObjectType' and [Name] = 'View')
-		, FullLoad						= d.FullLoad
-		, InsertOnly					= d.InsertOnly
-		, BigData						= d.BigData
-		, BK_Template_Load				= ''--case when l.[Name] != 'pst' then d.BK_Template_Load else null end --d.BK_Template_Load
-		, BK_Template_Create			= ''--d.BK_Template_Create
-		, CustomStagingView				= d.CustomStagingView
-		, BK_RefType_RepositoryStatus	= d.BK_RefType_RepositoryStatus
-		, IsSystem						= d.IsSystem
-		, s.isDWH								
-		, s.isSRC								
-		, s.isTGT
-		, s.isRep
-		, mta_RowNum					= Row_Number() over (order by d.BK)
+		, datasetname					= QUOTENAME(s.schemaname) + '.[vw_'  + d.bk_group + '_' + replace(d.shortname,'_','') + '_Custom' + ']'
+		, schemaname					= s.schemaname
+		, layername						= s.layername
+		, layerorder					= s.layerorder
+		, datasource					= d.datasource
+		, bk_schema						= s.bk
+		, bk_group						= d.bk_group
+		, shortname						= iif(isnull(d.dwhtargetshortname,'')='', replace(d.shortname,'_',''),d.dwhtargetshortname) 
+		, dwhtargetshortname			= d.dwhtargetshortname
+		, description					= d.description
+		, bk_flow						= d.bk_flow
+		, timestamp						= d.timestamp
+		, businessdate					= d.businessdate
+		, wherefilter					= d.wherefilter
+		, partitionstatement			= d.partitionstatement
+		, [BK_RefType_ObjectType]		= (SELECT bk FROM rep.vw_reftype WHERE reftype='ObjectType' AND [Name] = 'View')
+		, fullload						= d.fullload
+		, insertonly					= d.insertonly
+		, bigdata						= d.bigdata
+		, bk_template_load				= ''--case when l.[Name] != 'pst' then d.BK_Template_Load else null end --d.BK_Template_Load
+		, bk_template_create			= ''--d.BK_Template_Create
+		, customstagingview				= d.customstagingview
+		, bk_reftype_repositorystatus	= d.bk_reftype_repositorystatus
+		, issystem						= d.issystem
+		, s.isdwh								
+		, s.issrc								
+		, s.istgt
+		, s.isrep
+		, mta_rownum					= ROW_NUMBER() OVER (ORDER BY d.bk)
 
 
 	--FROM  [bld].[tr_100_Dataset_010_DatasetSrc] D
@@ -75,31 +77,31 @@ from [stg].[DWH_ObjectDefinitions] src
 	--join bld.vw_RefType		RT	on RT.BK		= D.[BK_RefType_ObjectType]
 	--WHERE 1 = 1
 	--			AND isnull(d.[CustomStagingView],0) = 1
-	FROM [bld].[vw_Dataset] D
+	FROM [bld].[vw_Dataset] d
 
-	Join bld.vw_Schema		S	on S.bk			= d.BK_Schema
+	JOIN bld.vw_schema		s	ON s.bk			= d.bk_schema
 
 	
-	join rep.vw_RefType		RT	on RT.BK		= D.[BK_RefType_ObjectType]
+	JOIN rep.vw_reftype		rt	ON rt.bk		= d.[BK_RefType_ObjectType]
 	WHERE 1 = 1
 				AND isnull(d.[CustomStagingView],0) = 1
-				and s.[Name] = 'stg'
+				AND s.[Name] = 'stg'
 
-				and RT.RefType='ObjectType' and RT.[Name] = 'Table'
+				AND rt.reftype='ObjectType' AND rt.[Name] = 'Table'
 				
 
 			)
-Select 
+SELECT 
 	  src.[BK]
 	, src.[Code]
 	, src.[DatasetName]
 	, src.[SchemaName]
 	, src.[DataSource]
-	, ss.BK_LinkedService
-	, LinkedServiceName							= ss.LinkedServiceName
-	, ss.BK_DataSource
-	, ss.BK_Layer
-	, src.LayerName
+	, ss.bk_linkedservice
+	, linkedservicename							= ss.linkedservicename
+	, ss.bk_datasource
+	, ss.bk_layer
+	, src.layername
 	, src.[BK_Schema]
 	, src.[BK_Group]
 	, src.[Shortname]
@@ -108,7 +110,7 @@ Select
 	, [PostFix]									= 'Custom'
 	, src.[Description]
 	, src.[BK_Flow]
-	, FlowOrder									= (src.LayerOrder + ((fl.SortOrder * 10) + 2))
+	, floworder									= (src.layerorder + ((fl.sortorder * 10) + 2))
 	, src.[TimeStamp]
 	, src.[BusinessDate]
 	, src.[WhereFilter]
@@ -121,25 +123,25 @@ Select
 	, src.[BK_Template_Create]
 	, src.[CustomStagingView]
 	, src.[BK_RefType_RepositoryStatus]
-	, src.IsSystem
-	, src.isDWH								
-	, src.isSRC								
-	, src.isTGT
-	, src.IsRep
-	, FirstDefaultDWHView						= 0
-	, ObjectType								= rtOT.[Name]
-	, RepositoryStatusName						= rtRS.[Name]
-	, RepositoryStatusCode						= rtRS.Code
+	, src.issystem
+	, src.isdwh								
+	, src.issrc								
+	, src.istgt
+	, src.isrep
+	, firstdefaultdwhview						= 0
+	, objecttype								= rtot.[Name]
+	, repositorystatusname						= rtrs.[Name]
+	, repositorystatuscode						= rtrs.code
 	, [view_defintion_contains_business_logic]	= vl.[view_defintion_contains_business_logic]
 	, [view_defintion]							= vl.[view_defintion]
-	, ToDeploy									= 0
-from CustomStagingViews			src
-left join bld.vw_Schema			ss		on ss.BK					= src.BK_Schema
-left join rep.vw_FlowLayer		fl		on fl.BK_Flow				= src.BK_Flow 
-											and fl.BK_Layer = ss.BK_Layer 
-											and (src.BK_Schema = fl.BK_Schema  OR fl.BK_Schema is null) 
-join rep.vw_RefType				rtOT	on rtOT.BK					= src.BK_RefType_ObjectType
-join rep.vw_RefType				rtRS	on rtRS.BK					= src.BK_RefType_RepositoryStatus
-left join view_logic			vl		on vl.dataset_name			= src.DatasetName
-where 1=1
+	, todeploy									= 0
+FROM customstagingviews			src
+LEFT JOIN bld.vw_schema			ss		ON ss.bk					= src.bk_schema
+LEFT JOIN rep.vw_flowlayer		fl		ON fl.bk_flow				= src.bk_flow 
+											AND fl.bk_layer = ss.bk_layer 
+											AND (src.bk_schema = fl.bk_schema  OR fl.bk_schema IS null) 
+JOIN rep.vw_reftype				rtot	ON rtot.bk					= src.bk_reftype_objecttype
+JOIN rep.vw_reftype				rtrs	ON rtrs.bk					= src.bk_reftype_repositorystatus
+LEFT JOIN view_logic			vl		ON vl.dataset_name			= src.datasetname
+WHERE 1=1
 --and src.code  = 'SA_DWH|src_file|Wes|EUAStatus'		

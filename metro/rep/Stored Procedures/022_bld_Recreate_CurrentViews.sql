@@ -56,7 +56,7 @@ BEGIN
                 AND TABLE_TYPE = 'VIEW'
                 AND LEFT(t.[TABLE_NAME], 3) = 'tr_'
                 AND t.TABLE_SCHEMA = @SrcSchema
-				and(rep.[GetNamePart](REPLACE(t.[TABLE_NAME], 'tr_', ''), 2) = @tgt_table_name  or @tgt_table_name is null)
+				AND(rep.[GetNamePart](REPLACE(t.[TABLE_NAME], 'tr_', ''), 2) = @tgt_table_name  OR @tgt_table_name IS null)
         )
         SELECT *,
             ProcessSequence = ROW_NUMBER() OVER (ORDER BY tgt_table_name)

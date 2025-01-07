@@ -4,7 +4,7 @@
 
 
 
-CREATE view [bld].[tr_510_Markers_010_SystemMarkers] as 
+CREATE VIEW [bld].[tr_510_Markers_010_SystemMarkers] AS 
 /* 
 === Comments =========================================
 
@@ -21,18 +21,18 @@ Date		time		Author					Description
 
 
 SELECT 
-	  BK				= d.bk+'|'+'<!<'+src.[Name]+'>>'+'|'+'System'
+	  BK				= D.BK+'|'+'<!<'+SRC.[Name]+'>>'+'|'+'System'
 	
-	, BK_Dataset		= d.BK
-	, Code				= d.Code
-	, MarkerType		= 'System'
-	, MarkerDescription = src.[Description]
-	, Marker			= '<!<'+src.[Name]+'>>'
-	, MarkerValue		= src.[DefaultValue]
-	, [Pre]				= Isnull(src.[Pre],0)
-	, [Post]			= Isnull(src.[Post],0)
-	, mta_RecType		= diff.RecType
-	, MarkerVersion		= src.MarkerVersion
-  FROM [rep].[vw_Marker] src
-  cross join bld.vw_dataset d
-  join [bld].[vw_MarkersSmartLoad] Diff on d.Code = Diff.Code  and diff.mta_RecType> -99
+	, BK_DATASET		= D.BK
+	, CODE				= D.CODE
+	, MARKERTYPE		= 'System'
+	, MARKERDESCRIPTION = SRC.[Description]
+	, MARKER			= '<!<'+SRC.[Name]+'>>'
+	, MARKERVALUE		= SRC.[DefaultValue]
+	, [Pre]				= Isnull(SRC.[Pre],0)
+	, [Post]			= Isnull(SRC.[Post],0)
+	, MTA_RECTYPE		= DIFF.RECTYPE
+	, MARKERVERSION		= SRC.MARKERVERSION
+  FROM [rep].[vw_Marker] SRC
+  CROSS JOIN BLD.VW_DATASET D
+  JOIN [bld].[vw_MarkersSmartLoad] DIFF ON D.CODE = DIFF.CODE  AND DIFF.MTA_RECTYPE> -99

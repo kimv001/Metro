@@ -1,17 +1,11 @@
-﻿
-CREATE VIEW adf.vw_jobparameters AS
-SELECT jobparameterid = src.[jobparameterid],
+﻿CREATE VIEW adf.vw_jobparameters AS 
 
-       jobparametername = src.[jobparametername],
-
-       jobparametervalue = src.[jobparametervalue],
-
-       jobparameterdescription = src.[jobparameterdescription],
-
-       jobid = src.[jobid],
-
-       environment = env.environment
-
-  FROM [adf].[jobparameters] src
-
- CROSS JOIN [adf].[vw_sdtap] env
+SELECT  
+	jobparameterid				= src.[JobParameterId],
+    jobparametername			= src.[JobParameterName],
+    jobparametervalue			= src.[JobParameterValue],
+    jobparameterdescription		= src.[JobParameterDescription],
+    jobid						= src.[JobId],
+	environment					= env.Environment
+  FROM [adf].[JobParameters]    src
+CROSS JOIN [adf].[vw_SDTAP]  env

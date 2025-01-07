@@ -4,7 +4,7 @@
 
 
 
-CREATE view [bld].[tr_150_DataTypesBySchema_010_allschemas] as 
+CREATE VIEW [bld].[tr_150_DataTypesBySchema_010_allschemas] AS 
 /* 
 === Comments =========================================
 
@@ -20,68 +20,68 @@ Date		time		Author					Description
 */
 
 
-with FixedSchemaDataType as (
+WITH FIXEDSCHEMADATATYPE AS (
 
 /* get fixed datatypes for scehma's, like "staging" */
 
-	Select  
-		  BK_Schema				= ss.BK
-		, DataTypeMapped		= dtm.DataTypeByDataSource
-	From bld.vw_schema				ss
-	join bld.[vw_RefType]			sdt on sdt.bk				= ss.[BK_RefType_ToChar]
-	join bld.vw_RefType				dst	on dst.BK				= ss.BK_DataSourceType
-	join rep.vw_DataTypeMapping		dtm on dtm.BK_RefType_DST	= dst.bk					and sdt.code = dtm.code
-	join bld.vw_RefType				dt	on dt.bk				= dtm.BK_RefType_DataType 
-  where sdt.reftype = 'SchemaDataType'
+	SELECT  
+		  BK_SCHEMA				= SS.BK
+		, DATATYPEMAPPED		= DTM.DATATYPEBYDATASOURCE
+	FROM BLD.VW_SCHEMA				SS
+	JOIN BLD.[vw_RefType]			SDT ON SDT.BK				= SS.[BK_RefType_ToChar]
+	JOIN BLD.VW_REFTYPE				DST	ON DST.BK				= SS.BK_DATASOURCETYPE
+	JOIN REP.VW_DATATYPEMAPPING		DTM ON DTM.BK_REFTYPE_DST	= DST.BK					AND SDT.CODE = DTM.CODE
+	JOIN BLD.VW_REFTYPE				DT	ON DT.BK				= DTM.BK_REFTYPE_DATATYPE 
+  WHERE SDT.REFTYPE = 'SchemaDataType'
 
   )
-, GenericDataSourcetype as (
+, GENERICDATASOURCETYPE AS (
 	-- select the default DataSourceType. This will be used if no datasource Type is mapped in [DataTypeMapping]
-	Select  
-		BK_RefType_DataSourceType	= r.BK
-	From bld.[vw_RefType] r
-	Where r.RefTypeAbbr = 'DST' and cast(r.[isDefault] as int) = 1
+	SELECT  
+		BK_REFTYPE_DATASOURCETYPE	= R.BK
+	FROM BLD.[vw_RefType] R
+	WHERE R.REFTYPEABBR = 'DST' AND CAST(R.[isDefault] AS int) = 1
 )
 
-, DataTypeMapping as (
+, DATATYPEMAPPING AS (
 
 	-- get all datatypes by DataSourceType
 
-	Select 
-		  BK_Schema					= ss.BK
-		, DataTypeMapped			= Coalesce(fd.DataTypeMapped,dtm.DataTypeByDataSource, gdtm.DataTypeByDataSource)
-		, DataTypeInRep				= Coalesce(dt.Code,gdtm.DataTypeByDataSource)
-		, FixedSchemaDataType		= iif(fd.BK_Schema is null, 0, 1)
-		, OrgMappedDataType			= Coalesce(dtm.DataTypeByDataSource,gdtm.DataTypeByDataSource)
-		, DefaultValue				= coalesce(dt.defaultValue, gdt.DefaultValue)
-	From bld.vw_schema					ss
-	join rep.vw_DataSource				ds		on ds.bk				= ss.BK_DataSource
+	SELECT 
+		  BK_SCHEMA					= SS.BK
+		, DATATYPEMAPPED			= COALESCE(FD.DATATYPEMAPPED,DTM.DATATYPEBYDATASOURCE, GDTM.DATATYPEBYDATASOURCE)
+		, DATATYPEINREP				= COALESCE(DT.CODE,GDTM.DATATYPEBYDATASOURCE)
+		, FIXEDSCHEMADATATYPE		= iif(FD.BK_SCHEMA IS null, 0, 1)
+		, ORGMAPPEDDATATYPE			= COALESCE(DTM.DATATYPEBYDATASOURCE,GDTM.DATATYPEBYDATASOURCE)
+		, DEFAULTVALUE				= COALESCE(DT.DEFAULTVALUE, GDT.DEFAULTVALUE)
+	FROM BLD.VW_SCHEMA					SS
+	JOIN REP.VW_DATASOURCE				DS		ON DS.BK				= SS.BK_DATASOURCE
 
 
 
 	--
-	join bld.vw_RefType					dst		on dst.BK				= ds.BK_RefType_DataSourceType
-	left join rep.vw_DataTypeMapping	dtm		on dtm.BK_RefType_DST	= dst.bk
-	left join bld.vw_RefType			dt		on dt.bk				= dtm.BK_RefType_DataType
+	JOIN BLD.VW_REFTYPE					DST		ON DST.BK				= DS.BK_REFTYPE_DATASOURCETYPE
+	LEFT JOIN REP.VW_DATATYPEMAPPING	DTM		ON DTM.BK_REFTYPE_DST	= DST.BK
+	LEFT JOIN BLD.VW_REFTYPE			DT		ON DT.BK				= DTM.BK_REFTYPE_DATATYPE
 
 	-- DataSourceType zonder specifieke datatypemapping (generic)
-	join GenericDataSourcetype			gdst	on 1=1
-	left join rep.vw_DataTypeMapping	gdtm	on gdtm.BK_RefType_DST	= gdst.BK_RefType_DataSourceType and dtm.BK_RefType_DST is null
-	left join bld.vw_RefType			gdt		on gdt.bk				= gdtm.BK_RefType_DataType
+	JOIN GENERICDATASOURCETYPE			GDST	ON 1=1
+	LEFT JOIN REP.VW_DATATYPEMAPPING	GDTM	ON GDTM.BK_REFTYPE_DST	= GDST.BK_REFTYPE_DATASOURCETYPE AND DTM.BK_REFTYPE_DST IS null
+	LEFT JOIN BLD.VW_REFTYPE			GDT		ON GDT.BK				= GDTM.BK_REFTYPE_DATATYPE
 
 
 	-- Some schema's get a fixed datatype like staging
-	left join FixedSchemaDataType		fd		on ss.bk				= fd.BK_Schema 
+	LEFT JOIN FIXEDSCHEMADATATYPE		FD		ON SS.BK				= FD.BK_SCHEMA 
 
 )
-select distinct
-	BK	=  src.BK_Schema+'|'+ DataTypeMapped+'|'+DataTypeInRep
-	, Code = src.BK_Schema
-	, src.BK_Schema
-	, src.DataTypeMapped
-	, src.DataTypeInRep
-	, src.FixedSchemaDataType
-	, src.OrgMappedDataType
-	, src.DefaultValue
+SELECT DISTINCT
+	BK	=  SRC.BK_SCHEMA+'|'+ DATATYPEMAPPED+'|'+DATATYPEINREP
+	, CODE = SRC.BK_SCHEMA
+	, SRC.BK_SCHEMA
+	, SRC.DATATYPEMAPPED
+	, SRC.DATATYPEINREP
+	, SRC.FIXEDSCHEMADATATYPE
+	, SRC.ORGMAPPEDDATATYPE
+	, SRC.DEFAULTVALUE
 
-from DataTypeMapping src
+FROM DATATYPEMAPPING SRC

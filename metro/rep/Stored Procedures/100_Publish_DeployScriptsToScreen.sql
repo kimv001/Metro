@@ -1,4 +1,4 @@
-﻿CREATE procedure [rep].[100_Publish_DeployScriptsToScreen] @TGT_ObjectName varchar(8000) = ''
+﻿CREATE PROCEDURE [rep].[100_Publish_DeployScriptsToScreen] @TGT_ObjectName varchar(8000) = ''
 	,@LayerName varchar(8000) = ''
 	,@SchemaName varchar(8000) = ''
 	,@GroupName varchar(8000) = ''
@@ -7,7 +7,7 @@
 	,@DeployMappings bit = 1
 	,@ObjectType varchar(100) = ''
 	,@IgnoreErrors int = 0 -- 2 just show the scripts, 1 stop on all builderrors, 0 stop on builderrors on selection
-as
+AS
 /*
 Developed by:			metro
 Description:			Publish deployscripts to screen
@@ -33,107 +33,108 @@ Date					Author				Description
 											1	- stop generating scripts if there are errors in the total build
 											2	- show the errors... but still generate the scripts
 */
-set ansi_warnings off;
-set nocount on;
+SET ANSI_WARNINGS OFF;
+SET NOCOUNT ON;
 
-declare @LogProcName varchar(255) = '100_Publish_DeployScriptsToScreen'
-declare @LogSQL varchar(max) = ''
-declare @SrcSchema varchar(255) = 'rep'
-declare @SrcDataset varchar(255) = ''
-declare @TgtSchema varchar(255) = 'rep'
-declare @TgtDataset varchar(255) = ''
-declare @Msg varchar(8000)
-declare @DeployVersion varchar(max) = '<!<DeployVersionNum>>' -- Convert(varchar(20),Format(cast(GETUTCDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Central European Standard Time' as datetime), 'yyyyMMddHHmmss'),121)
+DECLARE @LogProcName varchar(255) = '100_Publish_DeployScriptsToScreen'
+DECLARE @LogSQL varchar(MAX) = ''
+DECLARE @SrcSchema varchar(255) = 'rep'
+DECLARE @SrcDataset varchar(255) = ''
+DECLARE @TgtSchema varchar(255) = 'rep'
+DECLARE @TgtDataset varchar(255) = ''
+DECLARE @Msg varchar(8000)
+-- Convert(varchar(20),Format(cast(GETUTCDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Central European Standard Time' as datetime), 'yyyyMMddHHmmss'),121)
+DECLARE @DeployVersion varchar(MAX) = '<!<DeployVersionNum>>'
 	-- variables for the loops
-declare @CounterNr int
-declare @MaxNr int
-declare @StopCounterNr int
-declare @sql varchar(max)
-declare @bld_msg varchar(max)
+DECLARE @CounterNr int
+DECLARE @MaxNr int
+DECLARE @StopCounterNr int
+DECLARE @sql varchar(MAX)
+DECLARE @bld_msg varchar(MAX)
 
-if object_id('tempdb..#bld_errors') is not null
-	drop table #bld_errors
+IF object_id('tempdb..#bld_errors') IS NOT null
+	DROP TABLE #bld_errors
 
-select bc.*
-	,rownum = row_number() over (
-		partition by bc.buildcheckid order by bc.buildcheckid asc
+SELECT bc.*
+	,rownum = ROW_NUMBER() OVER (
+		PARTITION BY bc.buildcheckid ORDER BY bc.buildcheckid ASC
 		)
-into #bld_errors
-from [bld].[vw_BuildCheck] bc
-inner join bld.vw_Dataset d on d.BK = bc.BK
-where 1 = 1
-	and (
+INTO #bld_errors
+FROM [bld].[vw_BuildCheck] bc
+INNER JOIN bld.vw_Dataset d ON d.BK = bc.BK
+WHERE 1 = 1
+	AND (
 		@IgnoreErrors = 2
-		or @IgnoreErrors = 1
-		or (
+		OR @IgnoreErrors = 1
+		OR (
 			@IgnoreErrors = 0
-			and (
+			AND (
 				@TGT_ObjectName = ''
-				or @TGT_ObjectName = d.[DatasetName]
+				OR @TGT_ObjectName = d.[DatasetName]
 				)
-			and (
+			AND (
 				@LayerName = ''
-				or @LayerName = d.LayerName
+				OR @LayerName = d.LayerName
 				)
-			and (
+			AND (
 				@SchemaName = ''
-				or @SchemaName = d.SchemaName
+				OR @SchemaName = d.SchemaName
 				)
-			and (
+			AND (
 				@GroupName = ''
-				or @GroupName = d.BK_Group
+				OR @GroupName = d.BK_Group
 				)
-			and (
+			AND (
 				@ShortName = ''
-				or @ShortName = d.ShortName
+				OR @ShortName = d.ShortName
 				)
 			)
 		)
 
-select @counternr = min(rownum)
+SELECT @counternr = min(rownum)
 	,@MaxNr = max(rownum)
 --, @StopCounterNr= min(rownum)
-from #bld_errors bc
+FROM #bld_errors bc
 
-if @CounterNr > 0
-	print '/*' + char(10) + 'Build errors found:' + char(10)
+IF @CounterNr > 0
+	PRINT '/*' + char(10) + 'Build errors found:' + char(10)
 
-while (
-		@counternr is not null
-		and @counternr <= @MaxNr
+WHILE (
+		@counternr IS NOT null
+		AND @counternr <= @MaxNr
 		)
-begin
-	select @bld_msg = 'Dataset: ' + src.BK + ' Message:' + src.CheckMessage + char(10)
-	from #bld_errors src
-	where 1 = 1
-		and src.RowNum = @counternr
+BEGIN
+	SELECT @bld_msg = 'Dataset: ' + src.BK + ' Message:' + src.CheckMessage + char(10)
+	FROM #bld_errors src
+	WHERE 1 = 1
+		AND src.RowNum = @counternr
 
-	print (@bld_msg)
+	PRINT (@bld_msg)
 
-	if @CounterNr = @MaxNr
-		print char(10) + '*/' + char(10)
+	IF @CounterNr = @MaxNr
+		PRINT char(10) + '*/' + char(10)
 
-	set @counternr = @counternr + 1
-end
+	SET @counternr = @counternr + 1
+END
 
-if @IgnoreErrors < 2
-	and @counternr is not null
-begin
+IF @IgnoreErrors < 2
+	AND @counternr IS NOT null
+BEGIN
 	-- NEED TO STOP STORED PROCEDURE EXECUTION
-	return
-end
+	RETURN
+END
 
-if OBJECT_ID('tempdb..#DeployScripts') is not null
-	drop table #DeployScripts;
+IF OBJECT_ID('tempdb..#DeployScripts') IS NOT null
+	DROP TABLE #DeployScripts;
 
-with base
-as (
-	select
+WITH base
+AS (
+	SELECT
 		--	  DeployOrder				= dense_rank() over (partition by  d.Code order by d.ShortName,d.BK_Group, cast(isnull(fl.SortOrder,'1000') as int) asc,   cast(src.ObjectTypeDeployOrder as int) asc) -- rank() OVER (partition by d.SchemaName order by  cast(src.ObjectTypeDeployOrder as int) asc )
-		DeployOrder = dense_rank() over (
-			partition by d.Code order by d.ShortName
+		DeployOrder = DENSE_RANK() OVER (
+			PARTITION BY d.Code ORDER BY d.ShortName
 				,d.BK_Group
-				,cast(src.ObjectTypeDeployOrder as int) + cast(d.FlowOrder as int) asc
+				,CAST(src.ObjectTypeDeployOrder AS int) + CAST(d.FlowOrder AS int) ASC
 			) -- rank() OVER (partition by d.SchemaName order by  cast(src.ObjectTypeDeployOrder as int) asc )
 		,DeployScript = src.TemplateScript
 		,TGT_ObjectName = src.TGT_ObjectName
@@ -148,101 +149,101 @@ as (
 		,Code = d.Code
 		,src.ScriptLanguageCode
 		,src.ScriptLanguage
-	from bld.vw_DeployScripts src
-	inner join bld.vw_Dataset d on d.BK = src.BK_Dataset
-	inner join bld.vw_Schema s on s.bk = d.BK_Schema
-	where 1 = 1
-		and isnull(d.ToDeploy, 1) = 1
-		and (
+	FROM bld.vw_DeployScripts src
+	INNER JOIN bld.vw_Dataset d ON d.BK = src.BK_Dataset
+	INNER JOIN bld.vw_Schema s ON s.bk = d.BK_Schema
+	WHERE 1 = 1
+		AND isnull(d.ToDeploy, 1) = 1
+		AND (
 			(
 				@DeployDatasets = 1
-				and src.TemplateType = 'Dataset'
+				AND src.TemplateType = 'Dataset'
 				)
-			or src.TemplateType = 'Mapping'
+			OR src.TemplateType = 'Mapping'
 			)
-		and (
+		AND (
 			(
 				@DeployMappings = 1
-				and src.TemplateType = 'Mapping'
+				AND src.TemplateType = 'Mapping'
 				)
-			or src.TemplateType = 'Dataset'
+			OR src.TemplateType = 'Dataset'
 			)
-		and (
+		AND (
 			@ObjectType = src.ObjectType
-			or @ObjectType = ''
+			OR @ObjectType = ''
 			)
 	)
-select *
-	,RowNum = Row_Number() over (
-		order by groupname
+SELECT *
+	,RowNum = ROW_NUMBER() OVER (
+		ORDER BY groupname
 			,shortname
 			,DeployOrder
 		)
-into #DeployScripts
-from base
-where 1 = 1
-	and (
+INTO #DeployScripts
+FROM base
+WHERE 1 = 1
+	AND (
 		@TGT_ObjectName = ''
-		or @TGT_ObjectName = TGT_ObjectName
+		OR @TGT_ObjectName = TGT_ObjectName
 		)
-	and (
+	AND (
 		@LayerName = ''
-		or @LayerName = LayerName
+		OR @LayerName = LayerName
 		)
-	and (
+	AND (
 		@SchemaName = ''
-		or @SchemaName = SchemaName
+		OR @SchemaName = SchemaName
 		)
-	and (
+	AND (
 		@GroupName = ''
-		or @GroupName = GroupName
+		OR @GroupName = GroupName
 		)
-	and (
+	AND (
 		@ShortName = ''
-		or @ShortName = ShortName
+		OR @ShortName = ShortName
 		)
-order by groupname
+ORDER BY groupname
 	,shortname
 	,DeployOrder
 
-select @CounterNr = min(RowNum)
+SELECT @CounterNr = min(RowNum)
 	,@MaxNr = max(RowNum)
-from #DeployScripts
+FROM #DeployScripts
 
-while (
-		@CounterNr is not null
-		and @CounterNr <= @MaxNr
+WHILE (
+		@CounterNr IS NOT null
+		AND @CounterNr <= @MaxNr
 		)
-begin
-	select @TGT_ObjectName = src.TGT_ObjectName
+BEGIN
+	SELECT @TGT_ObjectName = src.TGT_ObjectName
 		,@sql = replace(src.DeployScript, '<!<DeployVersionNum>>', @DeployVersion)
-	from #DeployScripts src
-	where 1 = 1
-		and src.RowNum = @CounterNr
+	FROM #DeployScripts src
+	WHERE 1 = 1
+		AND src.RowNum = @CounterNr
 
-	exec [rep].[Helper_LongPrint] @string = @sql
+	EXEC [rep].[Helper_LongPrint] @string = @sql
 
 	--Print	(@sql)
 	--Exec	(@sql1)
-	set @Msg = 'Create Deploy Scripts  ' + @TGT_ObjectName
+	SET @Msg = 'Create Deploy Scripts  ' + @TGT_ObjectName
 
-	exec [aud].[proc_Log_Procedure] @LogAction = 'Create'
+	EXEC [aud].[proc_Log_Procedure] @LogAction = 'Create'
 		,@LogNote = @Msg
 		,@LogProcedure = @LogProcName
 		,@LogSQL = @sql
 		,@LogRowCount = 1
 
-	set @CounterNr = @CounterNr + 1
-end
+	SET @CounterNr = @CounterNr + 1
+END
 
-set @LogSQL = 'exec ' + @TgtSchema + '.' + @LogProcName
+SET @LogSQL = 'exec ' + @TgtSchema + '.' + @LogProcName
 
-exec [aud].[proc_Log_Procedure] @LogAction = 'INFO'
+EXEC [aud].[proc_Log_Procedure] @LogAction = 'INFO'
 	,@LogNote = 'Publish deploy scripts to screen done'
 	,@LogProcedure = @LogProcName
 	,@LogSQL = @LogSQL
 	,@LogRowCount = @MaxNr
 
 -- cleaning
-if OBJECT_ID('tempdb..#DeployScripts') is not null
-	drop table #DeployScripts
+IF OBJECT_ID('tempdb..#DeployScripts') IS NOT null
+	DROP TABLE #DeployScripts

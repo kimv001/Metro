@@ -1,18 +1,20 @@
-﻿
-CREATE TABLE [rep].[template] ([bk] NVARCHAR (MAX) NULL,
-                                                   [code] NVARCHAR (MAX) NULL,
-                                                                         [name] NVARCHAR (MAX) NULL,
-                                                                                               [description] NVARCHAR (MAX) NULL,
-                                                                                                                            [script] NVARCHAR (MAX) NULL,
-                                                                                                                                                    [templateversion] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                     [objectname] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                 [bk_reftype_scriptlanguage] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                                            [scriptlanguage] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                                                                            [bk_reftype_templatetype] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                                                                                                                     [bk_reftype_objecttype] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                                                                                                                                                            [bk_reftype_objecttype_basedon] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                                                                                                                                                                                                           [active] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                   [issystem] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                             [isdefault] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        [mta_source] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    [mta_loaddate] NVARCHAR (MAX) NULL);
+﻿CREATE TABLE [rep].[Template] (
+    [BK]                            NVARCHAR (MAX) NULL,
+    [Code]                          NVARCHAR (MAX) NULL,
+    [Name]                          NVARCHAR (MAX) NULL,
+    [Description]                   NVARCHAR (MAX) NULL,
+    [Script]                        NVARCHAR (MAX) NULL,
+    [TemplateVersion]               NVARCHAR (MAX) NULL,
+    [ObjectName]                    NVARCHAR (MAX) NULL,
+    [BK_RefType_ScriptLanguage]     NVARCHAR (MAX) NULL,
+    [ScriptLanguage]                NVARCHAR (MAX) NULL,
+    [BK_RefType_TemplateType]       NVARCHAR (MAX) NULL,
+    [BK_RefType_ObjectType]         NVARCHAR (MAX) NULL,
+    [BK_RefTYpe_ObjectType_BasedOn] NVARCHAR (MAX) NULL,
+    [Active]                        NVARCHAR (MAX) NULL,
+    [IsSystem]                      NVARCHAR (MAX) NULL,
+    [IsDefault]                     NVARCHAR (MAX) NULL,
+    [mta_Source]                    NVARCHAR (MAX) NULL,
+    [mta_LoadDate]                  NVARCHAR (MAX) NULL
+);
+

@@ -1,13 +1,14 @@
-﻿
-CREATE TABLE [aud].[log_procedure] ([log_procedureid] INT IDENTITY (1,
-                                                                    1) NOT NULL,
-                                                                       [log_time] datetime2 (7) NOT NULL,
-                                                                                                [log_action] VARCHAR (50) NOT NULL,
-                                                                                                                          [log_note] VARCHAR (MAX) NOT NULL,
-                                                                                                                                                   [log_procedure] VARCHAR (255) NULL,
-                                                                                                                                                                                 [log_sql] VARCHAR (MAX) NULL,
-                                                                                                                                                                                                         [log_rowcount] BIGINT NULL,
-                                                                                                                                                                                                                               [log_user] VARCHAR (255) NULL,
-                                                                                                                                                                                                                                                        [log_timestart] datetime2 (7) NULL,
-                                                                                                                                                                                                                                                                                      [log_timeend] datetime2 (7) NULL,
-                                                                                                                                                                                                                                                                                                                  CONSTRAINT [pk_logprocedure] PRIMARY KEY clustered ([log_procedureid] ASC));
+﻿CREATE TABLE [aud].[Log_Procedure] (
+    [Log_ProcedureID] INT           IDENTITY (1, 1) NOT NULL,
+    [Log_Time]        DATETIME2 (7) NOT NULL,
+    [Log_Action]      VARCHAR (50)  NOT NULL,
+    [Log_Note]        VARCHAR (MAX) NOT NULL,
+    [Log_Procedure]   VARCHAR (255) NULL,
+    [Log_SQL]         VARCHAR (MAX) NULL,
+    [Log_RowCount]    BIGINT        NULL,
+    [Log_User]        VARCHAR (255) NULL,
+    [Log_TimeStart]   DATETIME2 (7) NULL,
+    [Log_TimeEnd]     DATETIME2 (7) NULL,
+    CONSTRAINT [PK_LogProcedure] PRIMARY KEY CLUSTERED ([Log_ProcedureID] ASC)
+);
+

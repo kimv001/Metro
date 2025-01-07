@@ -1,12 +1,14 @@
-﻿
-CREATE TABLE [rep].[datatypemapping] ([bk] NVARCHAR (MAX) NULL,
-                                                          [code] NVARCHAR (MAX) NULL,
-                                                                                [name] NVARCHAR (MAX) NULL,
-                                                                                                      [description] NVARCHAR (MAX) NULL,
-                                                                                                                                   [bk_reftype_datatype] NVARCHAR (MAX) NULL,
-                                                                                                                                                                        [datatypebydatasource] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                              [bk_reftype_dst] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                              [active] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                                                      [issystem] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                                                                                [mta_source] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                                                                                                            [mta_loaddate] NVARCHAR (MAX) NULL);
+﻿CREATE TABLE [rep].[DataTypeMapping] (
+    [BK]                   NVARCHAR (MAX) NULL,
+    [Code]                 NVARCHAR (MAX) NULL,
+    [Name]                 NVARCHAR (MAX) NULL,
+    [Description]          NVARCHAR (MAX) NULL,
+    [BK_RefType_DataType]  NVARCHAR (MAX) NULL,
+    [DataTypeByDataSource] NVARCHAR (MAX) NULL,
+    [BK_RefType_DST]       NVARCHAR (MAX) NULL,
+    [Active]               NVARCHAR (MAX) NULL,
+    [IsSystem]             NVARCHAR (MAX) NULL,
+    [mta_Source]           NVARCHAR (MAX) NULL,
+    [mta_LoadDate]         NVARCHAR (MAX) NULL
+);
+

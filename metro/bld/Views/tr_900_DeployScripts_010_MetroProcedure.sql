@@ -1,24 +1,24 @@
 ﻿
 
 
-CREATE view [bld].[tr_900_DeployScripts_010_MetroProcedure] as
+CREATE VIEW [bld].[tr_900_DeployScripts_010_MetroProcedure] AS
 
-SELECT top 0
+SELECT TOP 0
 	  BK						= ''
-	, Code						= ''
-	, BK_Template				= ''
-	, BK_Dataset				= ''
-	, TGT_ObjectName			= ''
-	, ObjectType				= ''
-	, ObjectTypeDeployOrder		= ''
-	, TemplateType				= ''
-	, ScriptLanguageCode		= ''
-	, ScriptLanguage			= ''
-	, TemplateSource			= ''
-	, TemplateName				= ''
-	, TemplateScript			= ''
-	, TemplateVersion			= ''
-	, ToDeploy					= ''
+	, CODE						= ''
+	, BK_TEMPLATE				= ''
+	, BK_DATASET				= ''
+	, TGT_OBJECTNAME			= ''
+	, OBJECTTYPE				= ''
+	, OBJECTTYPEDEPLOYORDER		= ''
+	, TEMPLATETYPE				= ''
+	, SCRIPTLANGUAGECODE		= ''
+	, SCRIPTLANGUAGE			= ''
+	, TEMPLATESOURCE			= ''
+	, TEMPLATENAME				= ''
+	, TEMPLATESCRIPT			= ''
+	, TEMPLATEVERSION			= ''
+	, TODEPLOY					= ''
 	
 
   /*

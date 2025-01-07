@@ -1,5 +1,5 @@
 ﻿
-CREATE procedure [rep].[020_bld_create]  @tgt_table_name VARCHAR(255) =null  as 
+CREATE PROCEDURE [rep].[020_bld_create]  @tgt_table_name VARCHAR(255) =null  AS 
 /*
 Developed by:			metro
 Description:			create all bld tables, views and procedures based on defined [bld].[tr_%] views
@@ -16,10 +16,10 @@ Date					Author				Description
 
 
 --exec [rep].[Helper_RefreshMetroViews]
-exec [rep].[021_bld_Recreate_BuildTables]  @tgt_table_name 
-exec [rep].[022_bld_Recreate_CurrentViews] @tgt_table_name
+EXEC [rep].[021_bld_Recreate_BuildTables]  @tgt_table_name 
+EXEC [rep].[022_bld_Recreate_CurrentViews] @tgt_table_name
 
 -- refresh views
-exec [rep].[Helper_RefreshMetroViews]
+EXEC [rep].[Helper_RefreshMetroViews]
 
-exec [rep].[023_bld_Recreate_LoadProcs]
+EXEC [rep].[023_bld_Recreate_LoadProcs]

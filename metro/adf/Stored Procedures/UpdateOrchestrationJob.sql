@@ -1,77 +1,54 @@
-﻿
-CREATE PROCEDURE [adf].[updateorchestrationjob] @flowrunguid nvarchar(36) = '-1',
+﻿CREATE PROCEDURE [adf].[UpdateOrchestrationJob]
+	
+	@FlowRunGUID 		NVARCHAR(36) = '-1',
+	@JobId 				NVARCHAR(900) = '-1',
+	@JobRunGUID			NVARCHAR(36) = '-1',
+	@LastRunDuration 	INT = -1,
+    @LastRunStart 		DATETIME2 = '1900-01-01 00:00:00',
+	@LastRunEnd 		DATETIME2 = '9999-12-31 23:59:99',
+    @LastRunStatus 		NVARCHAR(10) = 'Undefined',
+    @CheckPoint 		DATETIME2 = NULL,
+	@JobMetrics 		NVARCHAR(MAX) = NULL,
+	@JobFullMessage 	NVARCHAR(MAX) = NULL 
 
-       @jobid nvarchar(900) = '-1',
+AS
+	-- Update job info
+	UPDATE		[adf].[Jobs]
+		
+	SET			[LastRunDuration] = @LastRunDuration,
+				[LastRunStart] = @LastRunStart,
+				[LastRunStatus] = @LastRunStatus,
+				[CheckPoint] = @CheckPoint
 
-       @jobrunguid nvarchar(36) = '-1',
+	WHERE		[JobId] = @JobId
 
-       @lastrunduration INT = -1,
+	-- Insert monitoring record
+	INSERT INTO	[aud].[JobRuns] 
 
-       @lastrunstart datetime2 = '1900-01-01 00:00:00',
+	SELECT		[Flows].[FlowId],
+				@FlowRunGUID AS [FlowRunGUID],
+				[Jobs].[JobId],
+				[Jobs].[JobName],
+				[Jobs].[JobDescription],
+				[Jobs].[JobType],
+				@JobRunGUID AS [JobRunGUID],
+				@LastRunStart AS [RunStart],
+				@LastRunEnd AS [RunEnd],
+				@LastRunDuration AS [RunDuration],
+				@LastRunStatus AS [RunStatus],
+				@CheckPoint AS [CheckPoint],
+				ISNULL(JSON_VALUE(@JobMetrics, '$.RowsInserted'), -1) AS [RowsInserted],
+				ISNULL(JSON_VALUE(@JobMetrics, '$.RowsUpdated'), -1) AS [RowsUpdated],
+				ISNULL(JSON_VALUE(@JobMetrics, '$.RowsDeleted'), -1) AS [RowsDeleted],
+				GETDATE() AS [LogDateTime],
+				@JobFullMessage AS [LogFullMessage]
 
-       @lastrunend datetime2 = '9999-12-31 23:59:99',
+	FROM		[adf].[Jobs] AS Jobs
 
-       @lastrunstatus nvarchar(10) = 'Undefined',
-
-       @checkpoint datetime2 = NULL,
-
-       @jobmetrics nvarchar(MAX) = NULL,
-
-       @jobfullmessage nvarchar(MAX) = NULL AS -- Update job info
-
-UPDATE [adf].[jobs]
-
-   SET [lastrunduration] = @lastrunduration,
-
-       [lastrunstart] = @lastrunstart,
-
-       [lastrunstatus] = @lastrunstatus,
-
-       [checkpoint] = @checkpoint
-
- WHERE [jobid] = @jobid -- Insert monitoring record
-
-  INSERT INTO [aud].[jobruns]
-SELECT [flows].[flowid],
-
-       @flowrunguid AS [flowrunguid],
-
-       [jobs].[jobid],
-
-       [jobs].[jobname],
-
-       [jobs].[jobdescription],
-
-       [jobs].[jobtype],
-
-       @jobrunguid AS [jobrunguid],
-
-       @lastrunstart AS [runstart],
-
-       @lastrunend AS [runend],
-
-       @lastrunduration AS [runduration],
-
-       @lastrunstatus AS [runstatus],
-
-       @checkpoint AS [checkpoint],
-
-       isnull(json_value(@jobmetrics, '$.RowsInserted'), -1) AS [rowsinserted],
-
-       isnull(json_value(@jobmetrics, '$.RowsUpdated'), -1) AS [rowsupdated],
-
-       isnull(json_value(@jobmetrics, '$.RowsDeleted'), -1) AS [rowsdeleted],
-
-       getdate() AS [logdatetime],
-
-       @jobfullmessage AS [logfullmessage]
-
-  FROM [adf].[jobs] AS jobs
-
- INNER JOIN [adf].[flows] AS flows
-    ON [jobs].[flowid] = [flows].[flowid]
-
- INNER JOIN [adf].[projects] AS projects
-    ON [flows].[projectid] = [projects].[projectid]
-
- WHERE [jobs].[jobid] = @jobid
+	INNER JOIN	[adf].[Flows] AS Flows
+		ON [Jobs].[FlowId] = [Flows].[FlowId]
+	
+	INNER JOIN	[adf].[Projects] AS Projects
+		ON [Flows].[ProjectId] = [Projects].[ProjectId]
+	
+	WHERE		[Jobs].[JobId] = @JobId

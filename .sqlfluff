@@ -1,0 +1,30 @@
+[sqlfluff]
+dialect = tsql
+max_line_length = 160
+large_file_skip_byte_limit = 30000
+indented_ctes = true
+
+[sqlfluff:rules]
+exclude_rules = L014  # Exclude rule that changes single quotes to double quotes
+
+[sqlfluff:rules:layout.spacing]
+single_line_maximum = 1  # Enforce single empty lines
+
+[sqlfluff:rules:capitalisation.keywords]
+capitalisation_policy = upper
+
+[sqlfluff:rules:capitalisation.identifiers]
+capitalisation_policy = upper
+
+[sqlfluff:rules:capitalisation.functions]
+capitalisation_policy = upper
+
+[sqlfluff:rules:capitalisation.literals]
+capitalisation_policy = upper
+
+[sqlfluff:rules:capitalisation.types]
+capitalisation_policy = upper
+
+[sqlfluff:layout:type:comma]
+spacing_before = touch
+line_position = trailing

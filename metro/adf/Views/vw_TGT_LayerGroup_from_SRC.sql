@@ -1,109 +1,61 @@
-﻿ ;
-CREATE VIEW [adf].[vw_tgt_layergroup_from_src] AS WITH base AS
-
-        (SELECT tgt = src.tgt_datasetname,
-
-               tgt_bk_dataset = src.bk_target,
-
-               tgt_group,
-
-               tgt_schema,
-
-               tgt_layer,
-
-               tgt_dwh = 'All',
-
-               src_bk_dataset = src.bk_source,
-
-               src_dataset = src.src_datasetname,
-
-               src_shortname,
-
-               src_group,
-
-               src_schema,
-
-               src_layer,
-
-               [generation_number]
-
-          FROM bld.vw_loaddependency src
-
-         WHERE dependencytype = 'TgtFromSrc'
-       ),
-
-       layerme AS
-
-        (SELECT DISTINCT [tgt_layergroup] = [tgt_layer] + '-' + [tgt_group],
-
-               src_bk_dataset,
-
-               [src_dataset],
-
-               [src_shortname],
-
-               [src_group],
-
-               [src_schema],
-
-               [src_layer],
-
-               [generation_number] = min([generation_number]),
-
-               'LayerGroup' AS dependencytype
-
-          FROM base b
-
-         WHERE 1 = 1
-
-         GROUP BY [tgt_layer] + '-' + [tgt_group],
-
-                  src_bk_dataset,
-
-                  [src_dataset],
-
-                  [src_shortname],
-
-                  [src_group],
-
-                  [src_schema],
-
-                  [src_layer]
-       )
-SELECT DISTINCT [tgt_layergroup],
-
-       [tgt] = [tgt_layergroup],
-
-       src_bk_dataset,
-
-       [src_dataset],
-
-       src.[src_shortname],
-
-       src_sourcename = src.src_group + '_' + iif(src.src_schema = 'stg', d.src_shortname, src.src_shortname),
-
-       src_datasettype = d.src_objecttype,
-
-       tgt_datasettype = d.tgt_objecttype,
-
-       [src_group],
-
-       [src_schema],
-
-       [src_layer],
-
-       generation_number = dense_rank() over(PARTITION BY [tgt_layergroup]
-                                                      ORDER BY [generation_number]),
-
-       dependencytype = 'LayerGroup',
-
-       [repositorystatusname] = d.repositorystatusname,
-
-       [repositorystatuscode] = d.repositorystatuscode
-
-  FROM layerme src
-
-  JOIN bld.vw_dataset d
-    ON src.src_bk_dataset = d.bk
-
- WHERE 1 = 1
+﻿CREATE VIEW [adf].[vw_TGT_LayerGroup_from_SRC] AS
+WITH base AS (
+				SELECT 
+		  TGT				= src.TGT_DatasetName
+		, TGT_BK_Dataset	= src.BK_Target	
+		, TGT_Group
+		, TGT_Schema
+		, TGT_Layer
+		, TGT_DWH			= 'All'
+		, SRC_BK_DataSet	= src.BK_Source
+		, SRC_DataSet		= src.SRC_DatasetName
+		, SRC_ShortName
+		, SRC_Group
+		, SRC_Schema
+		, SRC_Layer
+		  
+		,[generation_number]
+		FROM bld.vw_LoadDependency src
+		WHERE DependencyType = 'TgtFromSrc'
+)
+, LayerMe AS (
+	SELECT DISTINCT 
+		[TGT_LayerGroup] = [TGT_Layer]+'-'+[tgt_Group]
+		,SRC_BK_DataSet
+		,[SRC_DataSet]
+		,[SRC_ShortName]
+		,[SRC_Group]
+		,[SRC_Schema]
+		,[SRC_Layer]
+		,[generation_number] =min([generation_number])
+		, 'LayerGroup' AS DependencyType
+	FROM base b
+	WHERE 1=1
+	GROUP BY
+		 [TGT_Layer]+'-'+[tgt_Group]
+		,SRC_BK_DataSet
+		,[SRC_DataSet]
+		,[SRC_ShortName]
+		,[SRC_Group]
+		,[SRC_Schema]
+		,[SRC_Layer]
+	)
+SELECT DISTINCT 
+	  [TGT_LayerGroup]
+	, [TGT]						= [TGT_LayerGroup]
+	, SRC_BK_DataSet
+	, [SRC_DataSet]
+	, src.[SRC_ShortName]
+		, SRC_SourceName			= src.SRC_Group + '_' + iif(src.SRC_Schema = 'stg',d.SRC_ShortName, src.SRC_ShortName)
+	, SRC_DatasetType			= D.SRC_ObjectType
+	, TGT_DatasetType			= D.TGT_ObjectType
+	, [SRC_Group]
+	, [SRC_Schema]
+	, [SRC_Layer] 
+	, generation_number			=  DENSE_RANK() OVER(PARTITION BY [TGT_LayerGroup] ORDER BY [generation_number])
+	, DependencyType			= 'LayerGroup'
+	, [RepositoryStatusName]    = d.RepositoryStatusName
+	, [RepositoryStatusCode]	= d.RepositoryStatusCode
+FROM LayerMe src
+JOIN bld.vw_Dataset d ON src.SRC_BK_DataSet = d.BK
+WHERE 1=1

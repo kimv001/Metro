@@ -1,14 +1,16 @@
-﻿
-CREATE TABLE [rep].[datasourceproperties] ([bk] NVARCHAR (MAX) NULL,
-                                                               [code] NVARCHAR (MAX) NULL,
-                                                                                     [name] NVARCHAR (MAX) NULL,
-                                                                                                           [description] NVARCHAR (MAX) NULL,
-                                                                                                                                        [active] NVARCHAR (MAX) NULL,
-                                                                                                                                                                [bk_datasource] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                               [bk_reftype_environment] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                       [datasourcepropertiesname] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                                                                 [datasourcepropertiesvalue] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                                                                                                            [bk_reftype_repositorystatus] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                                                                                                                                                         [issystem] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                                                                                                                                                                                   [mta_source] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                                                                                                                                                                                                               [mta_loaddate] NVARCHAR (MAX) NULL);
+﻿CREATE TABLE [rep].[DataSourceProperties] (
+    [BK]                          NVARCHAR (MAX) NULL,
+    [Code]                        NVARCHAR (MAX) NULL,
+    [Name]                        NVARCHAR (MAX) NULL,
+    [Description]                 NVARCHAR (MAX) NULL,
+    [Active]                      NVARCHAR (MAX) NULL,
+    [BK_Datasource]               NVARCHAR (MAX) NULL,
+    [BK_RefType_Environment]      NVARCHAR (MAX) NULL,
+    [DatasourcePropertiesName]    NVARCHAR (MAX) NULL,
+    [DatasourcePropertiesValue]   NVARCHAR (MAX) NULL,
+    [BK_RefType_RepositoryStatus] NVARCHAR (MAX) NULL,
+    [IsSystem]                    NVARCHAR (MAX) NULL,
+    [mta_Source]                  NVARCHAR (MAX) NULL,
+    [mta_LoadDate]                NVARCHAR (MAX) NULL
+);
+

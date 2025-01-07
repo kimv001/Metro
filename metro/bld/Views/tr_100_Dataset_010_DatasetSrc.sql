@@ -5,7 +5,7 @@
 
 
 
-CREATE view [bld].[tr_100_Dataset_010_DatasetSrc] as 
+CREATE VIEW [bld].[tr_100_Dataset_010_DatasetSrc] AS 
 
 /* 
 === Comments =========================================
@@ -25,16 +25,16 @@ Date		time		Author					Description
 20241212	0800		K. Vermeij				Added Segments and Buckets
 =======================================================
 */
-with view_logic as (
-select
-	  [dataset_name]							= lower(concat('[',src.ObjectSchema,'].[',src.ObjectName,']'))
-	, [view_defintion_contains_business_logic]	= src.ObjectDefinition_contains_business_logic
-    , [view_defintion]							= cast(src.ObjectDefinition as varchar(max))
-from [stg].[DWH_ObjectDefinitions] src 
+WITH view_logic AS (
+SELECT
+	  [dataset_name]							= lower(concat('[',src.objectschema,'].[',src.objectname,']'))
+	, [view_defintion_contains_business_logic]	= src.objectdefinition_contains_business_logic
+    , [view_defintion]							= CAST(src.objectdefinition AS varchar(MAX))
+FROM [stg].[DWH_ObjectDefinitions] src 
 
 )
 
-, Base as (
+, base AS (
 	SELECT  
 		  [BK]								= src.[BK]
 		, [Code]							= src.[Code]
@@ -76,10 +76,10 @@ from [stg].[DWH_ObjectDefinitions] src
 		, [SCD]								= ''
 		, [DistinctValues]					= isnull(src.[DistinctValues],0)
 
-	From [rep].[vw_DatasetSrc] src
+	FROM [rep].[vw_DatasetSrc] src
 
 	)
-select 
+SELECT 
 	  [BK]										= src.[BK]
 	, [Code]									= src.[Code]
 	, [DatasetName]								= src.[DatasetName]
@@ -123,22 +123,22 @@ select
 
 	, [LayerName]								= ss.[LayerName]
 	, [BK_LinkedService]						= ss.[BK_LinkedService]
-	, [LinkedServiceName]						= ss.LinkedServiceName
+	, [LinkedServiceName]						= ss.linkedservicename
 	, [BK_DataSource]							= ss.[BK_DataSource]
 	, [BK_Layer]								= ss.[BK_Layer]
 	, [CreateDummies]							= ss.[CreateDummies]
-	, [FlowOrder]								= cast(isnull(ss.[LayerOrder],0) as int) + cast(isnull(fl.[SortOrder],0) as int)
+	, [FlowOrder]								= CAST(isnull(ss.[LayerOrder],0) AS int) + CAST(isnull(fl.[SortOrder],0) AS int)
 	, [FlowOrderDesc]							= 9999
 
 	, [FirstDefaultDWHView]						= 0
 
-	, [DatasetType]								= Cast('SRC' as varchar(5))
-	, [ObjectType]								= rtOT.[Name]
-	, [SRC_ObjectType]							= rtOT.[Name]
-	, [TGT_ObjectType]							= cast('' as varchar(255))
+	, [DatasetType]								= CAST('SRC' AS varchar(5))
+	, [ObjectType]								= rtot.[Name]
+	, [SRC_ObjectType]							= rtot.[Name]
+	, [TGT_ObjectType]							= CAST('' AS varchar(255))
 
-	, [RepositoryStatusName]					= rtRS.[Name]
-	, [RepositoryStatusCode]					= rtRS.Code
+	, [RepositoryStatusName]					= rtrs.[Name]
+	, [RepositoryStatusCode]					= rtrs.code
 	, [isDWH]									= ss.[isDWH]
 	, [isSRC]									= ss.[isSRC]
 	, [isTGT]									= ss.[isTGT]
@@ -148,13 +148,13 @@ select
 		
 	, [ToDeploy]								= 0
 	
-From base					src
-join bld.vw_Schema			ss		on ss.BK			= src.BK_Schema
+FROM base					src
+JOIN bld.vw_schema			ss		ON ss.bk			= src.bk_schema
 
-join rep.vw_FlowLayer		fl		on fl.BK_Flow		= src.BK_Flow 
-										and fl.BK_Layer = ss.BK_Layer 
-										and (src.BK_Schema = fl.BK_Schema  OR fl.BK_Schema is null)  
-join rep.vw_RefType			rtOT	on rtOT.BK			= src.BK_RefType_ObjectType
-join rep.vw_RefType			rtRS	on rtRS.BK			= src.BK_RefType_RepositoryStatus
-left join view_logic		vl		on vl.dataset_name		= src.DatasetName
-Where 1=1
+JOIN rep.vw_flowlayer		fl		ON fl.bk_flow		= src.bk_flow 
+										AND fl.bk_layer = ss.bk_layer 
+										AND (src.bk_schema = fl.bk_schema  OR fl.bk_schema IS null)  
+JOIN rep.vw_reftype			rtot	ON rtot.bk			= src.bk_reftype_objecttype
+JOIN rep.vw_reftype			rtrs	ON rtrs.bk			= src.bk_reftype_repositorystatus
+LEFT JOIN view_logic		vl		ON vl.dataset_name		= src.datasetname
+WHERE 1=1

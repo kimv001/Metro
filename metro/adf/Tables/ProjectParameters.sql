@@ -1,11 +1,13 @@
-﻿
-CREATE TABLE [adf].[projectparameters]
-  ([projectparameterid] AS (convert([nvarchar](900), concat_ws('|', [projectid], [projectparameterjobtype], [projectparametername]))) persisted NOT NULL,
-                                                                                                                                                [projectparametername] NVARCHAR (280) NULL,
-                                                                                                                                                                                      [projectparametervalue] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                             [projectparameterjobtype] NVARCHAR (280) NULL,
-                                                                                                                                                                                                                                                                      [projectparameterdescription] NVARCHAR (MAX) NULL,
-                                                                                                                                                                                                                                                                                                                   [projectid] NVARCHAR (900) NULL,
-                                                                                                                                                                                                                                                                                                                                              CONSTRAINT [pk_projectparameters] PRIMARY KEY clustered ([projectparameterid] ASC),
-                                                                                                                                                                                                                                                                                                                                                                                            CONSTRAINT [fk_projectparameters_projectid]
-   FOREIGN KEY ([projectid]) REFERENCES [adf].[projects] ([projectid]) ON DELETE CASCADE ON UPDATE CASCADE);
+﻿CREATE TABLE [adf].[ProjectParameters] (
+    [ProjectParameterId]          AS             (
+        CONVERT([nvarchar](900),concat_ws('|',[ProjectId],[ProjectParameterJobType],[ProjectParameterName]))
+    ) PERSISTED NOT NULL,
+    [ProjectParameterName]        NVARCHAR (280) NULL,
+    [ProjectParameterValue]       NVARCHAR (MAX) NULL,
+    [ProjectParameterJobType]     NVARCHAR (280) NULL,
+    [ProjectParameterDescription] NVARCHAR (MAX) NULL,
+    [ProjectId]                   NVARCHAR (900) NULL,
+    CONSTRAINT [PK_ProjectParameters] PRIMARY KEY CLUSTERED ([ProjectParameterId] ASC),
+    CONSTRAINT [FK_ProjectParameters_ProjectId] FOREIGN KEY ([ProjectId]) REFERENCES [adf].[Projects] ([ProjectId]) ON DELETE CASCADE ON UPDATE CASCADE
+);
+

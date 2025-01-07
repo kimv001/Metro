@@ -1,142 +1,88 @@
 ﻿
-CREATE VIEW [adf].vw_connections_src_api AS WITH linkedserviceproperties AS
 
-        (SELECT bk_linkedservice = ls.bk,
 
-               linkedservicename = ls.[name],
 
-               lsp.linkedservicepropertiesname,
 
-               lsp.linkedservicepropertiesvalue
 
-          FROM rep.vw_linkedservice ls
 
-          JOIN rep.vw_linkedserviceproperties lsp
-            ON ls.bk = lsp.bk_linkedservice
-       ),
+CREATE VIEW [adf].vw_Connections_Src_Api AS
+WITH LinkedServiceProperties AS
+	(
+		SELECT 
+			  BK_LinkedService					=  ls.BK
+			, LinkedServiceName					= ls.[Name]
+			, lsp.LinkedServicePropertiesName
+			, lsp.LinkedServicePropertiesValue 
+		FROM rep.vw_LinkedService			ls
+		JOIN rep.vw_LinkedServiceProperties lsp ON ls.BK = lsp.BK_LinkedService
+	)
+, cte_DataSourceProperties_SDTAP_Values AS (
+	SELECT 
+		src.BK_DataSource
+		, src.DataSourceServer
+		, src.DataSourceDatabase
+		, src.DataSourceURL
+		, src.DataSourceUSR
+		, src.Environment
+	FROM adf.vw_DataSourceProperties_SDTAP_Values src
+)
+SELECT 
+	-- first attribute [SRCConnectionName] is legacy
+	SRCConnectionName				= src.GroupShortName
+	
+	, [DWHGroupnameShortname]		= src.[GroupShortName] 
+	, [DWHGroupname]				= src.GroupName
+	, [DWHShortname]				= dt.ShortName
+	, [DWHShortnameSource]			= src.DatasetShortName
+	, [SRC_BK_Dataset]				= src.BK_Dataset
+	, [TGT_BK_Dataset]				= dt.BK
+	, [SRC_DatasetType]				= src.ObjectType
+	, [TGT_DatasetType]				= dt.ObjectType
+	, [SRC_Schema]					= src.SchemaName
+	, [TGT_Schema]					= dt.SchemaName
+	, [SRC_Layer]					= src.LayerName
+	, [TGT_Layer]					= dt.LayerName
+	, [SRC_Dataset]					= src.DatasetName
+	, [TGT_Dataset]					= dt.DatasetName
+	,[TGT_Tablename] = CONCAT (
+		src.GroupName
+		,'_'
+		,dt.ShortName
+		)
+	,[SRC_DataSource]				= src.DataSourceName
+	,[SRC_DataSourceServer]			= src.DataSourceServer
+	,[SRC_DataSourceDatabase]		= src.DataSourceDatabase
+	,[SRC_DataSourceURL]			= src.DataSourceURL
+	,[SRC_DataSourceUSR]			= src.DataSourceUSR
+	,[TGT_DataSource]				= dt.DataSource
+	,[TGT_DataSourceServer]			= DSPV.DataSourceServer
+	,[TGT_DataSourceDatabase]		= DSPV.DataSourceDatabase
+	,[TGT_DataSourceURL]			= DSPV.DataSourceURL
+	,[TGT_DataSourceUSR]			= DSPV.DataSourceUSR	  
 
-       cte_datasourceproperties_sdtap_values AS
 
-        (SELECT src.bk_datasource,
+	, [STG_Container]				= src.[STG_Container]
+	, [TGT_Container]				= src.[TGT_Container]
+	, [Active]						= src.Active
+	, [CoreCount]					= src.[CoreCount]
+	,[RepositoryStatusName]			= src.RepositoryStatusName
+	,[RepositoryStatusCode]		= src.RepositoryStatusCode
+	
+	-- Api Info
 
-               src.datasourceserver,
-
-               src.datasourcedatabase,
-
-               src.datasourceurl,
-
-               src.datasourceusr,
-
-               src.environment
-
-          FROM adf.vw_datasourceproperties_sdtap_values src
-       )
-SELECT -- first attribute [SRCConnectionName] is legacy
- srcconnectionname = src.groupshortname,
-
-       [dwhgroupnameshortname] = src.[groupshortname],
-
-       [dwhgroupname] = src.groupname,
-
-       [dwhshortname] = dt.shortname,
-
-       [dwhshortnamesource] = src.datasetshortname,
-
-       [src_bk_dataset] = src.bk_dataset,
-
-       [tgt_bk_dataset] = dt.bk,
-
-       [src_datasettype] = src.objecttype,
-
-       [tgt_datasettype] = dt.objecttype,
-
-       [src_schema] = src.schemaname,
-
-       [tgt_schema] = dt.schemaname,
-
-       [src_layer] = src.layername,
-
-       [tgt_layer] = dt.layername,
-
-       [src_dataset] = src.datasetname,
-
-       [tgt_dataset] = dt.datasetname,
-
-       [tgt_tablename] =
-CONCAT (src.groupname,
-                           '_',
-                           dt.shortname) ,[src_datasource] = src.datasourcename,
-
-       [src_datasourceserver] = src.datasourceserver,
-
-       [src_datasourcedatabase] = src.datasourcedatabase,
-
-       [src_datasourceurl] = src.datasourceurl,
-
-       [src_datasourceusr] = src.datasourceusr,
-
-       [tgt_datasource] = dt.datasource,
-
-       [tgt_datasourceserver] = dspv.datasourceserver,
-
-       [tgt_datasourcedatabase] = dspv.datasourcedatabase,
-
-       [tgt_datasourceurl] = dspv.datasourceurl,
-
-       [tgt_datasourceusr] = dspv.datasourceusr,
-
-       [stg_container] = src.[stg_container],
-
-       [tgt_container] = src.[tgt_container],
-
-       [active] = src.active,
-
-       [corecount] = src.[corecount],
-
-       [repositorystatusname] = src.repositorystatusname,
-
-       [repositorystatuscode] = src.repositorystatuscode -- Api Info
-,
-
-       [src_datasourceid] = src.bk_datasource,
-
-       linkedservicename = src.linkedservicename,
-
-       environmenturl = dslp_e.linkedservicepropertiesvalue,
-
-       username = dslp_u.linkedservicepropertiesvalue,
-
-       bigdata = isnull(src.bigdata, 0),
-
-       dspv.environment,
-
-       src.datasettype
-
-  FROM [adf].[vw_connections_base] src
-
-  JOIN bld.vw_datasetdependency dd
-    ON src.bk_dataset = dd.bk_parent
-
-  JOIN bld.vw_dataset dt
-    ON dd.bk_child = dt.bk
-
-  LEFT JOIN linkedserviceproperties dslp_e
-    ON dslp_e.bk_linkedservice = src.bk_linkedservice
-
-   AND dslp_e.linkedservicepropertiesname = 'EnvironmentURL'
-
-  LEFT JOIN linkedserviceproperties dslp_u
-    ON dslp_u.bk_linkedservice = src.bk_linkedservice
-
-   AND dslp_u.linkedservicepropertiesname = 'Username'
-
-  LEFT JOIN cte_datasourceproperties_sdtap_values dspv
-    ON dt.bk_datasource = dspv.bk_datasource
-
-   AND src.environment = dspv.environment
-
- WHERE 1 = 1
-
-   AND src.layername = 'src'
-
-   AND src.datasettype = 'api'
+	, [SRC_DataSourceId]			= src.BK_DataSource
+	, LinkedServiceName				= src.LinkedServiceName
+	, EnvironmentURL				= dslp_e.LinkedServicePropertiesValue
+	, Username						= dslp_u.LinkedServicePropertiesValue	
+	, Bigdata						= ISNULL(src.Bigdata,0)
+	, DSPV.Environment
+	, src.DatasetType
+FROM [adf].[vw_Connections_BASE]		src
+JOIN bld.vw_DatasetDependency		dd		ON src.BK_Dataset		= dd.BK_Parent
+JOIN bld.vw_Dataset					dt		ON dd.BK_child			= dt.BK
+LEFT JOIN LinkedServiceProperties	dslp_e	ON dslp_e.BK_LinkedService	= src.BK_LinkedService	AND dslp_e.LinkedServicePropertiesName = 'EnvironmentURL'
+LEFT JOIN LinkedServiceProperties	dslp_u	ON dslp_u.BK_LinkedService	= src.BK_LinkedService	AND dslp_u.LinkedServicePropertiesName = 'Username'
+LEFT JOIN cte_DataSourceProperties_SDTAP_Values DSPV ON dt.BK_DataSource = DSPV.BK_DataSource AND src.Environment = DSPV.Environment
+WHERE 1 = 1
+AND src.LayerName	= 'src'	
+AND src.DatasetType = 'api'

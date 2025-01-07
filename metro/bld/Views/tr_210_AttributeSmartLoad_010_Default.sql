@@ -7,7 +7,7 @@
 
 
 
-CREATE view [bld].[tr_210_AttributeSmartLoad_010_Default] as 
+CREATE VIEW [bld].[tr_210_AttributeSmartLoad_010_Default] AS 
 /* 
 === Comments =========================================
 
@@ -32,46 +32,46 @@ The First CTE's determine if there is a change in the source records
 If not, the markers will not be rebuild
 */
 
-with CreateDateSrc as (
-	select 	src.Code, src.mta_CreateDate , 'vw_Dataset' as source
-	from bld.vw_Dataset src
+WITH CREATEDATESRC AS (
+	SELECT 	SRC.CODE, SRC.MTA_CREATEDATE , 'vw_Dataset' AS SOURCE
+	FROM BLD.VW_DATASET SRC
 	--order by 2 desc
-	union all
+	UNION ALL
 
-	select a.Code, a.mta_CreateDate , 'vw_Attribute' as source
-	from [bld].[vw_Attribute] a
-	where a.mta_Source != '[bld].[tr_230_Attribute_030_AddMtaAttributes]'
+	SELECT A.CODE, A.MTA_CREATEDATE , 'vw_Attribute' AS SOURCE
+	FROM [bld].[vw_Attribute] A
+	WHERE A.MTA_SOURCE != '[bld].[tr_230_Attribute_030_AddMtaAttributes]'
 
 )
-, MaxCreateDateSrc as (
-	select 
-		Code
-		, mta_CreateDate = max(mta_CreateDate) 
-	from  CreateDateSrc 
-	group by Code
+, MAXCREATEDATESRC AS (
+	SELECT 
+		CODE
+		, MTA_CREATEDATE = max(MTA_CREATEDATE) 
+	FROM  CREATEDATESRC 
+	GROUP BY CODE
 )
-, CreateDateTgt as (
-	select 
-		 Code				= m.code
-		, mta_CreateDate	= max(m.mta_CreateDate)
-	from bld.Attribute m
-	where m.mta_Source = '[bld].[tr_230_Attribute_030_AddMtaAttributes]'
-	group by m.code
+, CREATEDATETGT AS (
+	SELECT 
+		 CODE				= M.CODE
+		, MTA_CREATEDATE	= max(M.MTA_CREATEDATE)
+	FROM BLD.ATTRIBUTE M
+	WHERE M.MTA_SOURCE = '[bld].[tr_230_Attribute_030_AddMtaAttributes]'
+	GROUP BY M.CODE
 )
 -- List of Codes that are possibly changed
-select distinct 
-	BK					= Coalesce(S.Code, T.Code)
-	, Code				= Coalesce(S.Code, T.Code)
-	, SrcCreateDate		= S.mta_CreateDate
-	, TgtCreateDate		= T.mta_CreateDate
-	, IsUpdated			= iif(S.mta_CreateDate> T.mta_CreateDate,1,0)
-	, RecType			= case 
-							when S.Code = T.Code and 	S.mta_CreateDate> T.mta_CreateDate  then 0
-							when T.Code is null then 1
-							when S.Code is null then -1
-							else -99
-							end
+SELECT DISTINCT 
+	BK					= COALESCE(S.CODE, T.CODE)
+	, CODE				= COALESCE(S.CODE, T.CODE)
+	, SRCCREATEDATE		= S.MTA_CREATEDATE
+	, TGTCREATEDATE		= T.MTA_CREATEDATE
+	, ISUPDATED			= iif(S.MTA_CREATEDATE> T.MTA_CREATEDATE,1,0)
+	, RECTYPE			= CASE 
+							WHEN S.CODE = T.CODE AND 	S.MTA_CREATEDATE> T.MTA_CREATEDATE  THEN 0
+							WHEN T.CODE IS null THEN 1
+							WHEN S.CODE IS null THEN -1
+							ELSE -99
+							END
 
-from MaxCreateDateSrc S
+FROM MAXCREATEDATESRC S
 --left join CreateDateTgt T on S.Code = T.Code and S.mta_CreateDate> T.mta_CreateDate
-full outer join CreateDateTgt T on T.Code = S.Code
+FULL OUTER JOIN CREATEDATETGT T ON T.CODE = S.CODE

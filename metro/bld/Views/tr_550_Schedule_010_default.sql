@@ -1,105 +1,74 @@
 ﻿
-CREATE VIEW [bld].[tr_550_schedule_010_default] AS
-SELECT bk = s.bk ,
 
-       code = s.code ,
 
-       [bk_schedule] = s.bk ,
 
-       [schedulecode] = s.code ,
 
-       [schedulename] = s.[name] ,
 
-       [scheduledesc] = s.[description] ,
 
-       s.[startdate] ,
+CREATE VIEW [bld].[tr_550_Schedule_010_default] AS 
 
-       s.[enddate] ,
 
-       s.[starttime] ,
+SELECT  
+	  BK									= S.BK
+	, CODE									= S.CODE
+	, [BK_Schedule]							= S.BK
+	, [ScheduleCode]						= S.CODE
+	, [ScheduleName]						= S.[Name]
+	, [ScheduleDesc]						= S.[Description]
 
-       s.[endtime] ,
+	, S.[StartDate]
+	, S.[EndDate]
+	, S.[StartTime]
+	, S.[EndTime]
 
-       bk_scheduletype = s.bk_scheduletype ,
+	, BK_SCHEDULETYPE						= S.BK_SCHEDULETYPE
+	, [ScheduleTypeCode]					= RTST.CODE
+	, [ScheduleTypeName]					= RTST.[Name]
 
-       [scheduletypecode] = rtst.code ,
+	, BK_SCHEDULEFREQUENCY					= S.BK_SCHEDULEFREQUENCY
+	, [ScheduleFrequencyCode]				= RTSF.CODE
+	, [ScheduleFrequencyName]				= RTSF.[Name]
 
-       [scheduletypename] = rtst.[name] ,
+	, BK_SCHEDULEDAILYINTERVAL				= S.BK_SCHEDULEDAILYINTERVAL
+	, [ScheduleDailyIntervalCode]			= RTSD.CODE
+	, [ScheduleDailyIntervalName]			= RTSD.[Name]
 
-       bk_schedulefrequency = s.bk_schedulefrequency ,
+	, BK_SCHEDULEWEEKLYINTERVAL				= S.BK_SCHEDULEWEEKLYINTERVAL
+	, [ScheduleWeeklyIntervalCode]			= RTSW.CODE
+	, [ScheduleWeeklyIntervalName]			= RTSW.[Name]
 
-       [schedulefrequencycode] = rtsf.code ,
+	, BK_SCHEDULEWORKDAYINTERVAL			= S.BK_SCHEDULEWORKDAYINTERVAL
+	, [ScheduleWorkDayIntervalCode]			= RTWD.CODE
+	, [ScheduleWorkDayIntervalName]			= RTWD.[Name]
+	
+	, BK_SCHEDULEMONTHLYINTERVAL			= S.BK_SCHEDULEMONTHLYINTERVAL
+	, [ScheduleMonthlyIntervalCode]			= RTSM.CODE
+	, [ScheduleMonthlyIntervalName]			= RTSM.[Name]
 
-       [schedulefrequencyname] = rtsf.[name] ,
+	, BK_SCHEDULEQUARTERLYINTERVAL			= S.BK_SCHEDULEQUARTERLYINTERVAL
+	, [ScheduleQuarterlyIntervalCode]		= RTSQ.CODE
+	, [ScheduleQuarterlyIntervalName]		= RTSQ.[Name]
 
-       bk_scheduledailyinterval = s.bk_scheduledailyinterval ,
+	, BK_SCHEDULEYEARLYINTERVAL				= S.BK_SCHEDULEYEARLYINTERVAL
+	, [ScheduleYearlyIntervalCode]			= RTSY.CODE
+	, [ScheduleYearlyIntervalName]			= RTSY.[Name]
 
-       [scheduledailyintervalcode] = rtsd.code ,
+	, BK_SCHEDULESPECIALS					= S.BK_SCHEDULESPECIALS
+	, [ScheduleSpecialsCode]				= RTSS.CODE
+	, [ScheduleSpecialsName]				= RTSS.[Name]
 
-       [scheduledailyintervalname] = rtsd.[name] ,
 
-       bk_scheduleweeklyinterval = s.bk_scheduleweeklyinterval ,
+-- future use
+	--, s.[CRON]
+    
 
-       [scheduleweeklyintervalcode] = rtsw.code ,
-
-       [scheduleweeklyintervalname] = rtsw.[name] ,
-
-       bk_scheduleworkdayinterval = s.bk_scheduleworkdayinterval ,
-
-       [scheduleworkdayintervalcode] = rtwd.code ,
-
-       [scheduleworkdayintervalname] = rtwd.[name] ,
-
-       bk_schedulemonthlyinterval = s.bk_schedulemonthlyinterval ,
-
-       [schedulemonthlyintervalcode] = rtsm.code ,
-
-       [schedulemonthlyintervalname] = rtsm.[name] ,
-
-       bk_schedulequarterlyinterval = s.bk_schedulequarterlyinterval ,
-
-       [schedulequarterlyintervalcode] = rtsq.code ,
-
-       [schedulequarterlyintervalname] = rtsq.[name] ,
-
-       bk_scheduleyearlyinterval = s.bk_scheduleyearlyinterval ,
-
-       [scheduleyearlyintervalcode] = rtsy.code ,
-
-       [scheduleyearlyintervalname] = rtsy.[name] ,
-
-       bk_schedulespecials = s.bk_schedulespecials ,
-
-       [schedulespecialscode] = rtss.code ,
-
-       [schedulespecialsname] = rtss.[name] -- future use
- --, s.[CRON]
-
-  FROM rep.[vw_schedule] s
-
-  LEFT JOIN bld.vw_reftype rtst
-    ON rtst.bk = s.bk_scheduletype
-
-  LEFT JOIN bld.vw_reftype rtsf
-    ON rtsf.bk = s.bk_schedulefrequency
-
-  LEFT JOIN bld.vw_reftype rtsd
-    ON rtsd.bk = s.bk_scheduledailyinterval
-
-  LEFT JOIN bld.vw_reftype rtsw
-    ON rtsw.bk = s.bk_scheduleweeklyinterval
-
-  LEFT JOIN bld.vw_reftype rtwd
-    ON rtwd.bk = s.bk_scheduleworkdayinterval
-
-  LEFT JOIN bld.vw_reftype rtsm
-    ON rtsm.bk = s.bk_schedulemonthlyinterval
-
-  LEFT JOIN bld.vw_reftype rtsq
-    ON rtsq.bk = s.bk_schedulequarterlyinterval
-
-  LEFT JOIN bld.vw_reftype rtsy
-    ON rtsy.bk = s.bk_scheduleyearlyinterval
-
-  LEFT JOIN bld.vw_reftype rtss
-    ON rtss.bk = s.bk_schedulespecials
+FROM REP.[vw_Schedule] S
+LEFT JOIN BLD.VW_REFTYPE RTST ON  RTST.BK	= S.BK_SCHEDULETYPE
+LEFT JOIN BLD.VW_REFTYPE RTSF ON  RTSF.BK	= S.BK_SCHEDULEFREQUENCY
+LEFT JOIN BLD.VW_REFTYPE RTSD ON  RTSD.BK	= S.BK_SCHEDULEDAILYINTERVAL
+LEFT JOIN BLD.VW_REFTYPE RTSW ON  RTSW.BK	= S.BK_SCHEDULEWEEKLYINTERVAL
+LEFT JOIN BLD.VW_REFTYPE RTWD ON  RTWD.BK	= S.BK_SCHEDULEWORKDAYINTERVAL
+LEFT JOIN BLD.VW_REFTYPE RTSM ON  RTSM.BK	= S.BK_SCHEDULEMONTHLYINTERVAL
+LEFT JOIN BLD.VW_REFTYPE RTSQ ON  RTSQ.BK	= S.BK_SCHEDULEQUARTERLYINTERVAL
+LEFT JOIN BLD.VW_REFTYPE RTSY ON  RTSY.BK	= S.BK_SCHEDULEYEARLYINTERVAL
+LEFT JOIN BLD.VW_REFTYPE RTSS ON  RTSS.BK	= S.BK_SCHEDULESPECIALS
