@@ -1,15 +1,14 @@
-﻿ -- noqa: PRS
-CREATE FUNCTION [rep].[GetColumnListPerDatasetBK]
+﻿CREATE FUNCTION [rep].[GetColumnListPerDatasetBK]  -- noqa: PRS
 (
-	@DatasetBK varchar(255),
-	@Option int = 1,
-	@Type varchar(7),
-	@prefixA varchar(max) = '',
-	@postfixA varchar(max) = '',
-	@prefixDS varchar(max) = '',
-	@postfixDS varchar(max) = '',
-	@seperator varchar(max) = '',
-	@UseExpression int = 0
+	@DatasetBK VARCHAR(255),
+	@Option INT = 1,
+	@Type VARCHAR(7),
+	@prefixA VARCHAR(MAX) = '',
+	@postfixA VARCHAR(MAX) = '',
+	@prefixDS VARCHAR(MAX) = '',
+	@postfixDS VARCHAR(MAX) = '',
+	@seperator VARCHAR(MAX) = '',
+	@UseExpression INT = 0
 )
 RETURNS VARCHAR(MAX)
 AS
@@ -17,7 +16,7 @@ AS
 BEGIN
 	-- Declare the return variable here
 	DECLARE @Result VARCHAR(max),
-		@lenSeperator int = len(@seperator)-0
+		@lenSeperator INT = len(@seperator)-0
 
 
 if @Option = -1	-- column cast as datatype ordered by ordinal position
