@@ -1,5 +1,4 @@
-﻿
-
+﻿ -- noqa: PRS
 CREATE FUNCTION [rep].[GetColumnListPerDatasetBK]
 (
 	@DatasetBK varchar(255),
