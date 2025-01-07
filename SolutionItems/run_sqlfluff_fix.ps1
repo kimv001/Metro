@@ -5,4 +5,4 @@ $defaultPath = "c:/Users/BHR_VERME522/metro_github_sources/metro"
 Set-Location -Path $defaultPath
 
 # Run sqlfluff fix on all .sql files in the directory and subdirectories
-sqlfluff fix  "c:/Users/BHR_VERME522/metro_github_sources/metro/adf/**/*.sql" --dialect tsql --rules L010,L016 --exclude-rules L014
+sqlfluff fix  "./**/*.sql" --dialect tsql --rules L010,L016 --exclude-rules L014 --ignore parsing

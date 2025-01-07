@@ -1,16 +1,4 @@
 ﻿
-
-
-
-
-
-
-
-
-
-
-
-
  CREATE  VIEW [adf].[vw_Connections_Base] AS
 WITH cte_DataSourceProperties_SDTAP_Values AS (
 	SELECT 
