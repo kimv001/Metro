@@ -7,7 +7,7 @@ CREATE VIEW [bld].[tr_010_RefType_010_Default] AS
 === Comments =========================================
 
 Description:
-	All Defined RefTypes 
+	All Defined RefTypes.
 	
 Changelog:
 Date		time		Author					Description
