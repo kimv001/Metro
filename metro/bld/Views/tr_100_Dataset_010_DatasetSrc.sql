@@ -75,7 +75,6 @@ FROM [stg].[DWH_ObjectDefinitions] src
 		, [ReplaceAttributeNames]			= ''
 		, [SCD]								= ''
 		, [DistinctValues]					= isnull(src.[DistinctValues],0)
-
 	FROM [rep].[vw_DatasetSrc] src
 
 	)
@@ -102,7 +101,6 @@ SELECT
 	, [bk_ContactGroup_Data_Supplier]			= src.[bk_ContactGroup_Data_Supplier]
 	, [Data_Supplier_Info]						= src.[Data_Supplier_Info]
 	, [BK_Flow]									= src.[BK_Flow]
-	
 	, [TimeStamp]								= src.[TimeStamp]
 	, [BusinessDate]							= src.[BusinessDate]
 	, [RecordSrcDate]							= src.[RecordSrcDate]
@@ -120,7 +118,6 @@ SELECT
 	, [CustomStagingView]						= src.[CustomStagingView]
 	, [BK_RefType_RepositoryStatus]				= src.[BK_RefType_RepositoryStatus]
 	, [IsSystem]								= src.[IsSystem]
-
 	, [LayerName]								= ss.[LayerName]
 	, [BK_LinkedService]						= ss.[BK_LinkedService]
 	, [LinkedServiceName]						= ss.linkedservicename
@@ -129,14 +126,11 @@ SELECT
 	, [CreateDummies]							= ss.[CreateDummies]
 	, [FlowOrder]								= CAST(isnull(ss.[LayerOrder],0) AS int) + CAST(isnull(fl.[SortOrder],0) AS int)
 	, [FlowOrderDesc]							= 9999
-
 	, [FirstDefaultDWHView]						= 0
-
 	, [DatasetType]								= CAST('SRC' AS varchar(5))
 	, [ObjectType]								= rtot.[Name]
 	, [SRC_ObjectType]							= rtot.[Name]
 	, [TGT_ObjectType]							= CAST('' AS varchar(255))
-
 	, [RepositoryStatusName]					= rtrs.[Name]
 	, [RepositoryStatusCode]					= rtrs.code
 	, [isDWH]									= ss.[isDWH]
@@ -145,12 +139,9 @@ SELECT
 	, [isRep]									= ss.[IsRep]
 	, [view_defintion_contains_business_logic]	= vl.[view_defintion_contains_business_logic]
 	, [view_defintion]							= vl.[view_defintion]
-		
 	, [ToDeploy]								= 0
-	
 FROM base					src
 JOIN bld.vw_schema			ss		ON ss.bk			= src.bk_schema
-
 JOIN rep.vw_flowlayer		fl		ON fl.bk_flow		= src.bk_flow 
 										AND fl.bk_layer = ss.bk_layer 
 										AND (src.bk_schema = fl.bk_schema  OR fl.bk_schema IS null)  

@@ -1,8 +1,4 @@
-﻿
-
-
-
-CREATE VIEW [bld].[tr_100_Dataset_021_DatasetTrnFlowDatasets] AS 
+﻿CREATE VIEW [bld].[tr_100_Dataset_021_DatasetTrnFlowDatasets] AS 
 /* 
 === Comments =========================================
 
@@ -30,67 +26,60 @@ FROM [stg].[DWH_ObjectDefinitions] src
 )
 
 , dataflowtables AS (
-SELECT 
-	  bk							= Concat(ts.bk,'||', d.bk_group,'|', d.shortname, '|',Isnull(d.[PostFix],'') )
-	
-	, code							= d.bk
-	, [preFix]						= Isnull(d.[PreFix],'')
-	, [PostFix]						= Isnull(d.[PostFix],'')
-	, datasetname					= Quotename(ts.schemaname)+'.'+Quotename(d.bk_group +'_'+d.shortname)
-	, schemaname					= ts.schemaname
-	, layername						= ts.layername
-	, datasource					= ts.datasourcename
-	, ts.bk_linkedservice
-	, linkedservicename				= ts.linkedservicename
-	, ts.bk_datasource
-	, ts.bk_layer
-	, bk_schema						= ts.bk
-	, bk_group						= d.bk_group
-	, [BK_Segment]					= d.bk_segment
-	, [BK_Bucket]					= d.bk_bucket
-	, shortname						= d.shortname
-	, dwhtargetshortname			= d.dwhtargetshortname
-	, description					= d.description
-	, [BK_ContactGroup]					= d.[BK_ContactGroup]
-	, bk_flow						= d.bk_flow
-
+	SELECT 
+		  bk							= Concat(ts.bk,'||', d.bk_group,'|', d.shortname, '|',Isnull(d.[PostFix],'') )
+		, code							= d.bk
+		, [preFix]						= Isnull(d.[PreFix],'')
+		, [PostFix]						= Isnull(d.[PostFix],'')
+		, datasetname					= Quotename(ts.schemaname)+'.'+Quotename(d.bk_group +'_'+d.shortname)
+		, schemaname					= ts.schemaname
+		, layername						= ts.layername
+		, datasource					= ts.datasourcename
+		, ts.bk_linkedservice
+		, linkedservicename				= ts.linkedservicename
+		, ts.bk_datasource
+		, ts.bk_layer
+		, bk_schema						= ts.bk
+		, bk_group						= d.bk_group
+		, [BK_Segment]					= d.bk_segment
+		, [BK_Bucket]					= d.bk_bucket
+		, shortname						= d.shortname
+		, dwhtargetshortname			= d.dwhtargetshortname
+		, [description]					= d.[description]
+		, [BK_ContactGroup]					= d.[BK_ContactGroup]
+		, bk_flow						= d.bk_flow
 	-- If correct configured, it should be ("LayerOrder" + ("FlowOrder" * "10")) 
-	, floworder						= CAST(isnull(ts.layerorder,0) AS int) + (fl.sortorder * 10)
-
-	, timestamp						= d.timestamp
-	, businessdate					= d.businessdate
-	, scd							= d.scd
-	, wherefilter					= d.wherefilter
-	, partitionstatement			= d.partitionstatement
-	, [BK_RefType_ObjectType]			= (SELECT bk FROM rep.vw_reftype WHERE reftype='ObjectType' AND [Name] = 'Table')
-	, fullload						= d.fullload
-	, insertonly					= d.insertonly
-	, bigdata						= d.bigdata
-	, bk_template_load				= CASE WHEN l.[Name] != 'pst' THEN d.bk_template_load ELSE null END --d.BK_Template_Load
-	, bk_template_create			= ''--d.BK_Template_Create
-	, customstagingview				= d.customstagingview
-	, bk_reftype_repositorystatus	= d.bk_reftype_repositorystatus
-	, issystem						= d.issystem
-	, isdwh							= ts.isdwh
-	, issrc							= ts.issrc
-	, istgt							= ts.istgt
-	, isrep							= ts.isrep
-	, mta_rownum					= ROW_NUMBER() OVER (ORDER BY d.bk)
-	, createdummies					= isnull(ts.createdummies,0)
-		--from [bld].[vw_Dataset]			d
+		, floworder						= CAST(isnull(ts.layerorder,0) AS int) + (fl.sortorder * 10)
+		, [timestamp]					= d.[timestamp]
+		, businessdate					= d.businessdate
+		, scd							= d.scd
+		, wherefilter					= d.wherefilter
+		, partitionstatement			= d.partitionstatement
+		, [BK_RefType_ObjectType]			= (SELECT bk FROM rep.vw_reftype WHERE reftype='ObjectType' AND [Name] = 'Table')
+		, fullload						= d.fullload
+		, insertonly					= d.insertonly
+		, bigdata						= d.bigdata
+		, bk_template_load				= CASE WHEN l.[Name] != 'pst' THEN d.bk_template_load ELSE null END --d.BK_Template_Load
+		, bk_template_create			= ''--d.BK_Template_Create
+		, customstagingview				= d.customstagingview
+		, bk_reftype_repositorystatus	= d.bk_reftype_repositorystatus
+		, issystem						= d.issystem
+		, isdwh							= ts.isdwh
+		, issrc							= ts.issrc
+		, istgt							= ts.istgt
+		, isrep							= ts.isrep
+		, mta_rownum					= ROW_NUMBER() OVER (ORDER BY d.bk)
+		, createdummies					= isnull(ts.createdummies,0)
 	
-		FROM [bld].[tr_100_Dataset_020_DatasetTrn] d
-		JOIN bld.vw_schema				ss		ON ss.bk		= d.bk_schema
-
-		JOIN rep.vw_flowlayer fl				ON fl.bk_flow	= d.bk_flow AND (fl.sortorder > 1 OR d.[DatasetName] LIKE '%trvs%')
-		-- Get Flow Layer
-		JOIN rep.vw_layer	l					ON l.bk			= fl.bk_layer 
-
-		-- Get target Schema
-		LEFT JOIN bld.vw_schema			ts		ON ts.bk		= fl.bk_schema
-
-		WHERE 1=1
-		--and ts.SchemaName = 'snd'
+	FROM [bld].[tr_100_Dataset_020_DatasetTrn] d
+	JOIN bld.vw_schema				ss		ON ss.bk		= d.bk_schema
+	JOIN rep.vw_flowlayer fl				ON fl.bk_flow	= d.bk_flow AND (fl.sortorder > 1 OR d.[DatasetName] LIKE '%trvs%')
+-- Get Flow Layer
+	JOIN rep.vw_layer	l					ON l.bk			= fl.bk_layer 
+-- Get target Schema
+	LEFT JOIN bld.vw_schema			ts		ON ts.bk		= fl.bk_schema
+	WHERE 1=1
+	
 
 			)
 SELECT 

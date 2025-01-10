@@ -57,7 +57,7 @@ SELECT
 	, [bk_ContactGroup_Data_Supplier]	= d.[bk_ContactGroup_Data_Supplier]
 	, [Data_Supplier_Info]				= d.[Data_Supplier_Info]
 	, bk_flow						= d.bk_flow
-	-- If correct configured, it should be ("LayerOrder" + ("FlowOrder" * "10")) 
+-- If correct configured, it should be ("LayerOrder" + ("FlowOrder" * "10")) 
 	, floworder						= CAST(isnull(ts.layerorder,0) AS int) + (fl.sortorder * 10)
 	, timestamp						= d.timestamp
 	, businessdate					= d.businessdate
@@ -86,7 +86,6 @@ SELECT
 		JOIN rep.vw_flowlayer			fl		ON fl.bk_flow	= d.bk_flow AND (fl.sortorder > 1 )
 		-- Get Flow Layer
 		JOIN rep.vw_layer	l					ON l.bk			= fl.bk_layer 
-
 		-- Get target Schema
 		LEFT JOIN bld.vw_schema			ts		ON ts.bk		= fl.bk_schema
 
@@ -116,7 +115,6 @@ SELECT
 	, [bk_ContactGroup_Data_Supplier]			= src.[bk_ContactGroup_Data_Supplier]
 	, [Data_Supplier_Info]						= src.[Data_Supplier_Info]
 	, src.bk_flow
-
 	, src.floworder
 	, floworderdesc								= ROW_NUMBER() OVER (PARTITION BY src.code ORDER BY src.floworder DESC)
 	, src.[TimeStamp]
