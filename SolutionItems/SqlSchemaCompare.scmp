@@ -3,7 +3,7 @@
   <Version>10</Version>
   <SourceModelProvider>
     <ConnectionBasedModelProvider>
-      <ConnectionString>Data Source=sqlsrvwsdev.database.windows.net;Initial Catalog=metro;Persist Security Info=False;User ID=bhr_verme522@kpn.com;Pooling=False;Multiple Active Result Sets=False;Connect Timeout=60;Encrypt=True;Trust Server Certificate=False;Authentication=ActiveDirectoryInteractive;Command Timeout=0</ConnectionString>
+      <ConnectionString>Data Source=sqlsrvwsdev.database.windows.net;Initial Catalog=metro;Persist Security Info=False;Pooling=False;Multiple Active Result Sets=False;Connect Timeout=60;Encrypt=True;Trust Server Certificate=False;Authentication=ActiveDirectoryInteractive;Command Timeout=0</ConnectionString>
     </ConnectionBasedModelProvider>
   </SourceModelProvider>
   <TargetModelProvider>
