@@ -13,9 +13,6 @@ single_line_maximum = 1  # Enforce single empty lines
 [sqlfluff:rules:capitalisation.keywords]
 capitalisation_policy = upper
 
-[sqlfluff:rules:capitalisation.identifiers]
-capitalisation_policy = upper
-
 [sqlfluff:rules:capitalisation.functions]
 capitalisation_policy = upper
 
@@ -25,6 +22,6 @@ capitalisation_policy = upper
 [sqlfluff:rules:capitalisation.types]
 capitalisation_policy = upper
 
-[sqlfluff:layout:type:comma]
+[sqlfluff:rules:layout.commas]
 spacing_before = touch
 line_position = trailing

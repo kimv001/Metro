@@ -19,8 +19,7 @@ Date		time		Author					Description
 WITH CONTACTROLES AS (
 SELECT [BK]
       ,[Code]
-      ,[Name]
-     
+      ,[Name]   
       ,[Description]
       ,[RefType]
       ,[RefTypeAbbr]

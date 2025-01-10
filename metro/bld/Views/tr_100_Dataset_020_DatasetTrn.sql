@@ -31,7 +31,6 @@ FROM [stg].[DWH_ObjectDefinitions] src
 		  trn.[BK]
 		, [Code] = trn.[BK]
 		, datasetname = trn.[Name]
-		--, trn.[Layer]
 		, schemaname						= trn.[Schema]
 		, trn.[DataSource]
 		, trn.[BK_Schema]
@@ -43,8 +42,7 @@ FROM [stg].[DWH_ObjectDefinitions] src
 		, [Prefix]							= isnull(trn.[Prefix],'')
 		, [PostFix]							= Isnull(trn.[PostFix],'')
 		, trn.[Description]
-		, [BK_ContactGroup]					= trn.[BK_ContactGroup]
-			
+		, [BK_ContactGroup]					= trn.[BK_ContactGroup]	
 		, trn.[BK_Flow]
 		, trn.[TimeStamp]
 		, trn.[BusinessDate]
