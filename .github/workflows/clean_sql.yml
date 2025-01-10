@@ -27,22 +27,33 @@ jobs:
       run: |
         find . -name "*.sql" | while read sqlfile; do
           echo "Cleaning $sqlfile"
-          sqlfluff fix "$sqlfile" --dialect tsql --rules L010,L016 --exclude-rules L014 --ignore parsing
+          sqlfluff fix "$sqlfile" --dialect tsql --rules L010,L016 --exclude-rules L014 --ignore parsing --FIX-EVEN-UNPARSABLE
         done
 
+    - name: Check if there are changes to commit
+      id: check
+      run: |
+        git diff --exit-code || echo "changes_detected=true" >> $GITHUB_ENV
+
     - name: Commit changes
+      if: env.changes_detected == 'true'
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git add .
         git commit -m "Automated SQL formatting with SQLFluff"
-        git push origin HEAD:automated-sql-formatting
+    
+    - name: Push changes
+      if: env.changes_detected == 'true'
+      run: git push origin HEAD:automated-sql-formatting
 
     - name: Create Pull Request
+      if: env.changes_detected == 'true'
       uses: peter-evans/create-pull-request@v3
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         commit-message: "Automated SQL formatting with SQLFluff"
         branch: automated-sql-formatting
+        base: main
         title: "Automated SQL formatting with SQLFluff"
         body: "This pull request contains automated SQL formatting with SQLFluff."
