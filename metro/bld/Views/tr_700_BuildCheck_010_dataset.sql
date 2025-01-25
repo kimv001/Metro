@@ -1,5 +1,9 @@
 ﻿
-CREATE VIEW [bld].[tr_700_BuildCheck_010_dataset] AS
+
+
+
+
+CREATE view [bld].[tr_700_BuildCheck_010_dataset] as
 /* 
 === Comments =========================================
 
@@ -18,9 +22,9 @@ Date		time		Author					Description
 */
 
 
-WITH ErrorCodes AS (
-	SELECT Severity, Code, Error FROM 
-			(VALUES 
+With ErrorCodes as (
+	select Severity, Code, Error from 
+			(values 
 				/* 
 				Severity:
 						1	Blocking for ETL Generation
@@ -39,11 +43,11 @@ WITH ErrorCodes AS (
 					,(1, 'U8', 'Datatype Length is not defined')
 					,(1, 'U9', 'Datatype Scale and/or Precesion is not set correct')
 
-					)  list ([Severity], [Code], [Error])   -- noqa: PRS
+					)  list (Severity, Code, Error)
 
 )
-, All_Checks AS (
-SELECT
+, All_Checks as (
+select
 	  BK_Dataset		= a.bk_dataset
 	, Code				= a.code
 	--, DatasetName		= d.DatasetName
@@ -52,88 +56,88 @@ SELECT
 	--, BK_Group			= d.BK_Group
 
 	
-FROM bld.vw_Attribute		a
-LEFT JOIN bld.vw_Dataset	d ON a.bk_dataset	= d.bk
+from bld.vw_Attribute		a
+left join bld.vw_Dataset	d on a.bk_dataset	= d.bk
 --left join rep.vw_Schema		s on d.bk_schema	= s.bk
-WHERE 1=1
-AND d.BK_Layer = 'src'
-GROUP BY a.bk_dataset, a.code
-HAVING sum(isnull(CAST(a.businesskey AS int),0)) = 0
+where 1=1
+and d.BK_Layer = 'src'
+group by a.bk_dataset, a.code
+having sum(isnull(cast(a.businesskey as int),0)) = 0
 
 UNION ALL
 
-SELECT 
+select 
 	 BK_Dataset		= d.bk
 	, Code				= d.code
 	, CheckMessage		= '%File Dataset has no (valid) fileproperties defined' -- U2
 
 
-FROM bld.vw_Dataset D
-LEFT JOIN bld.vw_FileProperties fp ON fp.Code = D.code
+from bld.vw_Dataset D
+left join bld.vw_FileProperties fp on fp.Code = D.code
 
-WHERE 1=1
-AND (
-		d.ObjectType LIKE '%file' 
+where 1=1
+and (
+		d.ObjectType like '%file' 
 
 	)
-GROUP BY d.bk, d.code
-HAVING count(isnull(fp.code,0)) =0
+group by d.bk, d.code
+having count(isnull(fp.code,0)) =0
 
 UNION ALL
 
-SELECT 
+select 
 	d.bk, d.code
 	, CheckMessage		= 'Dataset has no atrributes defined' -- U5
 	
-FROM bld.vw_Dataset D
-LEFT JOIN bld.vw_attribute a ON A.BK_Dataset = D.bk
+from bld.vw_Dataset D
+left join bld.vw_attribute a on A.BK_Dataset = D.bk
 
-WHERE 1=1
+where 1=1
 
-AND (
+and (
 		d.SchemaName = 'src_file' 
 		OR
 		d.prefix= 'trv'
 	)
 
-GROUP BY d.bk, d.code
-HAVING count(isnull(a.BK_Dataset,0)) =0
+group by d.bk, d.code
+having count(isnull(a.BK_Dataset,0)) =0
 
 UNION ALL
 
-SELECT 
+select 
 	d.bk, d.code
 	, CheckMessage		= 'Dataset has attributes with the same ordinal position defined' -- U6
 	
-FROM bld.vw_Dataset D
-LEFT JOIN bld.vw_attribute a ON A.BK_Dataset = D.bk
+from bld.vw_Dataset D
+left join bld.vw_attribute a on A.BK_Dataset = D.bk
 
-WHERE 1=1
+where 1=1
 --and d.Active = 1
-AND (
+and (
 		d.SchemaName = 'src_file' 
 		OR
 		d.prefix = 'trv'
 	)
 
-GROUP BY d.bk, d.code, a.OrdinalPosition
-HAVING count (a.OrdinalPosition)>1
+group by d.bk, d.code, a.OrdinalPosition
+having count (a.OrdinalPosition)>1
 
 
 UNION ALL
 
-SELECT 
+select 
 	d.bk, d.code
-	, CheckMessage				= CASE 
-										WHEN a.datatype IN ('numeric', 'decimal') AND a.scale = 0 THEN a.AttributeName + ' : Scale is set to 0, consider a (big)integer'   -- W1
-									END 	
+	, CheckMessage				= case 
+										when a.datatype in ('numeric', 'decimal') and a.scale = 0 then a.AttributeName + ' : Scale is set to 0, consider a (big)integer'   -- W1
+									end 	
 
-FROM bld.vw_Dataset D
-LEFT JOIN bld.vw_attribute a ON A.BK_Dataset = D.bk
+from bld.vw_Dataset D
+left join bld.vw_attribute a on A.BK_Dataset = D.bk
 
-WHERE 1=1
+where 1=1
 
-AND (
+and (
 		d.SchemaName = 'src_file' 
 		OR
 		d.prefix = 'trv'
@@ -141,32 +145,26 @@ AND (
 
 UNION ALL
 
-SELECT 
+select 
 	d.bk, d.code
-	, CheckMessage				= CASE 
-										WHEN ISNULL(a.datatype,'') = ''		THEN a.AttributeName + ' :DataType not defined'	-- U7
-										-- U8
-										WHEN
-										    a.datatype IN ('char', 'varchar', 'nchar', 'nvarchar') AND ISNULL(a.MaximumLength, 0) = 0
-										    THEN a.AttributeName + ' :Datatype Length is nog defined'
-										-- U9
-										WHEN
-										    a.datatype IN ('numeric', 'decimal') AND ( ISNULL(a.scale, -1) = -1 OR ISNULL(a.Precision, -1) = -1)
-										    THEN a.AttributeName + ' :Datatype Scale and/or Precesion is not set correct'
-									END 	
+	, CheckMessage				= case 
+										when ISNULL(a.datatype,'') = ''		THEN a.AttributeName + ' :DataType not defined'	-- U7
+										when a.datatype in ('char', 'varchar', 'nchar', 'nvarchar') and ISNULL(a.MaximumLength, 0) = 0 then a.AttributeName + ' :Datatype Length is nog defined'  -- U8
+										when a.datatype in ('numeric', 'decimal') and ( ISNULL(a.scale, -1) = -1 OR ISNULL(a.Precision, -1) = -1) then a.AttributeName + ' :Datatype Scale and/or Precesion is not set correct'  -- U9
+									end 	
 	
-FROM bld.vw_Dataset D
-LEFT JOIN bld.vw_attribute a ON A.BK_Dataset = D.bk
+from bld.vw_Dataset D
+left join bld.vw_attribute a on A.BK_Dataset = D.bk
 
-WHERE 1=1
+where 1=1
 
-AND (
+and (
 		d.SchemaName = 'src_file' 
 		OR
 		d.prefix = 'trv'
 	)
 )
-SELECT 
+select 
 	  BK				= AC.BK_Dataset + AC.CheckMessage
 	, Code				= AC.Code
 	, CheckMessage		= AC.CheckMessage
@@ -176,11 +174,11 @@ SELECT
 	, ShortName			= d.ShortName
 	
 	
-FROM All_Checks AC
-LEFT JOIN bld.vw_Dataset	D ON AC.BK_Dataset	= D.BK
+from All_Checks AC
+left join bld.vw_Dataset	D on AC.BK_Dataset	= D.BK
 
 WHERE 1=1
-AND ac.CheckMessage IS NOT null
+and ac.CheckMessage is not null
 GO
 
 

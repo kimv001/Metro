@@ -1,6 +1,10 @@
 ﻿
- -- noqa: LT05
- -- noqa: PRS
+
+
+
+
+
+
 
 
 
@@ -23,6 +27,9 @@ Description:
 	<!<SRC_RH_SRC>>
 	<!<SRC_ColumnList_SRC_data>>
 	<!<SRC_ColumnList_SRC_bk_data>>
+	<!<ColumnList_SCDdate>>
+	<!<SRC_BKSCD_SRC>>
+	<!<SRC_BKSCDH_SRC>>
 
 
 get actual list:
@@ -77,81 +84,81 @@ Date		time		Author					Description
 WITH base AS (
 
 	SELECT  
-		  bk_dataset			= src.bk
-		, code					= src.code
-		, bk_reftype_objecttype	= src.bk_reftype_objecttype
-		, bk_schema				= src.bk_schema
-		, schemaname			= src.schemaname
-		, mta_rectype			= diff.rectype
+		  BK_Dataset			= src.BK
+		, Code					= src.code
+		, BK_RefType_ObjectType	= src.BK_RefType_ObjectType
+		, BK_Schema				= src.BK_Schema
+		, SchemaName			= src.SchemaName
+		, mta_RecType			= diff.RecType
 	FROM bld.vw_dataset src
-	JOIN bld.vw_markerssmartload diff ON src.code = diff.code 
+	JOIN bld.vw_MarkersSmartLoad Diff ON src.Code = Diff.Code 
 	WHERE 1=1
 	AND src.bk= src.code
-	AND CAST(diff.rectype AS int) > -99
+	AND CAST(diff.RecType AS int) > -99
 
 )
-, markerbuild AS (
+, MarkerBuild AS (
 
 	SELECT
-		src.bk_dataset		
-		, src.code
-		, marker				= '<!<SRC_ColumnList_SRC_bk_data_TryCast>>'
+		src.BK_Dataset		
+		, src.Code
+		, Marker				= '<!<SRC_ColumnList_SRC_bk_data_TryCast>>'
 		, markervalue			=  (
 									SELECT TRIM(
 										',' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) + CHAR(9)
 										FROM STRING_AGG(
 											'try_cast(src.'
-											+ CONVERT(VARCHAR(MAX), ISNULL(CAST(a.expression AS VARCHAR(MAX)), QUOTENAME(a.attributename)))
+											+ CONVERT(VARCHAR(MAX), ISNULL(CAST(A.Expression AS VARCHAR(MAX)), QUOTENAME(A.AttributeName)))
 											+ ' '
-											+ a.[DDL_Type3]
+											+ A.[DDL_Type3]
 											+ ') AS '
-											+ QUOTENAME(CAST(a.attributename AS VARCHAR(MAX))),
+											+ QUOTENAME(CAST(A.AttributeName AS VARCHAR(MAX))),
 											',' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) + CHAR(9)
-										) WITHIN GROUP (ORDER BY CAST(a.ordinalposition AS INT))
+										) WITHIN GROUP (ORDER BY CAST(A.OrdinalPosition AS INT))
 									)
 								)
-		, markerdescription		= ''
-	FROM base src
-	JOIN bld.vw_attribute a ON src.bk_dataset = a.bk_dataset
+		, MarkerDescription		= ''
+	FROM Base src
+	JOIN bld.vw_Attribute a ON src.BK_Dataset = a.bk_dataset
 	WHERE 1=1
-		AND CAST(isnull(a.ismta,0) AS int) = 0
+		AND CAST(isnull(a.Ismta,0) AS int) = 0
 	GROUP BY 
-		src.bk_dataset		
-		, src.code
+		src.BK_Dataset		
+		, src.Code
 
 
 UNION ALL
 
 	SELECT
-		  src.bk_dataset		
-		, src.code
-		, marker				= '<!<TGT_ColumnList_TryCast>>'
-		, markervalue			= STRING_AGG(
+		  src.BK_Dataset		
+		, src.Code
+		, Marker				= '<!<TGT_ColumnList_TryCast>>'
+		, MarkerValue			= STRING_AGG(
 										char(9) + char(9) + 
 										'try_cast(' +
 										CONVERT(varchar(MAX),
-										isnull(CAST(a.expression AS varchar(MAX)), quotename(a.attributename))
+										isnull(CAST(A.Expression AS varchar(MAX)), quotename(A.AttributeName))
 										+ ' '
 										+ a.[DDL_Type3]
 										+ ') as '
-										+ quotename(CAST(a.attributename AS varchar(MAX)))
+										+ quotename(CAST(A.AttributeName AS varchar(MAX)))
 										+char(10)
 									),', ') WITHIN GROUP (ORDER BY CAST(a.ordinalposition AS int))
-		, markerdescription		= ''
-	FROM base src
-	JOIN bld.vw_attribute a ON src.bk_dataset = a.bk_dataset
+		, MarkerDescription		= ''
+	FROM Base src
+	JOIN bld.vw_Attribute a ON src.BK_Dataset = a.bk_dataset
 	WHERE 1=1
-		AND isnull(a.ismta,0) = 0
+		AND isnull(a.IsMta,0) = 0
 	GROUP BY 
-		src.bk_dataset		
-		, src.code
+		src.BK_Dataset		
+		, src.Code
 
 UNION ALL
 
 	SELECT
-		  src.bk_dataset		
-		, src.code
-		, marker				= '<!<SRC_ColumnList_SRC_bk_data_CTAS>>'
+		  src.BK_Dataset		
+		, src.Code
+		, Marker				= '<!<SRC_ColumnList_SRC_bk_data_CTAS>>'
 		, markervalue			= (
 									SELECT TRIM(
 											',' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) + CHAR(9)
@@ -160,114 +167,142 @@ UNION ALL
 													WHEN a.isnullable = 0 THEN 'isnull(cast(src.' 
 													ELSE 'try_cast(src.' 
 												END +
-												CONVERT(varchar(MAX), ISNULL(CAST(a.expression AS varchar(MAX)), QUOTENAME(a.attributename)) + ' ' + a.[DDL_Type3]) +
+												CONVERT(varchar(MAX), ISNULL(CAST(A.Expression AS varchar(MAX)), QUOTENAME(A.AttributeName)) + ' ' + a.[DDL_Type3]) +
 												CASE 
-													WHEN a.isnullable = 0 THEN '),''' + a.defaultvalue + ''') AS ' 
+													WHEN a.isnullable = 0 THEN '),''' + a.DefaultValue + ''') AS ' 
 													ELSE ') AS ' 
 												END +
-												QUOTENAME(CAST(a.attributename AS varchar(MAX))),
+												QUOTENAME(CAST(A.AttributeName AS varchar(MAX))),
 												',' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) + CHAR(9)
 											) 
 											WITHIN GROUP (ORDER BY CAST(a.ordinalposition AS int))
 										)
 								)
-		, markerdescription		= ''
-	FROM base src
-	JOIN bld.vw_attribute a ON src.bk_dataset = a.bk_dataset
+		, MarkerDescription		= ''
+	FROM Base src
+	JOIN bld.vw_Attribute a ON src.BK_Dataset = a.bk_dataset
 	WHERE 1=1
-		AND isnull(a.ismta,0) = 0
+		AND isnull(a.IsMta,0) = 0
 	GROUP BY 
-		src.bk_dataset		
-		, src.code
+		src.BK_Dataset		
+		, src.Code
 
 
 	UNION ALL
 
 	SELECT
-		  src.bk_dataset		
-		, src.code
-		, marker				= '<!<businesskey_attributes>>'
+		  src.BK_Dataset		
+		, src.Code
+		, Marker				= '<!<businesskey_attributes>>'
 		, markervalue			= (
 									SELECT TRIM(
 											',' + CHAR(13) + CHAR(10)
 											FROM STRING_AGG(
 												
-												CONVERT(varchar(MAX), ISNULL(CAST(a.expression AS varchar(MAX)), QUOTENAME(a.attributename)) ) 
+												CONVERT(varchar(MAX), ISNULL(CAST(A.Expression AS varchar(MAX)), QUOTENAME(A.AttributeName)) ) 
 												,
 												',' + CHAR(13) + CHAR(10)
 											) 
 											WITHIN GROUP (ORDER BY CAST(a.ordinalposition AS int))
 										)
 								)
-		, markerdescription		= ''
-	FROM base src
-	JOIN bld.vw_attribute a ON src.bk_dataset = a.bk_dataset
+		, MarkerDescription		= ''
+	FROM Base src
+	JOIN bld.vw_Attribute a ON src.BK_Dataset = a.bk_dataset
 	WHERE 1=1
-		AND iif(COALESCE(a.businesskey,0)='',0,a.businesskey) > 0
+		AND iif(COALESCE(A.BusinessKey,0)='',0,A.BusinessKey) > 0
 	GROUP BY 
-		src.bk_dataset		
-		, src.code
+		src.BK_Dataset		
+		, src.Code
 		
 	UNION ALL
-
+	
 	SELECT
-		  src.bk_dataset		
-		, src.code
-		, marker				= '<!<dataset_attributes>>'
+		  src.BK_Dataset		
+		, src.Code
+		, Marker				= '<!<dataset_attributes>>'
 		, markervalue			= (
 									SELECT TRIM(
 											',' + CHAR(13) + CHAR(10)
 											FROM STRING_AGG(
 												
-												CONVERT(varchar(MAX), ISNULL(CAST(a.expression AS varchar(MAX)), QUOTENAME(a.attributename)) + ' ' + a.[DDL_Type3]) 
+												CONVERT(varchar(MAX), ISNULL(CAST(A.Expression AS varchar(MAX)), QUOTENAME(A.AttributeName)) + ' ' + a.[DDL_Type3]) 
 												,
 												',' + CHAR(13) + CHAR(10) 
 											) 
 											WITHIN GROUP (ORDER BY CAST(a.ordinalposition AS int))
 										)
 								)
-		, markerdescription		= ''
-	FROM base src
-	JOIN bld.vw_attribute a ON src.bk_dataset = a.bk_dataset
+		, MarkerDescription		= ''
+	FROM Base src
+	JOIN bld.vw_Attribute a ON src.BK_Dataset = a.bk_dataset
 	WHERE 1=1
-		AND isnull(a.ismta,0) = 0
+		AND isnull(a.IsMta,0) = 0
 	GROUP BY 
-		src.bk_dataset		
-		, src.code
+		src.BK_Dataset		
+		, src.Code
 
+	UNION ALL
+	--  <!<ColumnList_SCDdate>>
+
+	SELECT
+			  src.BK_Dataset		
+			, src.Code
+			, Marker				= '<!<ColumnList_SCDdate>>'
+			, markervalue			= (
+										SELECT TRIM(
+												',' + CHAR(13) + CHAR(10)
+												FROM STRING_AGG(
+												
+													CONVERT(varchar(MAX), ISNULL(CAST(A.Expression AS varchar(MAX)), QUOTENAME(A.AttributeName)) --+ ' ' + a.[DDL_Type3]
+													) 
+													,
+													',' + CHAR(13) + CHAR(10) 
+												) 
+												WITHIN GROUP (ORDER BY CAST(a.ordinalposition AS int))
+											)
+									)
+			, MarkerDescription		= ''
+		FROM Base src
+		JOIN bld.vw_Attribute a ON src.BK_Dataset = a.bk_dataset
+		WHERE 1=1
+			AND isnull(a.[SCDDate],0) > 0
+		GROUP BY 
+			src.BK_Dataset		
+			, src.Code
 
 
 UNION ALL	
 
 	SELECT
-		  src.bk_dataset		
-		, src.code
-		, marker				= '<!<TGT_ColumnList_bk>>'
+		  src.BK_Dataset		
+		, src.Code
+		, Marker				= '<!<TGT_ColumnList_bk>>'
 		
 		-- Example value:
 		--  [Id]
 		, markervalue			= STRING_AGG(
 										char(9)+
 										CONVERT(varchar(MAX),
-											quotename(a.attributename)
+											quotename(A.AttributeName)
 											+char(10)
 										)
 									,', ' ) WITHIN GROUP (ORDER BY  CAST(a.businesskey AS int))
-		, markerdescription		= ''
-	FROM base src
-	JOIN bld.vw_attribute a ON src.bk_dataset = a.bk_dataset
+		, MarkerDescription		= ''
+	FROM Base src
+	JOIN bld.vw_Attribute a ON src.BK_Dataset = a.bk_dataset
 	WHERE 1=1
-		AND iif(COALESCE(a.businesskey,0)='',0,a.businesskey) > 0
+		AND iif(COALESCE(A.BusinessKey,0)='',0,A.BusinessKey) > 0
 	GROUP BY 
-		src.bk_dataset		
-		, src.code
+		src.BK_Dataset		
+		, src.Code
 
 	UNION ALL
 
 	SELECT
-		  src.bk_dataset		
-		, src.code
-		, marker				= '<!<SRC_ColumnList_SRC_bk>>'
+		  src.BK_Dataset		
+		, src.Code
+		, Marker				= '<!<SRC_ColumnList_SRC_bk>>'
 		
 		-- Example value:
 		--  SRC.[Id]
@@ -275,273 +310,342 @@ UNION ALL
 										char(9)+
 										'src.'+
 										CONVERT(varchar(MAX),
-											quotename(a.attributename)
+											quotename(A.AttributeName)
 										)+char(10)
 									,', ') WITHIN GROUP (ORDER BY  CAST(a.businesskey AS int))
-		, markerdescription		= ''
-	FROM base src
-	JOIN bld.vw_attribute a ON src.bk_dataset = a.bk_dataset
+		, MarkerDescription		= ''
+	FROM Base src
+	JOIN bld.vw_Attribute a ON src.BK_Dataset = a.bk_dataset
 	WHERE 1=1
-		AND iif(COALESCE(a.businesskey,0)='',0,a.businesskey) > 0
+		AND iif(COALESCE(A.BusinessKey,0)='',0,A.BusinessKey) > 0
 	GROUP BY 
-		src.bk_dataset		
-		, src.code
+		src.BK_Dataset		
+		, src.Code
 
 	UNION ALL 
 
 	SELECT
-		  src.bk_dataset		
-		, src.code
-		, marker				= '<!<TGT_ColumnList_bk_data>>'
+		  src.BK_Dataset		
+		, src.Code
+		, Marker				= '<!<TGT_ColumnList_bk_data>>'
+		-- example value:
+		--  [Id],  [Name],  [ProductCode],  [Description],  [QuantityScheduleType],  [QuantityInstallmentPeriod],  [NumberOfQuantityInstallments],  [RevenueScheduleType],  [RevenueInstallmentPeriod],  [NumberOfRevenueInstallments],  [CanUseQuantitySchedule],  [CanUseRevenueSchedule],  [IsActive],  [CreatedDate],  [CreatedbyId],  [LastModifiedDate],  [LastModifiedbyId],  [SystemModstamp],  [Family],  [ExternalDataSourceId],  [ExternalId],  [DisplayUrl],  [QuantityUnitOfMeasure],  [IsDeleted],  [IsArchived],  [LastViewedDate],  [LastReferencedDate],  [StockKeepingUnit],  [External_Id__c],  [Product_Id__c],  [SLA_hours__c]
+			
 		, markervalue			=  (
 						SELECT TRIM(
 							',' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) + CHAR(9)
 							FROM STRING_AGG(
-								 CONVERT(VARCHAR(MAX), QUOTENAME(a.attributename)),
+								 CONVERT(VARCHAR(MAX), QUOTENAME(A.AttributeName)),
 								',' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) + CHAR(9)
-							) WITHIN GROUP (ORDER BY CAST(a.ordinalposition AS INT))
+							) WITHIN GROUP (ORDER BY CAST(A.OrdinalPosition AS INT))
 						))
-		, markerdescription		= ''
-	FROM base src
-	JOIN bld.vw_attribute a ON src.bk_dataset = a.bk_dataset
+		, MarkerDescription		= ''
+	FROM Base src
+	JOIN bld.vw_Attribute a ON src.BK_Dataset = a.bk_dataset
 	WHERE 1=1
-		AND CAST(isnull(a.ismta,0) AS int) = 0
+		AND CAST(isnull(a.Ismta,0) AS int) = 0
 	GROUP BY 
-		src.bk_dataset		
-		, src.code
+		src.BK_Dataset		
+		, src.Code
 
 	UNION ALL 
 
 	SELECT
-		  src.bk_dataset		
-		, src.code
-		, marker				= '<!<SRC_ColumnList_SRC_bk_data>>'
+		  src.BK_Dataset		
+		, src.Code
+		, Marker				= '<!<SRC_ColumnList_SRC_bk_data>>'
+		
+		-- example values:
+		--  SRC.[Id], SRC.[Name], SRC.[ProductCode], SRC.[Description], SRC.[QuantityScheduleType], SRC.[QuantityInstallmentPeriod], SRC.[NumberOfQuantityInstallments], SRC.[RevenueScheduleType], SRC.[RevenueInstallmentPeriod], SRC.[NumberOfRevenueInstallments], SRC.[CanUseQuantitySchedule], SRC.[CanUseRevenueSchedule], SRC.[IsActive], SRC.[CreatedDate], SRC.[CreatedbyId], SRC.[LastModifiedDate], SRC.[LastModifiedbyId], SRC.[SystemModstamp], SRC.[Family], SRC.[ExternalDataSourceId], SRC.[ExternalId], SRC.[DisplayUrl], SRC.[QuantityUnitOfMeasure], SRC.[IsDeleted], SRC.[IsArchived], SRC.[LastViewedDate], SRC.[LastReferencedDate], SRC.[StockKeepingUnit], SRC.[External_Id__c], SRC.[Product_Id__c], SRC.[SLA_hours__c]
+		
 		, markervalue = (
 						SELECT TRIM(
 							',' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) + CHAR(9)
 							FROM STRING_AGG(
-								'src.' + CONVERT(VARCHAR(MAX), QUOTENAME(a.attributename)),
+								'src.' + CONVERT(VARCHAR(MAX), QUOTENAME(A.AttributeName)),
 								',' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) + CHAR(9)
-							) WITHIN GROUP (ORDER BY CAST(a.ordinalposition AS INT))
+							) WITHIN GROUP (ORDER BY CAST(A.OrdinalPosition AS INT))
 						))
-		, markerdescription		= ''
-	FROM base src
-	JOIN bld.vw_attribute a ON src.bk_dataset = a.bk_dataset
+		--, markervalue			= STRING_AGG(
+		--									'src.' + CONVERT(VARCHAR(MAX), QUOTENAME(A.AttributeName)),
+		--									+ ',' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) + CHAR(9) 
+		--								) WITHIN GROUP (ORDER BY CAST(A.OrdinalPosition AS INT)) + CHAR(13) + CHAR(10)
+							
+		, MarkerDescription		= ''
+	FROM Base src
+	JOIN bld.vw_Attribute a ON src.BK_Dataset = a.bk_dataset
 	WHERE 1=1
-		AND CAST(isnull(a.ismta,0) AS int) = 0
+		AND CAST(isnull(a.Ismta,0) AS int) = 0
 	GROUP BY 
-		src.bk_dataset		
-		, src.code
+		src.BK_Dataset		
+		, src.Code
 
 	UNION ALL
 	
 	
 
 	SELECT
-		  src.bk_dataset		
-		, src.code
-		, marker				= '<!<TGT_ColumnList_data>>'
-		, markervalue			= STRING_AGG(
-											CONVERT(VARCHAR(MAX), QUOTENAME(a.attributename)),
-											+ ',' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) + CHAR(9) 
-										) WITHIN GROUP (ORDER BY CAST(a.ordinalposition AS INT)) + CHAR(13) + CHAR(10)
-		, markerdescription		= ''
-	FROM base src
-	JOIN bld.vw_attribute a ON src.bk_dataset = a.bk_dataset
-	WHERE 1=1
-		AND CAST(a.businesskey AS int) = 0 AND CAST(isnull(a.ismta,0) AS int) = 0
-	GROUP BY 
-		src.bk_dataset		
-		, src.code
-
-
-	UNION ALL
-
-	SELECT
-		  src.bk_dataset		
-		, src.code
-		, marker				= '<!<SRC_ColumnList_SRC_data>>'
+		  src.BK_Dataset		
+		, src.Code
+		, Marker				= '<!<TGT_ColumnList_data>>'
 		
+		-- Example value:
+		--  [Name],  [ProductCode],  [Description],  [QuantityScheduleType],  [QuantityInstallmentPeriod],  [NumberOfQuantityInstallments],  [RevenueScheduleType],  [RevenueInstallmentPeriod],  [NumberOfRevenueInstallments],  [CanUseQuantitySchedule],  [CanUseRevenueSchedule],  [IsActive],  [CreatedDate],  [CreatedbyId],  [LastModifiedDate],  [LastModifiedbyId],  [SystemModstamp],  [Family],  [ExternalDataSourceId],  [ExternalId],  [DisplayUrl],  [QuantityUnitOfMeasure],  [IsDeleted],  [IsArchived],  [LastViewedDate],  [LastReferencedDate],  [StockKeepingUnit],  [External_Id__c],  [Product_Id__c],  [SLA_hours__c]
 		, markervalue			= STRING_AGG(
-											'src.' + CONVERT(VARCHAR(MAX), QUOTENAME(a.attributename)),
+											CONVERT(VARCHAR(MAX), QUOTENAME(A.AttributeName)),
 											+ ',' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) + CHAR(9) 
-										) WITHIN GROUP (ORDER BY CAST(a.ordinalposition AS INT)) + CHAR(13) + CHAR(10)
-		, markerdescription		= ''
-	FROM base src
-	JOIN bld.vw_attribute a ON src.bk_dataset = a.bk_dataset
+										) WITHIN GROUP (ORDER BY CAST(A.OrdinalPosition AS INT)) + CHAR(13) + CHAR(10)
+		, MarkerDescription		= ''
+	FROM Base src
+	JOIN bld.vw_Attribute a ON src.BK_Dataset = a.bk_dataset
 	WHERE 1=1
-		AND CAST(a.businesskey AS int) = 0 AND CAST(isnull(a.ismta,0) AS int) = 0
+		AND CAST(A.BusinessKey AS int) = 0 AND CAST(isnull(a.IsMta,0) AS int) = 0
 	GROUP BY 
-		src.bk_dataset		
-		, src.code
+		src.BK_Dataset		
+		, src.Code
+
+
+	UNION ALL
+
+	SELECT
+		  src.BK_Dataset		
+		, src.Code
+		, Marker				= '<!<SRC_ColumnList_SRC_data>>'
+		
+		-- example value:
+		--  src.[Name],  src.[ProductCode],  src.[Description],  src.[QuantityScheduleType],  src.[QuantityInstallmentPeriod],  src.[NumberOfQuantityInstallments],  src.[RevenueScheduleType],  src.[RevenueInstallmentPeriod],  src.[NumberOfRevenueInstallments],  src.[CanUseQuantitySchedule],  src.[CanUseRevenueSchedule],  src.[IsActive],  src.[CreatedDate],  src.[CreatedbyId],  src.[LastModifiedDate],  src.[LastModifiedbyId],  src.[SystemModstamp],  src.[Family],  src.[ExternalDataSourceId],  src.[ExternalId],  src.[DisplayUrl],  src.[QuantityUnitOfMeasure],  src.[IsDeleted],  src.[IsArchived],  src.[LastViewedDate],  src.[LastReferencedDate],  src.[StockKeepingUnit],  src.[External_Id__c],  src.[Product_Id__c],  src.[SLA_hours__c]
+		, markervalue			= STRING_AGG(
+											'src.' + CONVERT(VARCHAR(MAX), QUOTENAME(A.AttributeName)),
+											+ ',' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) + CHAR(9) 
+										) WITHIN GROUP (ORDER BY CAST(A.OrdinalPosition AS INT)) + CHAR(13) + CHAR(10)
+		, MarkerDescription		= ''
+	FROM Base src
+	JOIN bld.vw_Attribute a ON src.BK_Dataset = a.bk_dataset
+	WHERE 1=1
+		AND CAST(A.BusinessKey AS int) = 0 AND CAST(isnull(a.IsMta,0) AS int) = 0
+	GROUP BY 
+		src.BK_Dataset		
+		, src.Code
 
 	
 	UNION ALL
 
 	SELECT
-		  src.bk_dataset		
-		, src.code
-		, marker				= '<!<TGT_BK>>'
-		, markervalue			= 'upper(concat('''','+
+		  src.BK_Dataset		
+		, src.Code
+		, Marker				= '<!<TGT_BK>>'
+		, MarkerValue			= 'upper(concat('''','+
 									STRING_AGG( 
 										CONVERT(varchar(MAX),
-											quotename(a.attributename)
+											quotename(A.AttributeName)
 												)
-									,',''|'',' ) WITHIN GROUP (ORDER BY  CAST(a.businesskey AS int))
+									,',''|'',' ) WITHIN GROUP (ORDER BY  CAST(a.BusinessKey AS int))
 									+ '))'
-		, markerdescription		= ''
-	FROM base src
-	JOIN bld.vw_attribute a ON src.bk_dataset = a.bk_dataset
+		, MarkerDescription		= ''
+	FROM Base src
+	JOIN bld.vw_Attribute a ON src.BK_Dataset = a.bk_dataset
 	WHERE 1=1
-		AND CAST(isnull(a.businesskey,0) AS int) > 0
+		AND CAST(isnull(a.BusinessKey,0) AS int) > 0
 	GROUP BY 
-		src.bk_dataset		
-		, src.code
+		src.BK_Dataset		
+		, src.Code
 
 	UNION ALL
 
 	SELECT
-		  src.bk_dataset		
-		, src.code
-		, marker				= '<!<SRC_BK_SRC>>'
-		, markervalue			= 'upper(concat('''','+
+		  src.BK_Dataset		
+		, src.Code
+		, Marker				= '<!<SRC_BK_SRC>>'
+		, MarkerValue			= 'upper(concat('''','+
 									STRING_AGG( 
 										CONVERT(varchar(MAX),
-											+'src.'+quotename(a.attributename)
+											+'src.'+quotename(A.AttributeName)
 												)
-									,',''|'',' ) WITHIN GROUP (ORDER BY  CAST(a.businesskey AS int))
+									,',''|'',' ) WITHIN GROUP (ORDER BY  CAST(a.BusinessKey AS int))
 									+ '))'
-		, markerdescription		= ''
-	FROM base src
-	JOIN bld.vw_attribute a ON src.bk_dataset = a.bk_dataset
+		, MarkerDescription		= ''
+	FROM Base src
+	JOIN bld.vw_Attribute a ON src.BK_Dataset = a.bk_dataset
 	WHERE 1=1
-		AND CAST(isnull(a.businesskey,0) AS int) > 0
+		AND CAST(isnull(a.BusinessKey,0) AS int) > 0
 	GROUP BY 
-		src.bk_dataset		
-		, src.code
+		src.BK_Dataset		
+		, src.Code
+
+	UNION ALL
+
+	SELECT
+		  src.BK_Dataset		
+		, src.Code
+		, Marker				= '<!<SRC_BKSCD_SRC>>'
+		, MarkerValue			= 'upper(concat('''','+
+									STRING_AGG( 
+										CONVERT(varchar(MAX),
+											+'src.'+quotename(A.AttributeName)
+												)
+									,',''|'',' ) WITHIN GROUP (ORDER BY  CAST(isnull(a.BusinessKey,0) AS int)*1+ CAST(isnull(a.[SCDDate],0) AS int)*1000 ASC)
+									+ '))'
+		, MarkerDescription		= ''
+	FROM Base src
+	-- select * from
+	JOIN bld.vw_Attribute a ON src.BK_Dataset = a.bk_dataset
+	WHERE 1=1
+		AND (CAST(isnull(a.BusinessKey,0) AS int) > 0 OR CAST(isnull(a.[SCDDate],0) AS int) > 0)
+	GROUP BY 
+		src.BK_Dataset		
+		, src.Code
 
 
 	UNION ALL
 
 	SELECT
-		  src.bk_dataset		
-		, src.code
-		, marker				= '<!<TGT_BKH>>'
-		, markervalue				= 'convert(char(128), hashbytes(''SHA2_512'', 
+		  src.BK_Dataset		
+		, src.Code
+		, Marker				= '<!<TGT_BKH>>'
+		, MarkerValue				= 'convert(char(128), hashbytes(''SHA2_512'', 
 									upper(concat('''','+
 									STRING_AGG(
 										CONVERT(varchar(MAX),
-											quotename(a.attributename)
+											quotename(A.AttributeName)
 												)
-									,',''|'',' ) WITHIN GROUP (ORDER BY  CAST(a.businesskey AS int))
+									,',''|'',' ) WITHIN GROUP (ORDER BY  CAST(a.BusinessKey AS int))
 									+ '))'
 									+'), 2)'
-		, markerdescription		= ''
-	FROM base src
-	JOIN bld.vw_attribute a ON src.bk_dataset = a.bk_dataset
+		, MarkerDescription		= ''
+	FROM Base src
+	JOIN bld.vw_Attribute a ON src.BK_Dataset = a.bk_dataset
 	WHERE 1=1
-		AND CAST(isnull(a.businesskey,0) AS int) > 0
+		AND CAST(isnull(a.BusinessKey,0) AS int) > 0
 	GROUP BY 
-		src.bk_dataset		
-		, src.code
+		src.BK_Dataset		
+		, src.Code
 
 	
 	UNION ALL
 
 	SELECT
-		  src.bk_dataset		
-		, src.code
-		, marker				= '<!<SRC_BKH_SRC>>'
+		  src.BK_Dataset		
+		, src.Code
+		, Marker				= '<!<SRC_BKH_SRC>>'
 		, markervalue				= 'convert(char(128), hashbytes(''SHA2_512'', 
 									upper(concat('''','+
 									STRING_AGG(
 										CONVERT(varchar(MAX),
-											+'src.'+quotename(a.attributename)
+											+'src.'+quotename(A.AttributeName)
 												)
-									,',''|'',' ) WITHIN GROUP (ORDER BY  CAST(a.businesskey AS int))
+									,',''|'',' ) WITHIN GROUP (ORDER BY  CAST(a.BusinessKey AS int))
 									+ '))'
 									+'), 2)'
-		, markerdescription		= ''
-	FROM base src
-	JOIN bld.vw_attribute a ON src.bk_dataset = a.bk_dataset
+		, MarkerDescription		= ''
+	FROM Base src
+	JOIN bld.vw_Attribute a ON src.BK_Dataset = a.bk_dataset
 	WHERE 1=1
-		AND CAST(isnull(a.businesskey,0) AS int) > 0
+		AND CAST(isnull(a.BusinessKey,0) AS int) > 0
 	GROUP BY 
-		src.bk_dataset		
-		, src.code
+		src.BK_Dataset		
+		, src.Code
+
+	-- <!<SRC_BKSCDH_SRC>>
+	UNION ALL
+
+	SELECT
+		  src.BK_Dataset		
+		, src.Code
+		, Marker				= '<!<SRC_BKSCDH_SRC>>'
+		, markervalue				= 'convert(char(128), hashbytes(''SHA2_512'', 
+									upper(concat('''','+
+									STRING_AGG(
+										CONVERT(varchar(MAX),
+											+'src.'+quotename(A.AttributeName)
+												)
+									,',''|'',' ) WITHIN GROUP (ORDER BY  CAST(isnull(a.BusinessKey,0) AS int)*1+ CAST(isnull(a.[SCDDate],0) AS int)*1000 ASC)
+									+ '))'
+									+'), 2)'
+		, MarkerDescription		= ''
+	FROM Base src
+	JOIN bld.vw_Attribute a ON src.BK_Dataset = a.bk_dataset
+	WHERE 1=1
+		AND (CAST(isnull(a.BusinessKey,0) AS int) > 0 OR CAST(isnull(a.[SCDDate],0) AS int) > 0)
+	GROUP BY 
+		src.BK_Dataset		
+		, src.Code
 
 	UNION ALL
 
 	SELECT
-		  src.bk_dataset		
-		, src.code
-		, marker				= '<!<TGT_RH>>'
-		, markervalue			= isnull(CAST(
+		  src.BK_Dataset		
+		, src.Code
+		, Marker				= '<!<TGT_RH>>'
+		, Markervalue			= isnull(CAST(
 									'convert(char(128), hashbytes(''SHA2_512'', concat('''','+
 										STRING_AGG(
 											CONVERT(varchar(MAX),
-												quotename(a.attributename)
+												quotename(A.AttributeName)
 											)
 										,',''|'',' ) WITHIN GROUP (ORDER BY  CAST(a.ordinalposition AS int))
 										+ ')), 2)'
 									 AS varchar(MAX)),'NULL')
-		, markerdescription		= ''
-	FROM base src
+		, MarkerDescription		= ''
+	FROM Base src
 	LEFT JOIN
-	    bld.vw_attribute a
-	ON src.bk_dataset = a.bk_dataset AND CAST(isnull(a.businesskey,0) AS int) = 0 AND isnull(a.ismta,0) = 0 AND CAST(isnull(a.notinrh,0) AS int)=0
+	    bld.vw_Attribute a
+	ON src.BK_Dataset = a.bk_dataset AND CAST(isnull(A.BusinessKey,0) AS int) = 0 AND isnull(a.IsMta,0) = 0 AND CAST(isnull(a.NotInRH,0) AS int)=0
 	WHERE 1=1
 		
 	GROUP BY 
-		src.bk_dataset		
-		, src.code
+		src.BK_Dataset		
+		, src.Code
 
 	UNION ALL
 
 	SELECT
-		  src.bk_dataset		
-		, src.code
-		, marker				= '<!<SRC_RH_SRC>>'
-		, markervalue			= isnull(CAST(
+		  src.BK_Dataset		
+		, src.Code
+		, Marker				= '<!<SRC_RH_SRC>>'
+		, Markervalue			= isnull(CAST(
 									'convert(char(128), hashbytes(''SHA2_512'', concat('''','+
 										STRING_AGG(
 										
 											
 											CONVERT(varchar(MAX),
-												'src.'+quotename(a.attributename)
+												'src.'+quotename(A.AttributeName)
 												
 											)
 										,',''|'',' ) WITHIN GROUP (ORDER BY  CAST(a.ordinalposition AS int))
 										+ ')), 2)'
 									 AS varchar(MAX)),'NULL')
-		, markerdescription		= ''
-	FROM base src
+		, MarkerDescription		= ''
+	FROM Base src
 	LEFT JOIN
-	    bld.vw_attribute a
-	ON src.bk_dataset = a.bk_dataset AND CAST(a.businesskey AS int) = 0 AND isnull(a.ismta,0) = 0 AND CAST(isnull(a.notinrh,0) AS int)=0
+	    bld.vw_Attribute a
+	ON src.BK_Dataset = a.bk_dataset AND CAST(A.BusinessKey AS int) = 0 AND isnull(a.IsMta,0) = 0 AND CAST(isnull(a.NotInRH,0) AS int)=0
 	WHERE 1=1
 		
 	GROUP BY 
-		src.bk_dataset		
-		, src.code
+		src.BK_Dataset		
+		, src.Code
 
 	
 
 
 	)
 SELECT
-	bk					= concat(tgt.bk,'|',mb.marker,'|','Dynamic')
-	, bk_dataset		= tgt.bk
-	, code				= mb.code
-	, markertype		= 'Dynamic'
-	, markerdescription
-	, mb.marker
-	, mb.markervalue
+	BK					= concat(tgt.BK,'|',MB.Marker,'|','Dynamic')
+	, BK_Dataset		= TGT.BK
+	, Code				= MB.Code
+	, MarkerType		= 'Dynamic'
+	, MarkerDescription
+	, MB.Marker
+	, MB.MarkerValue
 	, [Pre]				= 0
 	, [Post]			= 0
-	, mta_rectype		= diff.rectype
+	, mta_RecType		= diff.RecType
 
-FROM markerbuild mb
-JOIN bld.vw_dataset tgt ON mb.code = tgt.code
-LEFT JOIN [bld].[vw_MarkersSmartLoad] diff ON mb.code = diff.code 
+FROM MarkerBuild MB
+JOIN bld.vw_dataset TGT ON MB.Code = TGT.Code
+LEFT JOIN [bld].[vw_MarkersSmartLoad] Diff ON MB.Code = Diff.Code 
 WHERE 1=1
+--and  Marker				= '<!<SRC_BKSCD_SRC>>'
+--and marker = '<!<TGT_ColumnList_TryCast>>'
+--and tgt.bk = 'DWH|dim|trvs|Wholesale|Customer_History|'
+--order by MB.Marker asc

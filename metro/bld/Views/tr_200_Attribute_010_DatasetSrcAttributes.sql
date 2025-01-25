@@ -3,6 +3,7 @@
 
 
 
+
 CREATE VIEW [bld].[tr_200_Attribute_010_DatasetSrcAttributes] AS 
 /* 
 === Comments =========================================
@@ -54,11 +55,11 @@ SELECT  [BK]
   )
   , base AS (
 	SELECT  
-		  bk										= concat(d.[BK],'|',src.[AttributeName])
+		  BK										= concat(d.[BK],'|',src.[AttributeName])
 		, [Code]									= src.[BK_DatasetSrc]
-		, [Name]									= d.datasetname+'.['+src.[AttributeName]+']'
-		, [BK_Dataset]								= d.bk
-		, [Dataset]									= d.datasetname
+		, [Name]									= d.DatasetName+'.['+src.[AttributeName]+']'
+		, [BK_Dataset]								= d.BK
+		, [Dataset]									= d.DatasetName
 		, src.[AttributeName]
 		, src.[Description]
 		, src.[Expression]
@@ -73,45 +74,45 @@ SELECT  [BK]
 		, src.[SrcName]
 		, src.[BK_RefType_DataType]
 
-		, datatype									= dtm.datatypemapped
+		, DataType									= dtm.DataTypeMapped
 
-		, fixedschemadatatype						= CAST(dtm.fixedschemadatatype AS varchar(1))
-		, orgmappeddatatype							= dtm.orgmappeddatatype
-		, [Isnullable]								= CAST(ISNULL(iif(dtm.fixedschemadatatype=1,1, src.[Isnullable]),1) AS varchar(1))
-		, [OrdinalPosition]							= CAST(ROW_NUMBER() OVER (PARTITION BY d.bk ORDER BY CAST(ltrim(rtrim(src.[OrdinalPosition])) AS int) ASC) AS varchar(3))
+		, FixedSchemaDataType						= CAST(dtm.FixedSchemaDataType AS varchar(1))
+		, OrgMappedDataType							= dtm.OrgMappedDataType
+		, [Isnullable]								= CAST(ISNULL(iif(dtm.FixedSchemaDataType=1,1, src.[Isnullable]),1) AS varchar(1))
+		, [OrdinalPosition]							= CAST(ROW_NUMBER() OVER (PARTITION BY d.BK ORDER BY CAST(ltrim(rtrim(src.[OrdinalPosition])) AS int) ASC) AS varchar(3))
 		, [MaximumLength]							= CAST( CASE 
-																WHEN dtm.fixedschemadatatype='1'  
+																WHEN dtm.FixedSchemaDataType='1'  
 																	THEN  
 																		CASE 
 																			WHEN  ISNULL(iif(ltrim(rtrim(src.[NotInRH]))='','0',src.[NotInRH]) ,0)='1'																THEN 'max'
 
-																			WHEN /*(src.MaximumLength = -1 OR src.MaximumLength > 255) and*/ dtm.datatypemapped = 'varchar'		THEN '8000'
+																			WHEN /*(src.MaximumLength = -1 OR src.MaximumLength > 255) and*/ dtm.DataTypeMapped = 'varchar'		THEN '8000'
 																			--When /*(src.MaximumLength = -1 OR src.MaximumLength > 255) and*/ dtm.DataTypeMapped = 'nvarchar'	Then '4000'
 																			ELSE '4000'
 																		END 
 																ELSE 
 																	CASE 
-																		WHEN src.maximumlength = '-1' AND ISNULL(src.[NotInRH],0)='1'			THEN 'max'
-																		WHEN src.maximumlength = '-1' AND dtm.datatypemapped = 'varchar'		THEN '8000'
-																		WHEN src.maximumlength = '-1' AND dtm.datatypemapped = 'nvarchar'		THEN '4000'
-																		ELSE ISNULL(src.maximumlength,'')	
+																		WHEN src.MaximumLength = '-1' AND ISNULL(src.[NotInRH],0)='1'			THEN 'max'
+																		WHEN src.MaximumLength = '-1' AND dtm.DataTypeMapped = 'varchar'		THEN '8000'
+																		WHEN src.MaximumLength = '-1' AND dtm.DataTypeMapped = 'nvarchar'		THEN '4000'
+																		ELSE ISNULL(src.MaximumLength,'')	
 																	END
 																END
 														AS varchar(10))
-		, [Precision]								= iif(dtm.fixedschemadatatype=1,'',isnull(src.[Precision],''))
-		, [Scale]									= iif(dtm.fixedschemadatatype=1,'',isnull(src.[Scale],''))
+		, [Precision]								= iif(dtm.FixedSchemaDataType=1,'',isnull(src.[Precision],''))
+		, [Scale]									= iif(dtm.FixedSchemaDataType=1,'',isnull(src.[Scale],''))
 		, src.[Collation]
-		, [DefaultValue]							= COALESCE(src.[DefaultValue], dtm.defaultvalue)
+		, [DefaultValue]							= COALESCE(src.[DefaultValue], dtm.DefaultValue)
 		, src.[Active]
-		, floworder									= d.floworder
+		, FlowOrder									= d.FlowOrder
 		, d.[BK_RefType_ObjectType]
-		, d.bk_reftype_repositorystatus	
+		, d.BK_RefType_RepositoryStatus	
 	
 
 
 			FROM prep src
-	JOIN bld.vw_dataset					d	ON d.code		= src.bk_datasetsrc
-	JOIN [bld].[vw_DataTypesBySchema]	dtm	ON d.bk_schema	= dtm.bk_schema AND src.bk_reftype_datatype = dtm.datatypeinrep
+	JOIN bld.vw_Dataset					d	ON d.code		= src.BK_DatasetSrc
+	JOIN [bld].[vw_DataTypesBySchema]	dtm	ON d.BK_Schema	= dtm.BK_Schema AND src.BK_RefType_DataType = dtm.DataTypeInRep
 	WHERE 1=1
 
 
@@ -119,68 +120,67 @@ SELECT  [BK]
 
 
 SELECT 
-	  src.[BK]
-	, src.[Code]
-	, src.[Name]
-	, src.[BK_Dataset]
-	, src.[Dataset]
-	, src.[AttributeName]
-	, src.[Description]
-	, [Expression]			= CAST(src.[Expression] AS varchar(MAX))
-	, src.[DistributionHashKey]
-	, src.[NotInRH]
-	, src.[BusinessKey]
-	, ismta					= 0
-	, src.[SrcName]
-	, src.[BK_RefType_DataType]
-	, src.[DataType]
-	, src.[FixedSchemaDataType]
-	, src.[OrgMappedDataType]
-	, src.[Isnullable]
-	, src.[OrdinalPosition]
-	, src.[MaximumLength]
-	, src.[Precision]
-	, src.[Scale]
-	, src.[Collation]
-	, src.[Active]
-	, src.[FlowOrder]  
-	, src.[BK_RefType_ObjectType]
-	, src.bk_reftype_repositorystatus
-	, defaultvalue			= src.[DefaultValue]
-	, ddl_type1				= CASE 
-									WHEN (src.[DataType] IN ('nchar', 'nvarchar', 'char', 'varchar', 'varbinary'))	THEN CONCAT(Quotename(src.[DataType]),'(',src.[MaximumLength],')')
-									WHEN (src.[DataType] IN ('numeric', 'decimal')) THEN  CONCAT(Quotename(src.[DataType]),'(',src.[Precision],',', src.[Scale],')')
-									WHEN
-									    (src.[DataType] IN ('date','datetime','datetime2', 'time','smallint', 'float','int','bigint', 'tinyint', 'uniqueidentifier', 'xml', 'bit'))
-									    THEN Quotename(src.[DataType])
-								END
-	, ddl_type2				=  CASE 
-									WHEN (src.[DataType] IN ('nchar', 'nvarchar', 'char', 'varchar', 'varbinary'))	THEN CONCAT(Quotename(src.[DataType]),'(',src.[MaximumLength],')')
-									WHEN (src.[DataType] IN ('numeric', 'decimal')) THEN  CONCAT(Quotename(src.[DataType]),'(',src.[Precision],',', src.[Scale],')')
-									WHEN
-									    (src.[DataType] IN ('date','datetime','datetime2', 'time','smallint', 'float','int','bigint', 'tinyint', 'uniqueidentifier', 'xml', 'bit'))
-									    THEN Quotename(src.[DataType])
-								END
-								+  IIF(src.isnullable=1, ' NULL ', ' NOT NULL ')
-	, ddl_type3				=  'as '+ 
-								CASE 
-									WHEN (src.[DataType] IN ('nchar', 'nvarchar', 'char', 'varchar', 'varbinary'))	THEN CONCAT(Quotename(src.[DataType]),'(',src.[MaximumLength],')')
-									WHEN (src.[DataType] IN ('numeric', 'decimal')) THEN  CONCAT(Quotename(src.[DataType]),'(',[Precision],',', [Scale],')')
-									WHEN
-									    (src.[DataType] IN ('date','datetime','datetime2', 'time','smallint', 'float','int','bigint', 'tinyint', 'uniqueidentifier', 'xml', 'bit'))
-									    THEN Quotename(src.[DataType])
-								END
-	, ddl_type4				=  'as '+ 
-								CASE 
-									WHEN (src.[DataType] IN ('nchar', 'nvarchar', 'char', 'varchar', 'varbinary'))	THEN CONCAT(Quotename([DataType]),'(',src.[MaximumLength],')')
-									WHEN (src.[DataType] IN ('numeric', 'decimal')) THEN  CONCAT(Quotename(src.[DataType]),'(',src.[Precision],',', src.[Scale],')')
-									WHEN
-									    (src.[DataType] IN ('date','datetime','datetime2', 'time','smallint', 'float','int','bigint', 'tinyint', 'uniqueidentifier', 'xml', 'bit'))
-									    THEN Quotename(src.[DataType])
-								END
-								+  IIF(src.isnullable=1, ' NULL ', ' NOT NULL ')
+	  [BK]								= src.[BK]
+	, [Code]							= src.[Code]
+	, [Name]							= src.[Name]
+	, [BK_Dataset]						= src.[BK_Dataset]
+	, [Dataset]							= src.[Dataset]
+	, [AttributeName]					= src.[AttributeName]
+	, [Description]						= src.[Description]
+	, [Expression]						= CAST(src.[Expression] AS varchar(MAX))
+	, [DistributionHashKey]				= src.[DistributionHashKey]
+	, [NotInRH]							= src.[NotInRH]
+	, [BusinessKey]						= src.[BusinessKey]
+	, [isMta]							= 0
+	, [SrcName]							= src.[SrcName]
+	, [BK_RefType_DataType]				= src.[BK_RefType_DataType]
+	, [DataType]						= src.[DataType]
+	, [FixedSchemaDataType]				= src.[FixedSchemaDataType]
+	, [OrgMappedDataType]				= src.[OrgMappedDataType]
+	, [Isnullable]						= src.[Isnullable]
+	, [OrdinalPosition]					= src.[OrdinalPosition]
+	, [MaximumLength]					= src.[MaximumLength]
+	, [Precision]						= src.[Precision]
+	, [Scale]							= src.[Scale]
+	, [Collation]						= src.[Collation]
+	, [Active]							= src.[Active]
+	, [FlowOrder]						= src.[FlowOrder]  
+	, [BK_RefType_ObjectType]			= src.[BK_RefType_ObjectType]
+	, [BK_RefType_RepositoryStatus]		= src.[BK_RefType_RepositoryStatus]
+	, [SCDDate]							= CAST('' AS varchar(255))
+	, [DefaultValue]						= src.[DefaultValue]
+	, [DDL_Type1]							= CASE 
+												WHEN (src.[DataType] IN ('nchar', 'nvarchar', 'char', 'varchar', 'varbinary'))	THEN CONCAT(Quotename(src.[DataType]),'(',src.[MaximumLength],')')
+												WHEN (src.[DataType] IN ('numeric', 'decimal')) THEN  CONCAT(Quotename(src.[DataType]),'(',src.[Precision],',', src.[Scale],')')
+												WHEN
+												    (src.[DataType] IN ('date','datetime','datetime2', 'time','smallint', 'float','int','bigint', 'tinyint', 'uniqueidentifier', 'xml', 'bit'))
+												    THEN Quotename(src.[DataType])
+											END
+	, [DDL_Type2]							=  CASE 
+												WHEN (src.[DataType] IN ('nchar', 'nvarchar', 'char', 'varchar', 'varbinary'))	THEN CONCAT(Quotename(src.[DataType]),'(',src.[MaximumLength],')')
+												WHEN (src.[DataType] IN ('numeric', 'decimal')) THEN  CONCAT(Quotename(src.[DataType]),'(',src.[Precision],',', src.[Scale],')')
+												WHEN
+												    (src.[DataType] IN ('date','datetime','datetime2', 'time','smallint', 'float','int','bigint', 'tinyint', 'uniqueidentifier', 'xml', 'bit'))
+												    THEN Quotename(src.[DataType])
+											END
+											+  IIF(src.IsNullable=1, ' NULL ', ' NOT NULL ')
+	, [DDL_Type3]							=  'as '+ 
+											CASE 
+												WHEN (src.[DataType] IN ('nchar', 'nvarchar', 'char', 'varchar', 'varbinary'))	THEN CONCAT(Quotename(src.[DataType]),'(',src.[MaximumLength],')')
+												WHEN (src.[DataType] IN ('numeric', 'decimal')) THEN  CONCAT(Quotename(src.[DataType]),'(',[Precision],',', [Scale],')')
+												WHEN
+												    (src.[DataType] IN ('date','datetime','datetime2', 'time','smallint', 'float','int','bigint', 'tinyint', 'uniqueidentifier', 'xml', 'bit'))
+												    THEN Quotename(src.[DataType])
+											END
+	, [DDL_Type4]							=  'as '+ 
+											CASE 
+												WHEN (src.[DataType] IN ('nchar', 'nvarchar', 'char', 'varchar', 'varbinary'))	THEN CONCAT(Quotename([DataType]),'(',src.[MaximumLength],')')
+												WHEN (src.[DataType] IN ('numeric', 'decimal')) THEN  CONCAT(Quotename(src.[DataType]),'(',src.[Precision],',', src.[Scale],')')
+												WHEN
+												    (src.[DataType] IN ('date','datetime','datetime2', 'time','smallint', 'float','int','bigint', 'tinyint', 'uniqueidentifier', 'xml', 'bit'))
+												    THEN Quotename(src.[DataType])
+											END
+											+  IIF(src.IsNullable=1, ' NULL ', ' NOT NULL ')
 
 
 FROM 	base src
---where dataset = '[stg].[SF_Netcodec]'
---where bk = 'DWH|pst||AuraPortal|ClaseProcesoPtr15General||3_ETNN_EXT_BssEneId'	

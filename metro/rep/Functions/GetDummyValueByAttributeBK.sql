@@ -1,5 +1,4 @@
 ﻿ -- noqa: PRS
-
 CREATE FUNCTION [rep].[GetDummyValueByAttributeBK]
 (      
        @AttributeBK varchar(255)

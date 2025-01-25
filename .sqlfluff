@@ -6,6 +6,7 @@ indented_ctes = true
 
 [sqlfluff:rules]
 exclude_rules = L014  # Exclude rule that changes single quotes to double quotes
+custom_rules = custom_rules.Rule_CAM01
 
 [sqlfluff:rules:layout.spacing]
 single_line_maximum = 1  # Enforce single empty lines

@@ -14,7 +14,7 @@ Date		time		Author					Description
 */
 
 
-
+with base as (
 SELECT 
 	BK						= S.[BK]
 	, CODE					= S.[Code]
@@ -50,3 +50,38 @@ JOIN REP.VW_LAYER			L	ON L.BK			= S.BK_LAYER
 JOIN REP.VW_DATASOURCE		DS	ON DS.BK		= S.BK_DATASOURCE
 JOIN BLD.VW_REFTYPE			DST	ON DST.BK		= DS.BK_REFTYPE_DATASOURCETYPE
 JOIN REP.VW_LINKEDSERVICE	LS	ON LS.BK		= DS.BK_LINKEDSERVICE
+)
+-- Select rows from a Table or View 'TableOrViewName' in schema 'SchemaName'
+SELECT 
+[BK] ,
+            [Code],
+            [Name],
+            [BK_Schema],
+            [BK_Layer],
+            [BK_DataSource],
+            [BK_LinkedService],
+            [SchemaCode],
+            [SchemaName],
+            [DataSourceCode],
+            [DataSourceName],
+            [BK_DataSourceType],
+            [DataSourceTypeCode],
+            [DataSourceTypeName],
+            [LayerCode],
+            [LayerName],
+            [LayerOrder],
+            [ProcessOrderLayer],
+            [ProcessParallel],
+            [isDWH],
+            [isSRC],
+            [isTGT],
+            [IsREP],
+            [CreateDummies],
+            [LinkedServiceCode],
+            [LinkedServiceName],
+            [BK_Template_Create],
+            [BK_Template_Load],
+            [BK_RefType_ToChar],
+            [mta_RecType],
+            [mta_IsDeleted]
+		 FROM base

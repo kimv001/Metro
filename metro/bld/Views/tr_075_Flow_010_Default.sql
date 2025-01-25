@@ -1,22 +1,27 @@
 ﻿CREATE VIEW [bld].[tr_075_Flow_010_Default] AS 
 
 SELECT
-	BK							= FL.BK,
-	CODE						= FL.CODE,
-	BK_FLOW						= F.BK,
-	FLOW_NAME					= F.[Name],
-	FLOW_DESCRIPTION			= isnull(F.[Description],'<no description available ...>'),
-	FLOW_LAYER_STEP_NAME		= FL.[Name],
-	FLOW_LAYER_STEP_DESCRIPTION	= isnull(FL.[Description],'<no description available ...>'),
-	FLOW_LAYER_STEP_ORDER		= FL.SORTORDER,
-	BK_LAYER					= L.BK,
-	BK_SCHEMA					= S.BK,
--- helper to determine if there is a view on the source dataset that should be used instead of the table
-	READFROMVIEW				= FL.READFROMVIEW,
-	BK_TEMPLATE_LOAD			= FL.BK_TEMPLATE_LOAD,
-	BK_TEMPLATE_CREATE			= FL.BK_TEMPLATE_CREATE
-FROM REP.VW_FLOW			F
-JOIN REP.VW_FLOWLAYER		FL		ON FL.BK_FLOW			= F.BK 
-LEFT JOIN REP.VW_LAYER		L		ON FL.BK_LAYER			= L.BK
-LEFT JOIN REP.VW_SCHEMA		S		ON FL.BK_SCHEMA			= S.BK
-LEFT JOIN REP.VW_TEMPLATE	TL		ON FL.BK_TEMPLATE_LOAD	= TL.BK
+	BK							= fl.BK,
+	Code						= fl.code,
+	BK_Flow						= f.bk,
+	Flow_Name					= f.[Name],
+	Flow_Description			= isnull(f.[Description],'<no description available ...>'),
+	Flow_Layer_Step_Name		= fl.[Name],
+	Flow_Layer_Step_Description	= isnull(fl.[Description],'<no description available ...>'),
+	Flow_Layer_Step_Order		= fl.SortOrder,
+	BK_Layer					= l.BK,
+	BK_Schema					= s.BK,
+	
+	-- helper to determine if there is a view on the source dataset that should be used instead of the table
+	ReadFromView				= fl.ReadFromView,
+	BK_Template_Load			= fl.BK_Template_Load,
+	--Load_Template_Name			= tl.[Name],
+	--Load_Template_Description	= tl.[Description],
+	--Load_Template				= tl.Script
+	BK_Template_Create			= fl.BK_Template_Create
+
+FROM rep.vw_Flow			f
+JOIN rep.vw_FlowLayer		fl		ON fl.BK_Flow			= f.BK 
+LEFT JOIN rep.vw_Layer		l		ON fl.BK_Layer			= l.bk
+LEFT JOIN rep.vw_Schema		s		ON fl.BK_Schema			= s.bk
+LEFT JOIN rep.vw_template	tl		ON fl.BK_Template_Load	= tl.bk
