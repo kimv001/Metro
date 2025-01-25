@@ -3,6 +3,7 @@
     [Code]              NVARCHAR (MAX) NULL,
     [Name]              NVARCHAR (MAX) NULL,
     [Description]       NVARCHAR (MAX) NULL,
+    [Description_nl]    NVARCHAR (MAX) NULL,
     [Active]            NVARCHAR (MAX) NULL,
     [Fileformat]        NVARCHAR (MAX) NULL,
     [CompressionType]   NVARCHAR (MAX) NULL,

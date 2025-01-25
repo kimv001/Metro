@@ -3,6 +3,7 @@
     [Name]                         NVARCHAR (MAX) NULL,
     [Code]                         NVARCHAR (MAX) NULL,
     [Description]                  NVARCHAR (MAX) NULL,
+    [Description_nl]               NVARCHAR (MAX) NULL,
     [Active]                       NVARCHAR (MAX) NULL,
     [BK_Datasource]                NVARCHAR (MAX) NULL,
     [BK_Schema]                    NVARCHAR (MAX) NULL,

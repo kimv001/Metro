@@ -4,6 +4,7 @@
     [Name]                      NVARCHAR (MAX) NULL,
     [Active]                    NVARCHAR (MAX) NULL,
     [Description]               NVARCHAR (MAX) NULL,
+    [Description_nl]            NVARCHAR (MAX) NULL,
     [BK_RefType_DataSourceType] NVARCHAR (MAX) NULL,
     [BK_LinkedService]          NVARCHAR (MAX) NULL,
     [IsDWH]                     NVARCHAR (MAX) NULL,

@@ -1,0 +1,12 @@
+site_name: Metro Project Documentation
+nav:
+  - Home: index.md
+  - Functional Documentation:
+    - Overview: functional/overview.md
+    - Use Cases: functional/use_cases.md
+    - Data Flow: functional/data_flow.md
+  - Technical Documentation:
+    - Architecture: technical/architecture.md
+    - Database Schema: technical/database_schema.md
+    - API Endpoints: technical/api_endpoints.md
+  - Setup: setup.md

@@ -3,6 +3,7 @@
     [Code]               NVARCHAR (MAX) NULL,
     [Name]               NVARCHAR (MAX) NULL,
     [Description]        NVARCHAR (MAX) NULL,
+    [Description_nl]     NVARCHAR (MAX) NULL,
     [Active]             NVARCHAR (MAX) NULL,
     [BK_Flow]            NVARCHAR (MAX) NULL,
     [BK_Layer]           NVARCHAR (MAX) NULL,

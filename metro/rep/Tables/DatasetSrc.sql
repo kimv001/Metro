@@ -7,6 +7,7 @@
     [Prefix]                         NVARCHAR (MAX) NULL,
     [Active]                         NVARCHAR (MAX) NULL,
     [Description]                    NVARCHAR (MAX) NULL,
+    [Description_nl]                 NVARCHAR (MAX) NULL,
     [bk_ContactGroup_Data_Logistics] NVARCHAR (MAX) NULL,
     [Data_Logistics_Info]            NVARCHAR (MAX) NULL,
     [bk_ContactGroup_Data_Supplier]  NVARCHAR (MAX) NULL,

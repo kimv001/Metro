@@ -4,6 +4,7 @@
     [Name]             NVARCHAR (MAX) NULL,
     [Default]          NVARCHAR (MAX) NULL,
     [Description]      NVARCHAR (MAX) NULL,
+    [Description_nl]   NVARCHAR (MAX) NULL,
     [RefType]          NVARCHAR (MAX) NULL,
     [RefTypeAbbr]      NVARCHAR (MAX) NULL,
     [SortOrder]        NVARCHAR (MAX) NULL,

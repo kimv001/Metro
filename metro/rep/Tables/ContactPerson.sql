@@ -3,6 +3,7 @@
     [Code]                 NVARCHAR (MAX) NULL,
     [Name]                 NVARCHAR (MAX) NULL,
     [Description]          NVARCHAR (MAX) NULL,
+    [Description_nl]       NVARCHAR (MAX) NULL,
     [contact_name]         NVARCHAR (MAX) NULL,
     [contact_department]   NVARCHAR (MAX) NULL,
     [contact_org]          NVARCHAR (MAX) NULL,

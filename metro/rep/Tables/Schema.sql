@@ -3,6 +3,7 @@
     [Code]                   NVARCHAR (MAX) NULL,
     [Name]                   NVARCHAR (MAX) NULL,
     [Description]            NVARCHAR (MAX) NULL,
+    [Description_nl]         NVARCHAR (MAX) NULL,
     [Active]                 NVARCHAR (MAX) NULL,
     [process_order_in_layer] NVARCHAR (MAX) NULL,
     [process_parallel]       NVARCHAR (MAX) NULL,

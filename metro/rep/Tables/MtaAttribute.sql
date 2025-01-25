@@ -6,6 +6,7 @@
     [BK_RefType_ObjectType]   NVARCHAR (MAX) NULL,
     [Name]                    NVARCHAR (MAX) NULL,
     [Description]             NVARCHAR (MAX) NULL,
+    [Description_nl]          NVARCHAR (MAX) NULL,
     [BK_RefType_DataType]     NVARCHAR (MAX) NULL,
     [Isnullable]              NVARCHAR (MAX) NULL,
     [OrdinalPosition]         NVARCHAR (MAX) NULL,

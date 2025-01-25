@@ -3,6 +3,7 @@
     [Name]                         NVARCHAR (MAX) NULL,
     [Code]                         NVARCHAR (MAX) NULL,
     [Description]                  NVARCHAR (MAX) NULL,
+    [Description_nl]               NVARCHAR (MAX) NULL,
     [Active]                       NVARCHAR (MAX) NULL,
     [BK_ScheduleType]              NVARCHAR (MAX) NULL,
     [BK_ScheduleFrequency]         NVARCHAR (MAX) NULL,

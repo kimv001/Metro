@@ -3,6 +3,7 @@
     [Code]             NVARCHAR (MAX) NULL,
     [Name]             NVARCHAR (MAX) NULL,
     [Description]      NVARCHAR (MAX) NULL,
+    [Description_nl]   NVARCHAR (MAX) NULL,
     [bk_contactgroup]  NVARCHAR (MAX) NULL,
     [bk_contactrole]   NVARCHAR (MAX) NULL,
     [bk_contactperson] NVARCHAR (MAX) NULL,

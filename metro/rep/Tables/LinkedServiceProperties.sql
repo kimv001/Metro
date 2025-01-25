@@ -3,6 +3,7 @@
     [Code]                         NVARCHAR (MAX) NULL,
     [Name]                         NVARCHAR (MAX) NULL,
     [Description]                  NVARCHAR (MAX) NULL,
+    [Description_nl]               NVARCHAR (MAX) NULL,
     [BK_LinkedService]             NVARCHAR (MAX) NULL,
     [LinkedServicePropertiesName]  NVARCHAR (MAX) NULL,
     [LinkedServicePropertiesValue] NVARCHAR (MAX) NULL,

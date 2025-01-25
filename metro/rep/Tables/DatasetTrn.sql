@@ -18,6 +18,7 @@
     [ShortNameInput]              NVARCHAR (MAX) NULL,
     [postfix]                     NVARCHAR (MAX) NULL,
     [Description]                 NVARCHAR (MAX) NULL,
+    [Description_nl]              NVARCHAR (MAX) NULL,
     [BK_ContactGroup]             NVARCHAR (MAX) NULL,
     [BK_Flow]                     NVARCHAR (MAX) NULL,
     [TimeStamp]                   NVARCHAR (MAX) NULL,

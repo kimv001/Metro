@@ -2,6 +2,8 @@
     [BK]                          NVARCHAR (MAX) NULL,
     [Code]                        NVARCHAR (MAX) NULL,
     [Name]                        NVARCHAR (MAX) NULL,
+    [Description]                 NVARCHAR (MAX) NULL,
+    [Description_nl]              NVARCHAR (MAX) NULL,
     [BK_DatasetTrn]               NVARCHAR (MAX) NULL,
     [BK_Schema]                   NVARCHAR (MAX) NULL,
     [SRC_GroupName]               NVARCHAR (MAX) NULL,

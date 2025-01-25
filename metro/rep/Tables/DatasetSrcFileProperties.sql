@@ -3,6 +3,7 @@
     [Code]                     NVARCHAR (MAX) NULL,
     [Name]                     NVARCHAR (MAX) NULL,
     [Description]              NVARCHAR (MAX) NULL,
+    [Description_nl]           NVARCHAR (MAX) NULL,
     [BK_SrcDataset]            NVARCHAR (MAX) NULL,
     [Active]                   NVARCHAR (MAX) NULL,
     [BK_FileFormat]            NVARCHAR (MAX) NULL,

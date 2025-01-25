@@ -6,6 +6,7 @@
     [AttributeName]       NVARCHAR (MAX) NULL,
     [BK_DatasetSrc]       NVARCHAR (MAX) NULL,
     [Description]         NVARCHAR (MAX) NULL,
+    [Description_nl]      NVARCHAR (MAX) NULL,
     [Active]              NVARCHAR (MAX) NULL,
     [DistributionHashKey] NVARCHAR (MAX) NULL,
     [Expression]          NVARCHAR (MAX) NULL,

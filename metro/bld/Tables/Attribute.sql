@@ -27,6 +27,7 @@
     [FlowOrder]                   VARCHAR (255) NULL,
     [BK_RefType_ObjectType]       VARCHAR (255) NULL,
     [BK_RefType_RepositoryStatus] VARCHAR (255) NULL,
+    [SCDDate]                     VARCHAR (255) NULL,
     [DefaultValue]                VARCHAR (MAX) NULL,
     [DDL_Type1]                   VARCHAR (255) NULL,
     [DDL_Type2]                   VARCHAR (255) NULL,
@@ -39,6 +40,8 @@
     [mta_RH]                      CHAR (128)    NULL,
     [mta_Source]                  VARCHAR (255) NULL
 );
+
+
 
 
 GO

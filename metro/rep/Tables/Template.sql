@@ -3,6 +3,7 @@
     [Code]                          NVARCHAR (MAX) NULL,
     [Name]                          NVARCHAR (MAX) NULL,
     [Description]                   NVARCHAR (MAX) NULL,
+    [Description_nl]                NVARCHAR (MAX) NULL,
     [Script]                        NVARCHAR (MAX) NULL,
     [TemplateVersion]               NVARCHAR (MAX) NULL,
     [ObjectName]                    NVARCHAR (MAX) NULL,
