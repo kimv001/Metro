@@ -10,18 +10,38 @@
 AS
 /*
 Developed by:			metro
-Description:			Publish deployscripts to screen
+Description:
+    This stored procedure generates and displays deployment scripts for specified objects based on various filtering criteria.
 
-Example:		
+Parameters:
+    @TGT_ObjectName    VARCHAR(255) = ''  -- Target object name to filter the deployment scripts.
+    @LayerName         VARCHAR(255) = ''  -- Layer name to filter the deployment scripts.
+    @SchemaName        VARCHAR(255) = ''  -- Schema name to filter the deployment scripts.
+    @GroupName         VARCHAR(255) = ''  -- Group name to filter the deployment scripts.
+    @ShortName         VARCHAR(255) = ''  -- Short name to filter the deployment scripts.
+    @DeployDatasets    BIT = 1            -- Flag to indicate whether to deploy datasets.
+    @DeployMappings    BIT = 1            -- Flag to indicate whether to deploy mappings.
+    @ObjectType        VARCHAR(255) = 'table' -- Object type to filter the deployment scripts. Possible values: 'table', 'view', 'procedure'. When left blank, all object types will be generated.
+    @IgnoreErrors      BIT = 0            -- Flag to indicate whether to ignore errors.
 
-exec  [rep].[100_Publish_DeployScriptsToScreen]
-			  @TGT_ObjectName	= ''
-			, @LayerName		= ''
-			, @SchemaName		= 'pst'
-			, @GroupName		= 'boost'
-			, @ShortName		= 'case'
-			, @DeployDatasets	= 0
-			, @DeployMappings	= 1
+Example Usage:
+    exec [rep].[100_Publish_DeployScriptsToScreen]
+          @TGT_ObjectName    = ''
+        , @LayerName        = ''
+        , @SchemaName       = 'stg'
+        , @GroupName        = 'adventureworks'
+        , @ShortName        = ''
+        , @DeployDatasets   = 1
+        , @DeployMappings   = 1
+        , @ObjectType       = 'table'
+        , @IgnoreErrors     = 0
+
+Procedure Logic:
+    1. Selects deployment scripts from the base table based on the provided filtering criteria.
+    2. Orders the selected scripts by group name, short name, and deploy order.
+    3. Inserts the ordered scripts into a temporary table (#DeployScripts).
+    4. Retrieves the minimum and maximum row numbers from the temporary table.
+    5. Iterates through the rows in the temporary table and processes each script.
 
 Change log:
 Date					Author				Description
