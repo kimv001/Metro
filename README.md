@@ -13,7 +13,7 @@ Metro is a Data Warehouse Generator. Define your sources and transformations, an
 - [Introduction](#introduction)
 - [Features](#features)
 - [Installation](#installation)
-- [Usage](#usage)
+- [How Metro Works](#How Metro Works)
 - [Contributing](#contributing)
 - [License](#license)
 - [Contact](#contact)
@@ -66,9 +66,6 @@ Currently, Metro is populated via an Excel sheet, which includes the following:
 
 ### Prerequisites
 
-### Steps
-
-
 ## How Metro Works
 
 The Excel tabs mentioned above are loaded one-to-one into tables in the schema [stg].
@@ -99,3 +96,10 @@ exec [rep].[100_Publish_DeployScriptsToScreen]
     , @ObjectType       = 'table'
     , @IgnoreErrors     = 0
 
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Contact
+
+For any questions or issues, please contact the project maintainers at [kim@businesskey.nl].
