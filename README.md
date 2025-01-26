@@ -1,5 +1,4 @@
 # Metro
-
 Metro is a Data Warehouse Generator. Define your sources and transformations, and let Metro handle the rest!
 
 ## Features
@@ -76,7 +75,6 @@ Transformation views are defined on these staging views in the [bld] schema. The
 
 Due to the naming convention of the transformation views, the stored procedure [023_bld_Recreate_LoadProcs](metro/bld/Stored Procedures/023_bld_Recreate_LoadProcs.sql) creates procedures to generate so-called build tables. It is possible that more than one transformation view populates a single build table. An example of this is: [tr_100_Dataset_010_DatasetSrc](metro/bld/Views/tr_100_Dataset_010_DatasetSrc.sql) (where the defined source datasets are first "built") and the transformation view [tr_100_Dataset_011_DatasetSrcFlowDatasets](metro/bld/Views/tr_100_Dataset_011_DatasetSrcFlowDatasets.sql) determines which additional datasets need to be created based on the associated flow. For example, each source file gets a staging table and a persistent staging table.
 
-
 The build tables (and views) are generated based on the defined transformation views. The procedure [020_bld_create](metro/rep/Stored Procedures/020_bld_create.sql) creates the tables, views, and stored procedures.
 
 The processing and building of the scripts are initiated by the procedure [050_bld_load](metro/rep/Stored Procedures/050_bld_load.sql). This procedure processes all build procedures. All objects are then ready to create the scripts. The final step in this load procedure is the procedure [069_bld_CreateDeployScripts](metro/rep/Stored Procedures/069_bld_CreateDeployScripts.sql). This last step ensures that all linked and defined templates are populated.
@@ -86,7 +84,7 @@ When the steps above are done you can generate code.
 This example script will generate all scripts needed for staging tables:
 ```sql
 exec [rep].[100_Publish_DeployScriptsToScreen]
-      @TGT_ObjectName    = ''
+    @TGT_ObjectName    = ''
     , @LayerName        = ''
     , @SchemaName       = 'stg'
     , @GroupName        = 'adventureworks'
@@ -95,11 +93,12 @@ exec [rep].[100_Publish_DeployScriptsToScreen]
     , @DeployMappings   = 1
     , @ObjectType       = 'table'
     , @IgnoreErrors     = 0
+```
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](../LICENSE) file for details.
 
 ## Contact
 
-For any questions or issues, please contact the project maintainers at <kim@businesskey.nl>.
+For any questions or issues, please contact the project maintainers at [kim@businesskey.nl](mailto:kim@businesskey.nl).
