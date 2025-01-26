@@ -274,16 +274,8 @@
     <Build Include="bld\Tables\BuildCheck.sql" />
     <Build Include="bld\Tables\AttributeSmartLoad.sql" />
     <Build Include="bld\Tables\Attribute.sql" />
-    <Build Include="aud\Tables\JobRuns.sql" />
-    <Build Include="aud\Tables\FlowRuns.sql" />
     <Build Include="aud\Tables\Log_Procedure.sql" />
-    <Build Include="adf\Tables\Projects.sql" />
-    <Build Include="adf\Tables\JobDependencies.sql" />
     <Build Include="adf\Tables\DWH_Time.sql" />
-    <Build Include="adf\Tables\ProjectParameters.sql" />
-    <Build Include="adf\Tables\Jobs.sql" />
-    <Build Include="adf\Tables\JobParameters.sql" />
-    <Build Include="adf\Tables\Flows.sql" />
     <Build Include="adf\Tables\DWH_Date.sql" />
     <Build Include="rep\Views\vw_XlsTabsToLoad.sql" />
     <Build Include="rep\Views\vw_Testrule.sql" />
@@ -388,7 +380,6 @@
     <Build Include="bld\Views\tr_300_TestRules_010_Datasets.sql" />
     <Build Include="bld\Views\tr_400_DatasetDependency_030_TransformationViewsDWH.sql" />
     <Build Include="adf\Views\vw_Schedules.sql" />
-    <Build Include="adf\Views\vw_projects.sql" />
     <Build Include="adf\Views\vw_DWH_Time.sql" />
     <Build Include="adf\Views\vw_DWH_Date.sql" />
     <Build Include="adf\Views\vw_Dataset.sql" />
@@ -420,11 +411,7 @@
       <QuotedIdentifier>Off</QuotedIdentifier>
     </Build>
     <Build Include="adf\Views\vw_Datasource.sql" />
-    <Build Include="adf\Views\GetMissingJobDependencies.sql" />
-    <Build Include="adf\Views\GetJobDependencies.sql" />
     <Build Include="adf\Views\vw_TGT_ShortNameGroupLayer_from_SRC.sql" />
-    <Build Include="adf\Views\GetAllJobParametersTable.sql" />
-    <Build Include="adf\Views\GetAllJobParametersJSON.sql" />
     <Build Include="adf\Views\vw_TGT_GroupSRCLayer_from_SRC.sql" />
     <Build Include="adf\Views\vw_TGT_Export_from_SRC.sql" />
     <Build Include="adf\Views\vw_LoadDependencies.sql" />
@@ -433,13 +420,9 @@
     <Build Include="adf\Views\vw_contact.sql" />
     <Build Include="adf\Views\vw_Schedule_Date.sql" />
     <Build Include="adf\Views\vw_Connections_Src_Table.sql" />
-    <Build Include="adf\Views\vw_ProjectParameter.sql" />
-    <Build Include="adf\Views\vw_jobs.sql" />
     <Build Include="adf\Views\vw_Connections_Src_Api.sql" />
     <Build Include="adf\Views\vw_Schedule_Time.sql" />
-    <Build Include="adf\Views\vw_jobparameters.sql" />
     <Build Include="adf\Views\vw_DeployScripts.sql" />
-    <Build Include="adf\Views\vw_jobdependencies.sql" />
     <Build Include="rep\Functions\GetColumnListPerDatasetBK.sql" />
     <Build Include="rep\Functions\GetDummyValueByAttributeBK.sql" />
     <Build Include="rep\Functions\GetNamePart.sql" />

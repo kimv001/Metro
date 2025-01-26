@@ -14,7 +14,7 @@ Date		time		Author					Description
 */
 
 
-with base as (
+WITH base AS (
 SELECT 
 	BK						= S.[BK]
 	, CODE					= S.[Code]
@@ -81,7 +81,5 @@ SELECT
             [LinkedServiceName],
             [BK_Template_Create],
             [BK_Template_Load],
-            [BK_RefType_ToChar],
-            [mta_RecType],
-            [mta_IsDeleted]
+            [BK_RefType_ToChar]
 		 FROM base

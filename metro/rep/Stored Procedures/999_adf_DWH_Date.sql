@@ -1,4 +1,5 @@
-﻿CREATE procedure [rep].[999_adf_DWH_Date] as
+﻿ 
+CREATE PROCEDURE [rep].[999_adf_DWH_Date] AS
 /* 
 === Comments =========================================
 
@@ -24,11 +25,11 @@ SET DATEFIRST  1, -- 1 = Monday, 7 = Sunday
     LANGUAGE   US_ENGLISH;
 -- assume the above is here in all subsequent code blocks.
 
-Declare @StartDate  date	= '20100101';											-- startdate
-Declare @Years		int		= 30													-- add years from startdate
-Declare @CutoffDate date	= Dateadd(Day, -1, Dateadd(Year, @Years, @StartDate));	-- determine enddate
-Declare @startYear	int		= Datepart(Year,@StartDate)
-Declare @endYear	int		= Datepart(Year, @CutoffDate)
+DECLARE @StartDate  DATE	= '20100101';											-- startdate
+DECLARE @Years		INT		= 30													-- add years from startdate
+DECLARE @CutoffDate DATE	= DATEADD(DAY, -1, DATEADD(YEAR, @Years, @StartDate));	-- determine enddate
+DECLARE @startYear	INT		= DATEPART(YEAR, @StartDate)
+DECLARE @endYear	INT		= DATEPART(YEAR, @CutoffDate)
 
 
 IF OBJECT_ID('adf.DWH_date', 'U') IS NOT NULL

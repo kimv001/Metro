@@ -126,22 +126,11 @@ WITH base AS (
 		, Marker				= '<!<TGT_DDLcolumnlist>>'
 
 		-- example value:
-		--   [Id] [varchar](8000) NULL ,  [Id] [varchar](8000) NULL ,  [Id] [varchar](8000) NULL ,  [Id] [varchar](8000) NULL ,  [Id] [varchar](8000) NULL ,  [Id] [varchar](8000) NULL ,  [Name] [varchar](8000) NULL ,  [Name] [varchar](8000) NULL ,  [Name] [varchar](8000) NULL ,  [Name] [varchar](8000) NULL ,  [Name] [varchar](8000) NULL ,  [Name] [varchar](8000) NULL ,  [ProductCode] [varchar](8000) NULL ,  [ProductCode] [varchar](8000) NULL ,  [ProductCode] [varchar](8000) NULL ,  [ProductCode] [varchar](8000) NULL ,  [ProductCode] [varchar](8000) NULL ,  [ProductCode] [varchar](8000) NULL ,  [Description] [varchar](8000) NULL ,  [Description] [varchar](8000) NULL ,  [Description] [varchar](8000) NULL ,  [Description] [varchar](8000) NULL ,  [Description] [varchar](8000) NULL ,  [Description] [varchar](8000) NULL ,  [QuantityScheduleType] [varchar](8000) NULL ,  [QuantityScheduleType] [varchar](8000) NULL ,  [QuantityScheduleType] [varchar](8000) NULL ,  [QuantityScheduleType] [varchar](8000) NULL ,  [QuantityScheduleType] [varchar](8000) NULL ,  [QuantityScheduleType] [varchar](8000) NULL ,  [QuantityInstallmentPeriod] [varchar](8000) NULL ,  [QuantityInstallmentPeriod] [varchar](8000) NULL ,  [QuantityInstallmentPeriod] [varchar](8000) NULL ,  [QuantityInstallmentPeriod] [varchar](8000) NULL ,  [QuantityInstallmentPeriod] [varchar](8000) NULL ,  [QuantityInstallmentPeriod] [varchar](8000) NULL ,  [NumberOfQuantityInstallments] [varchar](8000) NULL ,  [NumberOfQuantityInstallments] [varchar](8000) NULL ,  [NumberOfQuantityInstallments] [varchar](8000) NULL ,  [NumberOfQuantityInstallments] [varchar](8000) NULL ,  [NumberOfQuantityInstallments] [varchar](8000) NULL ,  [NumberOfQuantityInstallments] [varchar](8000) NULL ,  [RevenueScheduleType] [varchar](8000) NULL ,  [RevenueScheduleType] [varchar](8000) NULL ,  [RevenueScheduleType] [varchar](8000) NULL ,  [RevenueScheduleType] [varchar](8000) NULL ,  [RevenueScheduleType] [varchar](8000) NULL ,  [RevenueScheduleType] [varchar](8000) NULL ,  [RevenueInstallmentPeriod] [varchar](8000) NULL ,  [RevenueInstallmentPeriod] [varchar](8000) NULL ,  [RevenueInstallmentPeriod] [varchar](8000) NULL ,  [RevenueInstallmentPeriod] [varchar](8000) NULL ,  [RevenueInstallmentPeriod] [varchar](8000) NULL ,  [RevenueInstallmentPeriod] [varchar](8000) NULL ,  [NumberOfRevenueInstallments] [varchar](8000) NULL ,  [NumberOfRevenueInstallments] [varchar](8000) NULL ,  [NumberOfRevenueInstallments] [varchar](8000) NULL ,  [NumberOfRevenueInstallments] [varchar](8000) NULL ,  [NumberOfRevenueInstallments] [varchar](8000) NULL ,  [NumberOfRevenueInstallments] [varchar](8000) NULL ,  [CanUseQuantitySchedule] [varchar](8000) NULL ,  [CanUseQuantitySchedule] [varchar](8000) NULL ,  [CanUseQuantitySchedule] [varchar](8000) NULL ,  [CanUseQuantitySchedule] [varchar](8000) NULL ,  [CanUseQuantitySchedule] [varchar](8000) NULL ,  [CanUseQuantitySchedule] [varchar](8000) NULL ,  [CanUseRevenueSchedule] [varchar](8000) NULL ,  [CanUseRevenueSchedule] [varchar](8000) NULL ,  [CanUseRevenueSchedule] [varchar](8000) NULL ,  [CanUseRevenueSchedule] [varchar](8000) NULL ,  [CanUseRevenueSchedule] [varchar](8000) NULL ,  [CanUseRevenueSchedule] [varchar](8000) NULL ,  [IsActive] [varchar](8000) NULL ,  [IsActive] [varchar](8000) NULL ,  [IsActive] [varchar](8000) NULL ,  [IsActive] [varchar](8000) NULL ,  [IsActive] [varchar](8000) NULL ,  [IsActive] [varchar](8000) NULL ,  [CreatedDate] [varchar](8000) NULL ,  [CreatedDate] [varchar](8000) NULL ,  [CreatedDate] [varchar](8000) NULL ,  [CreatedDate] [varchar](8000) NULL ,  [CreatedDate] [varchar](8000) NULL ,  [CreatedDate] [varchar](8000) NULL ,  [CreatedById] [varchar](8000) NULL ,  [CreatedById] [varchar](8000) NULL ,  [CreatedById] [varchar](8000) NULL ,  [CreatedById] [varchar](8000) NULL ,  [CreatedById] [varchar](8000) NULL ,  [CreatedById] [varchar](8000) NULL ,  [LastModifiedDate] [varchar](8000) NULL ,  [LastModifiedDate] [varchar](8000) NULL ,  [LastModifiedDate] [varchar](8000) NULL ,  [LastModifiedDate] [varchar](8000) NULL ,  [LastModifiedDate] [varchar](8000) NULL ,  [LastModifiedDate] [varchar](8000) NULL ,  [LastModifiedById] [varchar](8000) NULL ,  [LastModifiedById] [varchar](8000) NULL ,  [LastModifiedById] [varchar](8000) NULL ,  [LastModifiedById] [varchar](8000) NULL ,  [LastModifiedById] [varchar](8000) NULL ,  [LastModifiedById] [varchar](8000) NULL ,  [SystemModstamp] [varchar](8000) NULL ,  [SystemModstamp] [varchar](8000) NULL ,  [SystemModstamp] [varchar](8000) NULL ,  [SystemModstamp] [varchar](8000) NULL ,  [SystemModstamp] [varchar](8000) NULL ,  [SystemModstamp] [varchar](8000) NULL ,  [Family] [varchar](8000) NULL ,  [Family] [varchar](8000) NULL ,  [Family] [varchar](8000) NULL ,  [Family] [varchar](8000) NULL ,  [Family] [varchar](8000) NULL ,  [Family] [varchar](8000) NULL ,  [ExternalDataSourceId] [varchar](8000) NULL ,  [ExternalDataSourceId] [varchar](8000) NULL ,  [ExternalDataSourceId] [varchar](8000) NULL ,  [ExternalDataSourceId] [varchar](8000) NULL ,  [ExternalDataSourceId] [varchar](8000) NULL ,  [ExternalDataSourceId] [varchar](8000) NULL ,  [ExternalId] [varchar](8000) NULL ,  [ExternalId] [varchar](8000) NULL ,  [ExternalId] [varchar](8000) NULL ,  [ExternalId] [varchar](8000) NULL ,  [ExternalId] [varchar](8000) NULL ,  [ExternalId] [varchar](8000) NULL ,  [DisplayUrl] [varchar](8000) NULL ,  [DisplayUrl] [varchar](8000) NULL ,  [DisplayUrl] [varchar](8000) NULL ,  [DisplayUrl] [varchar](8000) NULL ,  [DisplayUrl] [varchar](8000) NULL ,  [DisplayUrl] [varchar](8000) NULL ,  [QuantityUnitOfMeasure] [varchar](8000) NULL ,  [QuantityUnitOfMeasure] [varchar](8000) NULL ,  [QuantityUnitOfMeasure] [varchar](8000) NULL ,  [QuantityUnitOfMeasure] [varchar](8000) NULL ,  [QuantityUnitOfMeasure] [varchar](8000) NULL ,  [QuantityUnitOfMeasure] [varchar](8000) NULL ,  [IsDeleted] [varchar](8000) NULL ,  [IsDeleted] [varchar](8000) NULL ,  [IsDeleted] [varchar](8000) NULL ,  [IsDeleted] [varchar](8000) NULL ,  [IsDeleted] [varchar](8000) NULL ,  [IsDeleted] [varchar](8000) NULL ,  [IsArchived] [varchar](8000) NULL ,  [IsArchived] [varchar](8000) NULL ,  [IsArchived] [varchar](8000) NULL ,  [IsArchived] [varchar](8000) NULL ,  [IsArchived] [varchar](8000) NULL ,  [IsArchived] [varchar](8000) NULL ,  [LastViewedDate] [varchar](8000) NULL ,  [LastViewedDate] [varchar](8000) NULL ,  [LastViewedDate] [varchar](8000) NULL ,  [LastViewedDate] [varchar](8000) NULL ,  [LastViewedDate] [varchar](8000) NULL ,  [LastViewedDate] [varchar](8000) NULL ,  [LastReferencedDate] [varchar](8000) NULL ,  [LastReferencedDate] [varchar](8000) NULL ,  [LastReferencedDate] [varchar](8000) NULL ,  [LastReferencedDate] [varchar](8000) NULL ,  [LastReferencedDate] [varchar](8000) NULL ,  [LastReferencedDate] [varchar](8000) NULL ,  [StockKeepingUnit] [varchar](8000) NULL ,  [StockKeepingUnit] [varchar](8000) NULL ,  [StockKeepingUnit] [varchar](8000) NULL ,  [StockKeepingUnit] [varchar](8000) NULL ,  [StockKeepingUnit] [varchar](8000) NULL ,  [StockKeepingUnit] [varchar](8000) NULL ,  [External_Id__c] [varchar](8000) NULL ,  [External_Id__c] [varchar](8000) NULL ,  [External_Id__c] [varchar](8000) NULL ,  [External_Id__c] [varchar](8000) NULL ,  [External_Id__c] [varchar](8000) NULL ,  [External_Id__c] [varchar](8000) NULL ,  [Product_Id__c] [varchar](8000) NULL ,  [Product_Id__c] [varchar](8000) NULL ,  [Product_Id__c] [varchar](8000) NULL ,  [Product_Id__c] [varchar](8000) NULL ,  [Product_Id__c] [varchar](8000) NULL ,  [Product_Id__c] [varchar](8000) NULL ,  [SLA_hours__c] [varchar](8000) NULL ,  [SLA_hours__c] [varchar](8000) NULL ,  [SLA_hours__c] [varchar](8000) NULL ,  [SLA_hours__c] [varchar](8000) NULL ,  [SLA_hours__c] [varchar](8000) NULL ,  [SLA_hours__c] [varchar](8000) NULL ,  [mta_LoadDate] [datetime2] NULL ,  [mta_LoadDate] [datetime2] NULL ,  [mta_LoadDate] [datetime2] NULL ,  [mta_LoadDate] [datetime2] NULL ,  [mta_LoadDate] [datetime2] NULL ,  [mta_LoadDate] [datetime2] NULL ,  [mta_Source] [varchar](255) NULL ,  [mta_Source] [varchar](255) NULL ,  [mta_Source] [varchar](255) NULL ,  [mta_Source] [varchar](255) NULL ,  [mta_Source] [varchar](255) NULL ,  [mta_Source] [varchar](255) NULL ,  [mta_DateInFileName] [varchar](20) NULL ,  [mta_DateInFileName] [varchar](20) NULL ,  [mta_DateInFileName] [varchar](20) NULL ,  [mta_DateInFileName] [varchar](20) NULL ,  [mta_DateInFileName] [varchar](20) NULL ,  [mta_DateInFileName] [varchar](20) NULL ,  [mta_PipelineRunID] [varchar](255) NULL ,  [mta_PipelineRunID] [varchar](255) NULL ,  [mta_PipelineRunID] [varchar](255) NULL ,  [mta_PipelineRunID] [varchar](255) NULL ,  [mta_PipelineRunID] [varchar](255) NULL ,  [mta_PipelineRunID] [varchar](255) NULL ,  [mta_PipelineTriggerID] [varchar](255) NULL ,  [mta_PipelineTriggerID] [varchar](255) NULL ,  [mta_PipelineTriggerID] [varchar](255) NULL ,  [mta_PipelineTriggerID] [varchar](255) NULL ,  [mta_PipelineTriggerID] [varchar](255) NULL ,  [mta_PipelineTriggerID] [varchar](255) NULL ,  [mta_Valid] [smallint] NULL ,  [mta_Valid] [smallint] NULL ,  [mta_Valid] [smallint] NULL ,  [mta_Valid] [smallint] NULL ,  [mta_Valid] [smallint] NULL ,  [mta_Valid] [smallint] NULL 
+		--   [Id] [varchar](8000) NULL ,  [Id] [varchar](8000) NULL ,  [Id] [varchar](8000) NULL 
 		, markervalue		= STRING_AGG(
 									CONVERT(VARCHAR(MAX), QUOTENAME(A.AttributeName) + ' ' + a.[DDL_Type2] + char(10))  
 									, CHAR(9) + ', '
 								) WITHIN GROUP (ORDER BY CAST(a.OrdinalPosition AS int))
-
-	
-		
-								--STRING_AGG(
-								--		CHAR(9)+CONVERT(VARCHAR(max),
-								--			QUOTENAME(A.AttributeName)+' ' +a.[DDL_Type2] 
-								--			+char(10)
-								--		)
-								--	,', ' ) WITHIN GROUP (ORDER BY  cast(a.OrdinalPosition as int))						
-								
-	
 
 		, MarkerDescription		=	
 'Start marker at posistion with 1 tab
@@ -166,7 +155,7 @@ Output should look like this:
 		, src.Code
 		, Marker				= '<!<TGT_ColumnList>>'
 		-- example value:
-		--  [Id], [Name], [ProductCode], [Description], [QuantityScheduleType], [QuantityInstallmentPeriod], [NumberOfQuantityInstallments], [RevenueScheduleType], [RevenueInstallmentPeriod], [NumberOfRevenueInstallments], [CanUseQuantitySchedule], [CanUseRevenueSchedule], [IsActive], [CreatedDate], [CreatedById], [LastModifiedDate], [LastModifiedById], [SystemModstamp], [Family], [ExternalDataSourceId], [ExternalId], [DisplayUrl], [QuantityUnitOfMeasure], [IsDeleted], [IsArchived], [LastViewedDate], [LastReferencedDate], [StockKeepingUnit], [External_Id__c], [Product_Id__c], [SLA_hours__c], [mta_LoadDate], [mta_Source], [mta_DateInFileName], [mta_PipelineRunID], [mta_PipelineTriggerID], [mta_Valid]
+		--  [Id], [Name], [ProductCode], [Description]
 		, markervalue			= STRING_AGG(
 										CHAR(9)+
 										CONVERT(VARCHAR(MAX),
@@ -189,8 +178,8 @@ Output should look like this:
 		, src.Code
 		, Marker				= '<!<SRC_ColumnList_SRC>>'
 		-- Example Value:
-		--  SRC.[Id], SRC.[Name], SRC.[ProductCode], SRC.[Description], SRC.[QuantityScheduleType], SRC.[QuantityInstallmentPeriod], SRC.[NumberOfQuantityInstallments], SRC.[RevenueScheduleType], SRC.[RevenueInstallmentPeriod], SRC.[NumberOfRevenueInstallments], SRC.[CanUseQuantitySchedule], SRC.[CanUseRevenueSchedule], SRC.[IsActive], SRC.[CreatedDate], SRC.[CreatedById], SRC.[LastModifiedDate], SRC.[LastModifiedById], SRC.[SystemModstamp], SRC.[Family], SRC.[ExternalDataSourceId], SRC.[ExternalId], SRC.[DisplayUrl], SRC.[QuantityUnitOfMeasure], SRC.[IsDeleted], SRC.[IsArchived], SRC.[LastViewedDate], SRC.[LastReferencedDate], SRC.[StockKeepingUnit], SRC.[External_Id__c], SRC.[Product_Id__c], SRC.[SLA_hours__c]
-	--	, MarkerValue			= CAST([rep].[GetColumnListPerDatasetBK] (src.BKSource,-1,'all'	,'SRC.'	,''	,''	,''	, ',',0) as varchar(max))
+		--  SRC.[Id], SRC.[Name], SRC.[ProductCode], SRC.[Description], SRC.[QuantityScheduleType]
+	
 		, markervalue			= STRING_AGG(
 										CHAR(9)+ 
 										'src.'+
@@ -214,7 +203,7 @@ Output should look like this:
 		, src.Code
 		, Marker				= '<!<SRC_ColumnList>>'
 		-- Example value:
-		--  [Id], [Name], [ProductCode], [Description], [QuantityScheduleType], [QuantityInstallmentPeriod], [NumberOfQuantityInstallments], [RevenueScheduleType], [RevenueInstallmentPeriod], [NumberOfRevenueInstallments], [CanUseQuantitySchedule], [CanUseRevenueSchedule], [IsActive], [CreatedDate], [CreatedById], [LastModifiedDate], [LastModifiedById], [SystemModstamp], [Family], [ExternalDataSourceId], [ExternalId], [DisplayUrl], [QuantityUnitOfMeasure], [IsDeleted], [IsArchived], [LastViewedDate], [LastReferencedDate], [StockKeepingUnit], [External_Id__c], [Product_Id__c], [SLA_hours__c]
+		--  [Id], [Name], [ProductCode], [Description], [QuantityScheduleType]
 		, markervalue			= STRING_AGG(
 										CHAR(9)+ 
 										CONVERT(VARCHAR(MAX),
@@ -276,7 +265,8 @@ UNION ALL
 		, Marker				= '<!<SRC_Dummies_Unknown>>'
 
 		-- Example value:
-		-- '<Unknown>' AS [ProductId],'<Unknown>' AS [ProductCode],'<Unknown>' AS [ProductName],'<Unknown>' AS [ProductGroup],'<Unknown>' AS [ProductDescription],'<Unknown>' AS [ProductExternalId],-2 AS [ProductSLAinHours],'0' AS [SalesForce_IsActive],'0' AS [SalesForce_IsArchived],'0' AS [SalesForce_IsDeleted],'1900-01-01' AS [SalesForce_CreatedDate],'<Unknown>' AS [SalesForce_CreatedBy],'1900-01-01' AS [SalesForce_ModifiedDate],'<Unknown>' AS [SalesForce_ModifiedBy]
+		-- '<Unknown>' AS [ProductId],'<Unknown>' AS [ProductCode],'<Unknown>' AS [ProductName],'<Unknown>' AS [ProductGroup]
+		-- ,'<Unknown>' AS [ProductDescription],'<Unknown>' AS [ProductExternalId],-2 AS [ProductSLAinHours]
 		, markervalue			= 
 									STRING_AGG(
 										CONVERT(VARCHAR(MAX),
@@ -291,9 +281,7 @@ UNION ALL
 	WHERE 1=1
 	AND src.createdummies  =1
 	AND CAST(isnull(a.IsMta,0) AS int) = 0
-	 --and src.[SchemaName] = 'dim'
-	 --and src.BK_RefType_ObjectType = 'OT|T|Table'
-	 GROUP BY 
+	GROUP BY 
 		src.BK_Dataset		
 		, src.Code
 
@@ -306,7 +294,8 @@ UNION ALL
 		, Marker				= '<!<SRC_Dummies_Empty>>'
 
 		-- Example value:
-		-- '<Empty>' AS [ProductId],'<Empty>' AS [ProductCode],'<Empty>' AS [ProductName],'<Empty>' AS [ProductGroup],'<Empty>' AS [ProductDescription],'<Empty>' AS [ProductExternalId],-1 AS [ProductSLAinHours],'0' AS [SalesForce_IsActive],'0' AS [SalesForce_IsArchived],'0' AS [SalesForce_IsDeleted],'1900-01-01' AS [SalesForce_CreatedDate],'<Empty>' AS [SalesForce_CreatedBy],'1900-01-01' AS [SalesForce_ModifiedDate],'<Empty>' AS [SalesForce_ModifiedBy]
+		-- '<Empty>' AS [ProductId],'<Empty>' AS [ProductCode],'<Empty>' AS [ProductName],'<Empty>' AS [ProductGroup]
+		-- ,'<Empty>' AS [ProductDescription],'<Empty>' AS [ProductExternalId],-1 AS [ProductSLAinHours]
 		, markervalue			= 
 									STRING_AGG(
 										CONVERT(VARCHAR(MAX),
