@@ -1,6 +1,6 @@
 [sqlfluff]
 dialect = tsql
-max_line_length = 160
+max_line_length = 300
 large_file_skip_byte_limit = 30000
 indented_ctes = true
 

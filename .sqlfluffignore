@@ -1,0 +1,4 @@
+# Ignore all files in the publish directory
+metro/bin
+bin/
+obj/

@@ -79,7 +79,7 @@ BEGIN
     INSERT INTO [adf].[DWH_Time] ([Time_HH_MM_SS], [Time_Int])
     SELECT dtHr, 
             -- minutes counter, starting at 0 ending at 1439
-            (DATEPART(hour, cast(dtHr as time)) * 60) + (DATEPART(minute, cast(dtHr as time)) ) Time_Int
+            (DATEPART(HOUR, CAST(dtHr AS time)) * 60) + (DATEPART(MINUTE, CAST(dtHr AS time)) ) Time_Int
     FROM Hours
     OPTION (MAXRECURSION 1440);
 END
