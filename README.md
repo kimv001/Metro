@@ -1,4 +1,14 @@
-# Metro Data Warehouse Documentation
+# Metro Data Warehouse Generator Documentation
+
+Introducing the Metro Data Warehouse Generator – a free tool designed to streamline your data warehouse projects and facilitate structured data migration. Our solution ensures a structured and logical data warehouse by leveraging metadata from source Excel sheets and utilizing our expertly crafted templates. This approach guarantees a robust start to your projects, saving you time and resources.
+
+With Metro Data Warehouse Generator, you can effortlessly deploy datasets and mappings, ensuring seamless integration and data consistency. Our solution supports various object types, including tables, and is designed to handle errors gracefully, ensuring uninterrupted workflow. While there are no templates for migrations yet, the tool can still be used to migrate data in a structured way.
+
+Licensed under the MIT License, Metro Data Warehouse Generator is not only powerful but also accessible to all. It serves as an inspiration for data professionals, demonstrating how innovative solutions can simplify complex tasks and drive efficiency.
+
+Join the growing community of satisfied users who have transformed their data warehouse projects with our innovative solution. Let Metro Data Warehouse Generator be the cornerstone of your next successful data warehouse project and inspire you to achieve new heights in data management.
+
+For more information or to get started, contact us at [kim@businesskey.nl](mailto:kim@businesskey.nl).
 
 ## Overview
 
