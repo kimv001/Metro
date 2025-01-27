@@ -1,19 +1,48 @@
 ﻿
-
-
-
-
-
-
-
-
 CREATE VIEW [bld].[tr_200_Attribute_020_DatasetTrnAttributes] AS 
 
 /* 
 === Comments =========================================
 
 Description:
-	Get all attributes for Transformation view Datasets 
+    Get all attributes for Transformation view Datasets.
+
+Columns:
+    - BK: The business key of the attribute.
+    - Code: The code of the attribute.
+    - Name: The name of the attribute.
+    - BK_DatasetTrn: The business key of the transformation dataset.
+    - DatasetTrn: The transformation dataset.
+    - AttributeName: The name of the attribute.
+    - Description: The description of the attribute.
+    - Active: Indicates if the attribute is active.
+    - DistributionHashKey: The distribution hash key of the attribute.
+    - Expression: The expression used for the attribute.
+    - NotInRH: Indicates if the attribute is not in the reference hub.
+    - BusinessKey: Indicates if the attribute is a business key.
+    - SrcName: The source name of the attribute.
+    - BK_RefType_DataType: The business key of the reference type data type.
+    - Isnullable: Indicates if the attribute is nullable.
+    - OrdinalPosition: The ordinal position of the attribute.
+    - MaximumLength: The maximum length of the attribute.
+    - Precision: The precision of the attribute.
+    - Scale: The scale of the attribute.
+
+Example Usage:
+    SELECT * FROM [bld].[tr_200_Attribute_020_DatasetTrnAttributes]
+
+Logic:
+    1. Selects attribute definitions from the [rep].[vw_Attribute] view.
+    2. Prepares the base attribute information.
+    3. Joins with other relevant views to get additional attribute attributes.
+
+Source Data:
+    - [rep].[vw_Attribute]: Contains attribute definitions for datasets.
+    - [rep].[vw_Schema]: Defines the schema for datasets, acting as a layer between the dataset and data source.
+    - [rep].[vw_DataSource]: Contains information about data sources.
+    - [rep].[vw_Group]: Grouping sets of datasets, mandatory for defining source and transformation datasets.
+    - [rep].[vw_Segment]: Organizational grouping of publication tables.
+    - [rep].[vw_Bucket]: Defines buckets for organizing datasets.
 
 
 	

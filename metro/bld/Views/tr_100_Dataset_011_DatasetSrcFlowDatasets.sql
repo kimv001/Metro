@@ -9,10 +9,41 @@ CREATE VIEW [bld].[tr_100_Dataset_011_DatasetSrcFlowDatasets] AS
 === Comments =========================================
 
 Description:
-	generates datasets based on Source Datasets and defined Flow.
+    This view generates datasets based on source datasets and defined flows. For example, if you define a source table and attach it to the flow SRC-STG-PST, it creates a staging table and a persistent staging table.
 
-	For Example you defined a Source table and attached it to the flow SRC-STG-PST
-	it creates a staging table and a persistant staging table
+Columns:
+    - BK: The business key of the dataset.
+    - Code: The code of the dataset.
+    - DatasetName: The name of the dataset.
+    - SchemaName: The name of the schema.
+    - LayerName: The name of the layer.
+    - DataSource: The data source of the dataset.
+    - BK_LinkedService: The business key of the linked service.
+    - LinkedServiceName: The name of the linked service.
+    - BK_DataSource: The business key of the data source.
+    - BK_Layer: The business key of the layer.
+    - BK_Schema: The business key of the schema.
+    - ViewDefinitionContainsBusinessLogic: Indicates if the view definition contains business logic.
+    - ViewDefinition: The definition of the view.
+
+Example Usage:
+    SELECT * FROM [bld].[tr_100_Dataset_011_DatasetSrcFlowDatasets]
+
+Logic:
+    1. Selects dataset definitions from the [stg].[DWH_ObjectDefinitions] view.
+    2. Prepares the base dataset information.
+    3. Joins with other relevant views to get additional dataset attributes.
+    4. Generates datasets based on source datasets and defined flows.
+
+Source Data:
+    - [stg].[DWH_ObjectDefinitions]: Contains object definitions for datasets.
+    - [rep].[vw_Schema]: Defines the schema for datasets, acting as a layer between the dataset and data source.
+    - [rep].[vw_DataSource]: Contains information about data sources.
+    - [rep].[vw_Group]: Grouping sets of datasets, mandatory for defining source and transformation datasets.
+    - [rep].[vw_Segment]: Organizational grouping of publication tables.
+    - [rep].[vw_Bucket]: Defines buckets for organizing datasets.
+    - [rep].[vw_Flow]: Defines the flows used in the data warehouse.
+    - [rep].[vw_FlowLayer]: Defines the actual flow steps (load pattern).
 	
 	
 Changelog:

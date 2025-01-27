@@ -7,6 +7,41 @@
 
 
 CREATE VIEW [bld].[tr_650_DatasetTemplates_010_default] AS
+/*
+View: [bld].[tr_650_DatasetTemplates_010_default]
+
+Description:
+    This view builds up the default dataset template definitions. It provides detailed information about which templates need to be filled in for which data warehouse objects.
+
+Columns:
+    - BK_TEMPLATE: The business key of the template.
+    - BK: The business key of the dataset.
+    - CODE: The code of the dataset.
+    - TEMPLATETYPE: The type of the template (e.g., Create).
+    - TEMPLATESOURCE: The source of the template (e.g., Dataset, FlowLayer).
+    - TEMPLATEORDER: The order of the template.
+    - BK_REFTYPE_OBJECTTYPE: The business key of the object type reference.
+    - TEMPLATESCRIPT: The script of the template.
+
+Example Usage:
+    SELECT * FROM [bld].[tr_650_DatasetTemplates_010_default]
+
+Logic:
+    1. Selects default templates for datasets.
+    2. Selects default templates for flow layers.
+    3. Combines the results into a single view.
+
+Source Data:
+    - [bld].[vw_Dataset]: Contains dataset definitions.
+    - [bld].[vw_Template]: Contains template definitions.
+    - [bld].[vw_Schema]: Contains schema definitions.
+    - [rep].[vw_FlowLayer]: Contains flow layer definitions.
+
+Changelog:
+Date        Time        Author              Description
+20220804    00:00       K. Vermeij          Initial version
+*/
+
 WITH ALLDEFAULTTEMPLATES AS (
 	SELECT 
 		  BK_TEMPLATE		= D.[BK_Template_Create]

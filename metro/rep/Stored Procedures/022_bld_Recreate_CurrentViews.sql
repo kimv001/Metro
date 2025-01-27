@@ -4,22 +4,69 @@ CREATE PROCEDURE [rep].[022_bld_Recreate_CurrentViews]  @tgt_table_name VARCHAR(
 AS
 BEGIN
     /*
-    Developed by:            metro
-    Description:             (Re)Create views on the [bld] tables with meta columns: 
-                             - mta_BK        (Stores the Businesskey of the table)
-                             - mta_BKH       (Stores the hash of the Businesskey of the table)
-                             - mta_RH        (Stores the hash of the full row)
-                             - mta_RowNum    actually only needed for the view [bld].[vw_XlsTabsToLoad] so i could make an easy loop in this procedure
+Developed by:            metro
+
+Description:
+    This stored procedure (re)creates views on the [bld] tables with meta columns:
+    - mta_BK: Stores the Businesskey of the table
+    - mta_BKH: Stores the hash of the Businesskey of the table
+    - mta_RH: Stores the hash of the full row
+    - mta_RowNum: Actually only needed for the view [bld].[vw_XlsTabsToLoad] to facilitate an easy loop in this procedure
+
+Parameters:
+    @tgt_table_name VARCHAR(255) = NULL  -- Target table name to filter the creation process. If null, all views will be recreated.
+
+Example Usage:
+    exec [rep].[022_bld_Recreate_CurrentViews]
+    exec [rep].[022_bld_Recreate_CurrentViews] @tgt_table_name = 'Schema'
+
+Procedure Logic:
+    1. Initializes variables for logging, schema names, and SQL statements.
+    2. Drops the temporary table #BuildCurrentViews if it exists.
+    3. Creates a temporary table #BuildCurrentViews with row numbers.
+    4. Iterates through the rows in the temporary table and processes each table to recreate views with meta columns.
+    5. Logs the progress and any errors encountered during the execution.
+
+AST:
+Procedure: [rep].[022_bld_Recreate_CurrentViews]
+  Parameters:
+    - @tgt_table_name: VARCHAR(255) = NULL
+  Variables:
+    - @LogProcName: VARCHAR(MAX)
+    - @LogSQL: VARCHAR(MAX)
+    - @SrcSchema: VARCHAR(MAX)
+    - @TgtSchema: VARCHAR(MAX)
+    - @CounterNr: INT
+    - @MaxNr: INT
+    - @sqlDrop: NVARCHAR(MAX)
+    - @sqlCreate: NVARCHAR(MAX)
+    - @TableName: VARCHAR(MAX)
+    - @Msg: VARCHAR(MAX)
+    - @ColumnList: NVARCHAR(MAX)
+    - @ColumnHashList: NVARCHAR(MAX)
+  Logic:
+    - Try Block:
+      - Drop temporary table if it exists
+      - Create temporary table with row numbers
+      - Additional logic to recreate views
+    - Catch Block:
+      - Error handling logic
+
+Mermaid Diagram:
+graph TD
+    A[Start] --> B[Initialize Variables]
+    B --> C{Drop #BuildCurrentViews if exists}
+    C --> D[Create #BuildCurrentViews with row numbers]
+    D --> E{Iterate through rows}
+    E --> F[Process each table to recreate views]
+    F --> G[Log progress and errors]
+    G --> H[End]
+    C --> I[Error Handling] --> H
 
 
-	examples:
-	exec  [rep].[022_bld_Recreate_CurrentViews]
-
-	exec  [rep].[022_bld_Recreate_CurrentViews] @tgt_table_name = 'Schema'
-
-    Change log:
-    Date                    Author              Description
-    20220915 00:00          K. Vermeij          Initial version
+Change log:
+Date                    Author              Description
+20220915 00:00          K. Vermeij          Initial version
     */
 
     DECLARE @LogProcName VARCHAR(MAX) = '[bld].[022_bld_Recreate_CurrentViews]'

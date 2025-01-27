@@ -7,7 +7,42 @@ CREATE VIEW [bld].[tr_510_Markers_020_DatasetTarget] AS
 === Comments =========================================
 
 Description:
-	creates dataset markers
+    Creates dataset markers for target datasets. These markers are used to dynamically replace values in templates based on the dataset configurations.
+
+Columns:
+    - BK: The business key of the marker.
+    - BKBASE: The business key of the base dataset.
+    - CODE: The code of the dataset.
+    - BKSOURCE: The business key of the source dataset.
+    - BKTARGET: The business key of the target dataset.
+    - SRC_DATASET: The name of the source dataset.
+    - SRC_DATASETSCHEMA: The schema of the source dataset.
+    - TGT_BUSINESSDATE: The business date of the target dataset.
+    - TGT_RECORDSRCDATE: The record source date of the target dataset.
+    - TGT_DATASET: The name of the target dataset.
+    - TGT_DATASETGROUPNAME: The group name of the target dataset.
+    - TGT_DATASETSCHEMA: The schema of the target dataset.
+    - TGT_DATASETSHORTNAME: The short name of the target dataset.
+    - TGT_DATASETSHORTNAMESRC: The short name of the source dataset.
+    - TGT_FULLLOAD: Indicates if the target dataset is fully loaded.
+    - TGT_INSERTONLY: Indicates if the target dataset is insert-only.
+    - TGT_INSERTNOCHECK: Indicates if the target dataset has insert no check.
+    - TGT_WHERFILTER: The where filter for the target dataset.
+    - TGT_TIMESTAMP: The timestamp expression for the target dataset.
+    - TGT_PARTITIONSTATEMENT: The partition statement for the target dataset.
+
+Example Usage:
+    SELECT * FROM [bld].[tr_510_Markers_020_DatasetTarget]
+
+Logic:
+    1. Selects base dataset information.
+    2. Joins with relevant views to get additional dataset attributes.
+    3. Creates markers for target datasets based on the dataset configurations.
+
+Source Data:
+    - [bld].[vw_Dataset]: Contains dataset definitions.
+    - [bld].[vw_FileProperties]: Contains file property definitions.
+    - [bld].[vw_Attribute]: Contains attribute definitions for datasets.
 	
 	
 Changelog:

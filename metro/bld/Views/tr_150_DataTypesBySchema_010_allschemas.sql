@@ -9,7 +9,24 @@ CREATE VIEW [bld].[tr_150_DataTypesBySchema_010_allschemas] AS
 === Comments =========================================
 
 Description:
-	Get DataType per Schema (per DataSourceType)
+    This view retrieves data types per schema for each data source type. It includes fixed data types for schemas and default data source types if no specific mapping is found.
+
+Columns:
+    - BK_SCHEMA: The business key of the schema.
+    - DATATYPEMAPPED: The mapped data type for the schema.
+
+Example Usage:
+    SELECT * FROM [bld].[tr_150_DataTypesBySchema_010_allschemas]
+
+Logic:
+    1. Retrieves fixed data types for schemas.
+    2. Selects the default data source type if no specific mapping is found.
+    3. Joins with other relevant views to get additional data type mappings.
+
+Source Data:
+    - [bld].[vw_Schema]: Defines the schema for datasets, acting as a layer between the dataset and data source.
+    - [bld].[vw_RefType]: Contains reference types used in the data warehouse.
+    - [rep].[vw_DataTypeMapping]: Contains mappings of data types for different data source types.
 	
 Changelog:
 Date		time		Author					Description

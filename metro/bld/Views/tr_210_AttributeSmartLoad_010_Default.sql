@@ -12,11 +12,12 @@ CREATE VIEW [bld].[tr_210_AttributeSmartLoad_010_Default] AS
 === Comments =========================================
 
 Description:
-	Is a helper for the [bld].[tr_200_Attribute_030_AddMtaAttributes]
-	When change is detected in the bld tables on wich the src.tgt_table_name are dependent, the code of the full set will be returned
+    This view is a helper for the [bld].[tr_200_Attribute_030_AddMtaAttributes]. 
+	When a change is detected in the bld tables on which the src.tgt_table_name are dependent, the code of the full set will be returned.
 
-	# Note
-	mta_attributes change when datasets are changed or when the ordinal positions of the other columns change
+Note:
+    MTA attributes change when datasets are changed or when the ordinal positions of the other columns change.
+
 	
 	
 Changelog:

@@ -10,6 +10,7 @@
 AS
 /*
 Developed by:			metro
+
 Description:
     This stored procedure generates and displays deployment scripts for specified objects based on various filtering criteria.
 
@@ -43,15 +44,51 @@ Procedure Logic:
     4. Retrieves the minimum and maximum row numbers from the temporary table.
     5. Iterates through the rows in the temporary table and processes each script.
 
+AST:
+Procedure: [rep].[100_Publish_DeployScriptsToScreen]
+  Parameters:
+    - @TGT_ObjectName: VARCHAR(255) = ''
+    - @LayerName: VARCHAR(255) = ''
+    - @SchemaName: VARCHAR(255) = ''
+    - @GroupName: VARCHAR(255) = ''
+    - @ShortName: VARCHAR(255) = ''
+    - @DeployDatasets: BIT = 1
+    - @DeployMappings: BIT = 1
+    - @ObjectType: VARCHAR(255) = 'table'
+    - @IgnoreErrors: BIT = 0
+  Variables:
+    - @LogProcName: VARCHAR(255)
+    - @LogSQL: VARCHAR(MAX)
+    - @CounterNr: INT
+    - @MaxNr: INT
+  Logic:
+    - Initialize variables
+    - Select deployment scripts based on filtering criteria
+    - Order selected scripts by group name, short name, and deploy order
+    - Insert ordered scripts into temporary table #DeployScripts
+    - Retrieve minimum and maximum row numbers from temporary table
+    - Iterate through rows in temporary table and process each script
+
+Mermaid Diagram:
+graph TD
+    A[Start] --> B[Initialize Variables]
+    B --> C[Select deployment scripts based on filtering criteria]
+    C --> D[Order selected scripts by group name, short name, and deploy order]
+    D --> E[Insert ordered scripts into temporary table #DeployScripts]
+    E --> F[Retrieve minimum and maximum row numbers from temporary table]
+    F --> G{Iterate through rows in temporary table}
+    G --> H[Process each script]
+    H --> I[End]
+
 Change log:
-Date					Author				Description
-20220916	2015		K. Vermeij			Initial version
-20230406	1045		K. Vermeij			Added filter ToDeploy = 1
-20230609	0858		K. Vermeij			Builderrors are shown before the scripts are shown. With the new paramter @IgnoreErrors
-											you can choose:
-											0	- stop generating scripts if there are errors in your selection for generating
-											1	- stop generating scripts if there are errors in the total build
-											2	- show the errors... but still generate the scripts
+Date                    Author              Description
+20220916 20:15          K. Vermeij          Initial version
+20230406 10:45          K. Vermeij          Added filter ToDeploy = 1
+20230609 08:58          K. Vermeij          Builderrors are shown before the scripts are shown. With the new parameter @IgnoreErrors
+                                            you can choose:
+                                            0 - stop generating scripts if there are errors in your selection for generating
+                                            1 - stop generating scripts if there are errors in the total build
+                                            2 - show the errors... but still generate the scripts
 */
 SET ANSI_WARNINGS OFF;
 SET NOCOUNT ON;

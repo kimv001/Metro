@@ -7,13 +7,35 @@ CREATE VIEW [bld].[tr_700_BuildCheck_010_dataset] AS
 /* 
 === Comments =========================================
 
-Description:
-	The BuildChecks are the last step(s) before the templates get filled
 
-	# Note
+Description:
+    The BuildChecks are the last step(s) before the templates get filled. This view performs various checks on datasets to ensure they meet the required criteria before template generation.
+
+# Note
 	Because of the recoding of Metro, the most checks need  a review before activating them.
 	All old Checks are commented out
-	
+
+Columns:
+    - Severity: The severity level of the error or warning.
+    - Code: The code of the error or warning.
+    - Error: The description of the error or warning.
+    - BK: The business key of the dataset.
+    - CODE: The code of the dataset.
+    - Description: The description of the dataset.
+    - CheckResult: The result of the check (e.g., Pass, Fail).
+
+Example Usage:
+    SELECT * FROM [bld].[tr_700_BuildCheck_010_dataset]
+
+Logic:
+    1. Defines a set of error codes and their severities.
+    2. Performs various checks on datasets to identify issues.
+    3. Combines the results of the checks into a single view.
+
+Source Data:
+    - [bld].[vw_Dataset]: Contains dataset definitions.
+    - [bld].[vw_FileProperties]: Contains file property definitions.
+    - [bld].[vw_Attribute]: Contains attribute definitions for datasets.	
 	
 Changelog:
 Date		time		Author					Description

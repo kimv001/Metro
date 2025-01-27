@@ -4,7 +4,28 @@ CREATE VIEW [bld].[tr_400_DatasetDependency_010_SrcToTgt] AS
 === Comments =========================================
 
 Description:
-	Get all repository defined dependencies from Src to Tgt
+    This view builds up dataset dependencies from source to target. It identifies the parent-child relationships between datasets and their dependencies.
+
+Columns:
+    - bk: The business key of the dependency.
+    - bk_parent: The business key of the parent dataset.
+    - bk_child: The business key of the child dataset.
+    - code: The code of the dataset.
+    - tabletypeparent: The type of the parent dataset.
+    - tabletypechild: The type of the child dataset.
+    - dependencytype: The type of the dependency (SrcToTgt).
+
+Example Usage:
+    SELECT * FROM [bld].[tr_400_DatasetDependency_010_SrcToTgt]
+
+Logic:
+    1. Selects base dataset dependencies.
+    2. Recursively builds the hierarchy of dependencies.
+    3. Selects and formats the final dataset dependencies.
+
+Source Data:
+    - [rep].[vw_Dataset]: Contains dataset definitions.
+    - [rep].[vw_RefType]: Contains reference types used in the data warehouse.
 	
 Changelog:
 Date		time		Author					Description

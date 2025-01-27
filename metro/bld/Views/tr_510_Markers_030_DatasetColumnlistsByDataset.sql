@@ -11,58 +11,42 @@ CREATE VIEW [bld].[tr_510_Markers_030_DatasetColumnlistsByDataset] AS
 === Comments =========================================
 
 Description:
-	creates dataset markers unique by dataset. Mostly when all columns or all mta columns are selected
-	Builded markers:
-	<!<TGT_DDLcolumnlist>>
-	<!<TGT_ColumnList>>
-	<!<SRC_ColumnList_SRC>>
-	<!<SRC_ColumnList>>
-	<!<SRC_BK_SRC>>
-	<!<SRC_Dummies_Unknown>>
-	<!<SRC_Dummies_Empty>>
+    Creates dataset markers unique by dataset. Mostly when all columns or all MTA columns are selected.
 
-get actual list:
-select distinct marker, MarkerDescription from [bld].[tr_510_Markers_030_DatasetColumnlistsByDataset]
+Markers:
+    - **Marker for Target DDL Column List**
+        - **Marker:** `<!<TGT_DDLcolumnlist>>`
+        - **Marker Value:** `[ProductId] INT, [ProductCode] VARCHAR(50), [ProductName] VARCHAR(100), [ProductGroup] VARCHAR(50), [ProductDescription] VARCHAR(255), [ProductExternalId] VARCHAR(50), [ProductSLAinHours] INT`
+    - **Marker for Target Column List**
+        - **Marker:** `<!<TGT_ColumnList>>`
+        - **Marker Value:** `[ProductId], [ProductCode], [ProductName], [ProductGroup], [ProductDescription], [ProductExternalId], [ProductSLAinHours]`
+    - **Marker for Source Column List with Source Prefix**
+        - **Marker:** `<!<SRC_ColumnList_SRC>>`
+        - **Marker Value:** `SRC.[ProductId], SRC.[ProductCode], SRC.[ProductName], SRC.[ProductGroup], SRC.[ProductDescription], SRC.[ProductExternalId], SRC.[ProductSLAinHours]`
+    - **Marker for Source Column List**
+        - **Marker:** `<!<SRC_ColumnList>>`
+        - **Marker Value:** `[ProductId], [ProductCode], [ProductName], [ProductGroup], [ProductDescription], [ProductExternalId], [ProductSLAinHours]`
+    - **Marker for Source Business Key**
+        - **Marker:** `<!<SRC_BK_SRC>>`
+        - **Marker Value:** `SRC.[ProductId], SRC.[ProductCode]`
+    - **Marker for Source Dummies Unknown**
+        - **Marker:** `<!<SRC_Dummies_Unknown>>`
+        - **Marker Value:** `'<Unknown>' AS [ProductId], '<Unknown>' AS [ProductCode], '<Unknown>' AS [ProductName], '<Unknown>' AS [ProductGroup], '<Unknown>' AS [ProductDescription], '<Unknown>' AS [ProductExternalId], -2 AS [ProductSLAinHours]`
+    - **Marker for Source Dummies Empty**
+        - **Marker:** `<!<SRC_Dummies_Empty>>`
+        - **Marker Value:** `'<Empty>' AS [ProductId], '<Empty>' AS [ProductCode], '<Empty>' AS [ProductName], '<Empty>' AS [ProductGroup], '<Empty>' AS [ProductDescription], '<Empty>' AS [ProductExternalId], -1 AS [ProductSLAinHours]`
 
-DECLARE @Output NVARCHAR(MAX);
+Example Usage:
+    SELECT * FROM [bld].[tr_510_Markers_030_DatasetColumnlistsByDataset]
 
-SELECT distinct @Output = STRING_AGG(
-    'Marker: ' + cast(Marker as NVARCHAR(MAX)) + CHAR(13) + CHAR(10) + 
-    'Description: ' + cast(MarkerDescription as NVARCHAR(MAX)) + CHAR(13) + CHAR(10) + CHAR(13) + CHAR(10),
-    ''
-) WITHIN GROUP (ORDER BY Marker)
-FROM (
-    SELECT DISTINCT Marker, MarkerDescription
-    FROM [bld].[tr_510_Markers_030_DatasetColumnlistsByDataset]
-) AS DistinctMarkers;
+Logic:
+    1. Selects base dataset information.
+    2. Joins with relevant views to get additional column attributes.
+    3. Creates markers for column lists based on the dataset configurations.
 
-PRINT @Output;
-
-DECLARE @Output NVARCHAR(MAX);
-
-WITH RankedMarkers AS (
-    SELECT 
-        Marker, 
-        markervalue,
-        ROW_NUMBER() OVER (PARTITION BY Marker ORDER BY Marker) AS rn
-    FROM [bld].[tr_510_Markers_030_DatasetColumnlistsByDataset]
-)
-SELECT @Output = STRING_AGG(
-     
-    'Marker: ' + cast(Marker as NVARCHAR(MAX)) + CHAR(13) + CHAR(10) + 
-    'Description: ' + CHAR(10) +cast(markervalue as NVARCHAR(MAX)) + CHAR(13) + CHAR(10) + CHAR(13) + CHAR(10),
-    CHAR(9) + '' + CHAR(10)
-) WITHIN GROUP (ORDER BY Marker)
-FROM (
-    SELECT TOP 100  Marker, markervalue
-    FROM RankedMarkers
-    WHERE rn = 1
-    ORDER BY Marker
-) AS TopDistinctMarkers;
-
-PRINT @Output;
-
-	
+Source Data:
+    - [bld].[vw_Dataset]: Contains dataset definitions.
+    - [bld].[vw_Attribute]: Contains attribute definitions for datasets.
 	
 Changelog:
 Date		time		Author					Description

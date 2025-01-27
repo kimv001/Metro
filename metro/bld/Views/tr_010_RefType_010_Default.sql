@@ -7,8 +7,35 @@ CREATE VIEW [bld].[tr_010_RefType_010_Default] AS
 === Comments =========================================
 
 Description:
-	All Defined RefTypes 
-	
+    This view is the first in a batch of transformation views that prepares all metadata to create DDL scripts for all needed data warehouse objects. 
+	It selects and transforms reference type data from the [rep].[vw_RefType] view, including linked reference types and default values.
+
+	The reference types are defined in the input datasheet and its a collection of all kind of refenece types that are used in the datawarehouse.
+
+Columns:
+    - BK: The business key of the reference type.
+    - Code: The code of the reference type.
+    - Name: The name of the reference type.
+    - Description: The description of the reference type.
+    - RefType: The type of the reference.
+    - RefTypeAbbr: The abbreviation of the reference type.
+    - SortOrder: The sort order of the reference type.
+    - LinkedReftype: The linked reference type.
+    - BK_LinkedRefType: The business key of the linked reference type.
+    - LinkedRefTypeCode: The code of the linked reference type.
+    - LinkedRefTypeName: The name of the linked reference type.
+    - LinkedRefTypeDescription: The description of the linked reference type.
+    - DefaultValue: The default value for the reference type if it is a 'DataType'.
+    - isDefault: Indicates if the reference type is a default, except for 'DataType'.
+
+Example Usage:
+    SELECT * FROM [bld].[tr_010_RefType_010_Default]
+
+Logic:
+    1. Selects reference type data from the [rep].[vw_RefType] view.
+    2. Joins with the same view to get linked reference type data.
+    3. Filters active reference types and ensures the business key is not null.
+    4. Transforms the data to include default values and linked reference type information.
 Changelog:
 Date		time		Author					Description
 20220804	0000		K. Vermeij				Initial

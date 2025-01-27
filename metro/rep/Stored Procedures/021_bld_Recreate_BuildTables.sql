@@ -2,19 +2,31 @@
 CREATE PROCEDURE [rep].[021_bld_Recreate_BuildTables] @table_name VARCHAR(255) = NULL, @tgt_table_name VARCHAR(255) = NULL
 AS
 BEGIN
-    /*
-    Developed by:            metro
-    Description:             (Re)Create tables in the [stg_bld] schema based on the [bld] schema
+/*
+Developed by:            metro
 
-	examples:
-	exec [rep].[021_bld_Recreate_BuildTables]
+Description:
+    This stored procedure (re)creates tables in the [stg_bld] schema based on the [bld] schema.
 
-	exec [rep].[021_bld_Recreate_BuildTables] @tgt_table_name = 'Schema'
+Parameters:
+    @table_name VARCHAR(255) = NULL       -- Source table name to filter the creation process. If null, all tables will be recreated.
+    @tgt_table_name VARCHAR(255) = NULL   -- Target table name to filter the creation process. If null, all tables will be recreated.
 
-    Change log:
-    Date                    Author              Description
-    20220916 20:15          K. Vermeij          Initial version
-    */
+Example Usage:
+    exec [rep].[021_bld_Recreate_BuildTables]
+    exec [rep].[021_bld_Recreate_BuildTables] @tgt_table_name = 'Schema'
+
+Procedure Logic:
+    1. Initializes variables for logging, schema names, and SQL statements.
+    2. Drops the temporary table #BuildTables if it exists.
+    3. Creates a temporary table #BuildTables with row numbers.
+    4. Iterates through the rows in the temporary table and processes each table to recreate it in the [stg_bld] schema.
+    5. Logs the progress and any errors encountered during the execution.
+
+Change log:
+Date                    Author              Description
+20220916 20:15          K. Vermeij          Initial version
+*/
     DECLARE @LogProcName VARCHAR(255) = '[bld].[021_bld_Recreate_BuildTables]'
     DECLARE @LogSQL VARCHAR(255)
     DECLARE @SrcSchema VARCHAR(255) = 'bld'

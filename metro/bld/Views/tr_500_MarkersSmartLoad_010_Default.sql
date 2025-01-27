@@ -9,9 +9,26 @@ CREATE VIEW [bld].[tr_500_MarkersSmartLoad_010_Default] AS
 === Comments =========================================
 
 Description:
-	Is a helper for the bld.tr_%_Marker_% views.
-	When change is detected in the bld tables on wich the markers are dependent, the code of the full set will be returned
-	
+    This view is a helper for the `bld.tr_%_Marker_%` views. 
+	When a change is detected in the `bld` tables on which the markers are dependent, the code of the full set will be returned.
+
+Columns:
+    - CODE: The code of the dataset or attribute.
+    - MTA_CREATEDATE: The creation date of the marker.
+    - SOURCE: The source view from which the marker is derived.
+
+Example Usage:
+    SELECT * FROM [bld].[tr_500_MarkersSmartLoad_010_Default]
+
+Logic:
+    1. Determines if there is a change in the source records.
+    2. If no change is detected, the markers will not be rebuilt.
+    3. Combines creation dates from various source views to identify changes.
+
+Source Data:
+    - [bld].[vw_Dataset]: Contains dataset definitions.
+    - [bld].[vw_FileProperties]: Contains file property definitions.
+    - [bld].[vw_Attribute]: Contains attribute definitions for datasets.
 	
 Changelog:
 Date		time		Author					Description
@@ -19,17 +36,7 @@ Date		time		Author					Description
 =======================================================
 */
 
-/*
-select * from bld.dataset
 
-update bld.Dataset set mta_Createdate = getdate()
-where BK = 'BI|Base||IB|AggregatedPc4|'
-*/
-
-/* 
-The First CTE's determine if there is a change in the source records
-If not, the markers will not be rebuild
-*/
 
 WITH CREATEDATESRC AS (
 	SELECT 	SRC.CODE, SRC.MTA_CREATEDATE , 'vw_Dataset' AS SOURCE

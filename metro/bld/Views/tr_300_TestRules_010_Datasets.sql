@@ -8,7 +8,38 @@ CREATE VIEW [bld].[tr_300_TestRules_010_Datasets] AS
 === Comments =========================================
 
 Description:
-	builds up a test rules definition set 
+    Builds up a test rules definition set.
+
+Columns:
+    - bk_testdefinition: The business key of the test definition.
+    - code: The code of the test definition.
+    - test: The test description.
+    - adfpipeline: The ADF pipeline associated with the test.
+    - getattributes: Indicates if attributes should be retrieved.
+    - bk_reftype_objecttype_target: The business key of the reference type object type target.
+    - bk_datasource: The business key of the data source.
+    - bk_schema: The business key of the schema.
+    - bk_dataset: The business key of the dataset.
+    - bk_datasetsrcattribute: The business key of the source dataset attribute.
+    - expectedvalue: The expected value for the test.
+    - tresholdvalue: The threshold value for the test.
+    - active: Indicates if the test rule is active.
+    - bk_reftype_repositorystatus: The business key of the repository status.
+
+Example Usage:
+    SELECT * FROM [bld].[tr_300_TestRules_010_Datasets]
+
+Logic:
+    1. Selects test rule definitions from the [rep].[vw_testdefinition] view.
+    2. Joins with the [rep].[vw_testrule] view to get additional test rule attributes.
+    3. Retrieves datasets, schemas, and data sources related to the test rules.
+
+Source Data:
+    - [rep].[vw_testdefinition]: Contains definitions for test rules.
+    - [rep].[vw_testrule]: Contains test rule details.
+    - [rep].[vw_dataset]: Contains dataset definitions.
+    - [rep].[vw_schema]: Defines the schema for datasets, acting as a layer between the dataset and data source.
+    - [rep].[vw_datasource]: Contains information about data sources.
 	
 Changelog:
 Date		time		Author					Description

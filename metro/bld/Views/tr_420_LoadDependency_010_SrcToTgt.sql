@@ -4,7 +4,26 @@ CREATE VIEW [bld].[tr_420_LoadDependency_010_SrcToTgt] AS
 === Comments =========================================
 
 Description:
-	Get all source dependencies for 1 target
+    Get all source dependencies for one target.
+
+Columns:
+    - bk_source: The business key of the source dataset.
+    - bk_target: The business key of the target dataset.
+    - bk_targetclean: The cleaned business key of the target dataset.
+    - bk_sourceclean: The cleaned business key of the source dataset.
+    - dependencytype: The type of the dependency (SrcToTgt).
+
+Example Usage:
+    SELECT * FROM [bld].[tr_420_LoadDependency_010_SrcToTgt]
+
+Logic:
+    1. Retrieves the full list of dependencies.
+    2. Cleans the business keys to make views look like tables.
+    3. Joins the cleaned business keys to get the final dependencies.
+
+Source Data:
+    - [bld].[vw_DatasetDependency]: Contains dataset dependencies.
+    - [bld].[vw_Dataset]: Contains dataset definitions.
 	
 Changelog:
 Date		time		Author					Description

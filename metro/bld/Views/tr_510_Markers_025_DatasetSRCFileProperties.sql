@@ -12,7 +12,81 @@ CREATE VIEW [bld].[tr_510_Markers_025_DatasetSRCFileProperties] AS
 === Comments =========================================
 
 Description:
-	creates dataset markers
+    Creates dataset markers for source file properties. These markers are used to dynamically replace values in templates based on the file properties of the source datasets.
+
+Columns:
+    - BK: The business key of the marker.
+    - BKBASE: The business key of the base dataset.
+    - CODE: The code of the dataset.
+    - BKSOURCE: The business key of the source dataset.
+    - BKTARGET: The business key of the target dataset.
+    - DATEINFILENAMEFORMAT: The format of the date in the filename.
+    - DATEINFILENAMELENGTH: The length of the date in the filename.
+    - DATEINFILENAMESTARTPOS: The start position of the date in the filename.
+    - DATEINFILENAMEEXPRESSION: The expression used to extract the date from the filename.
+    - FILENAME: The name of the file.
+    - FILEMASK: The file mask used to identify files.
+    - FILESYSTEM: The file system where the file is located.
+    - FOLDER: The folder where the file is located.
+    - FILEFORMAT: The file format.
+    - FILECOLUMNDLIMITER: The column delimiter for the file format.
+    - FILEROWDELIMITER: The row delimiter for the file format.
+    - FILEQUOTECHARACTER: The quote character for the file format.
+    - FILECOMPRESSIONLEVEL: The compression level for the file format.
+
+Example Usage:
+    SELECT * FROM [bld].[tr_510_Markers_025_DatasetSRCFileProperties]
+
+Logic:
+    1. Selects base dataset information.
+    2. Joins with relevant views to get additional file property attributes.
+    3. Creates markers for source file properties based on the dataset configurations.
+
+Source Data:
+    - [bld].[vw_Dataset]: Contains dataset definitions.
+    - [bld].[vw_FileProperties]: Contains file property definitions.
+    - [bld].[vw_Attribute]: Contains attribute definitions for datasets.
+
+Markers and Example Values:
+    - **Marker for Date in Filename Format**
+        - **Marker:** `<!<dateinfilenameformat>>`
+        - **Marker Value:** `yyyyMMdd`
+    - **Marker for Date in Filename Length**
+        - **Marker:** `<!<dateinfilenamelength>>`
+        - **Marker Value:** `8`
+    - **Marker for Date in Filename Start Position**
+        - **Marker:** `<!<dateinfilenamestartpos>>`
+        - **Marker Value:** `1`
+    - **Marker for Date in Filename Expression**
+        - **Marker:** `<!<dateinfilenameexpression>>`
+        - **Marker Value:** `SUBSTRING(Filename, 1, 8)`
+    - **Marker for Filename**
+        - **Marker:** `<!<filename>>`
+        - **Marker Value:** `datafile_20230101.csv`
+    - **Marker for File Mask**
+        - **Marker:** `<!<filemask>>`
+        - **Marker Value:** `datafile_*.csv`
+    - **Marker for File System**
+        - **Marker:** `<!<filesystem>>`
+        - **Marker Value:** `HDFS`
+    - **Marker for Folder**
+        - **Marker:** `<!<folder>>`
+        - **Marker Value:** `/data/files/`
+    - **Marker for File Format**
+        - **Marker:** `<!<fileformat>>`
+        - **Marker Value:** `CSV`
+    - **Marker for File Column Delimiter**
+        - **Marker:** `<!<filecolumndelimiter>>`
+        - **Marker Value:** `,`
+    - **Marker for File Row Delimiter**
+        - **Marker:** `<!<filerowdelimiter>>`
+        - **Marker Value:** `\n`
+    - **Marker for File Quote Character**
+        - **Marker:** `<!<filequotecharacter>>`
+        - **Marker Value:** `"`
+    - **Marker for File Compression Level**
+        - **Marker:** `<!<filecompressionlevel>>`
+        - **Marker Value:** `gzip`
 	
 	
 Changelog:

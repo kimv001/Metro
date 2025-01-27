@@ -6,8 +6,55 @@ CREATE VIEW [bld].[tr_100_Dataset_040_AliasViews] AS
 === Comments =========================================
 
 Description:
-	generates alias views, can be used for dimension aliases like dim.common_Date with aliases dim.vw_common_StartDatde, dim.vw_common_EndDate
+    This view generates alias views, which can be used for dimension aliases like dim.common_Date with aliases dim.vw_common_StartDate, dim.vw_common_EndDate.
 
+Columns:
+    - BK: The business key of the dataset.
+    - Code: The code of the dataset.
+    - DatasetName: The name of the dataset.
+    - SchemaName: The name of the schema.
+    - LayerName: The name of the layer.
+    - LayerOrder: The order of the layer.
+    - DataSource: The data source of the dataset.
+    - BK_Schema: The business key of the schema.
+    - BK_Group: The business key of the group.
+    - ShortName: The short name of the dataset.
+    - dwhTargetShortName: The target short name of the dataset in the data warehouse.
+    - Prefix: The prefix of the dataset.
+    - PostFix: The postfix of the dataset.
+    - Description: The description of the dataset.
+    - BK_Flow: The business key of the flow.
+    - Timestamp: The timestamp of the dataset.
+    - BusinessDate: The business date of the dataset.
+    - WhereFilter: The where filter for the dataset.
+    - PartitionStatement: The partition statement for the dataset.
+    - BK_RefType_ObjectType: The business key of the reference type object type.
+    - FullLoad: Indicates if the dataset is fully loaded.
+    - InsertOnly: Indicates if the dataset is insert-only.
+    - BigData: Indicates if the dataset is big data.
+    - BK_Template_Load: The business key of the load template.
+    - BK_Template_Create: The business key of the create template.
+    - CustomStagingView: Indicates if the dataset is a custom staging view.
+
+Example Usage:
+    SELECT * FROM [bld].[tr_100_Dataset_040_AliasViews]
+
+Logic:
+    1. Selects alias view definitions from the [stg].[DWH_ObjectDefinitions] view.
+    2. Prepares the base alias view information.
+    3. Joins with other relevant views to get additional alias view attributes.
+    4. Generates alias views based on the defined flows.
+
+Source Data:
+    - [stg].[DWH_ObjectDefinitions]: Contains object definitions for datasets.
+    - [rep].[vw_Schema]: Defines the schema for datasets, acting as a layer between the dataset and data source.
+    - [rep].[vw_DataSource]: Contains information about data sources.
+    - [rep].[vw_Group]: Grouping sets of datasets, mandatory for defining source and transformation datasets.
+    - [rep].[vw_Segment]: Organizational grouping of publication tables.
+    - [rep].[vw_Bucket]: Defines buckets for organizing datasets.
+    - [rep].[vw_Flow]: Defines the flows used in the data warehouse.
+    - [rep].[vw_FlowLayer]: Defines the actual flow steps (load pattern).
+    - [rep].[vw_RefType]: Contains reference types used in the data warehouse.
 	
 	
 Changelog:

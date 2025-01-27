@@ -2,19 +2,37 @@
 
 
 
-/*
-	and ISNULL(s.[BK_SRCDataset],'') = ''
-	and ISNULL(s.[SRC_Shortname],'') = ''
-	and ISNULL(s.[BK_TrnDataset],'') = ''
-	and ISNULL(s.[BK_Group]		,'') = ''
-	and ISNULL(s.[BK_Schema]	,'') = ''
-	and ISNULL(s.[BK_Layer]		,'') = ''
-	and ISNULL(s.[BK_SRC_layer] ,'') = ''
-*/
-
-
-
 CREATE VIEW [bld].[tr_560_Schedules_010_default] AS 
+/*
+Description:
+    This view builds up the default schedule definitions for all datasets and specific transactional datasets. It provides detailed information about schedules, including their groups, dependencies, and target datasets to load.
+
+Columns:
+    - BK: The business key of the schedule.
+    - SCHEDULES_GROUP: The group of the schedule.
+    - DEPENDEND_ON_SCHEDULES_GROUP: The group on which the schedule is dependent.
+    - BK_SCHEDULE: The business key of the schedule.
+    - TARGETTOLOAD: The target dataset to load.
+    - SCHEDULETYPE: The type of the schedule (DWH or Dataset).
+    - EXCLUDEFROMALLLEVEL: Indicates if the schedule is excluded from all levels.
+    - EXCLUDEFROMALLOTHER: Indicates if the schedule is excluded from all other schedules.
+    - PROCESSSOURCEDEPENDENCIES: Indicates if the schedule processes source dependencies.
+
+Example Usage:
+    SELECT * FROM [bld].[tr_560_Schedules_010_default]
+
+Logic:
+    1. Selects all schedules that process all tables.
+    2. Selects schedules for specific transactional datasets.
+    3. Combines the results into a single view.
+
+Source Data:
+    - [rep].[vw_Schedules]: Contains schedule definitions.
+
+Changelog:
+Date        Time        Author              Description
+20220804    00:00       K. Vermeij          Initial version
+*/
 
 WITH ALLSCHEDULES AS (
 

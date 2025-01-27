@@ -11,10 +11,26 @@ CREATE VIEW [bld].[tr_800_DeployScriptsSmartLoad_010_Sources] AS
 === Comments =========================================
 
 Description:
-	Is a helper for the bld.DeployScripts views.
-	When change is detected in the bld tables [bld].[Markers], [bld].[DatasetTemplates] or [bld].[Template] 
-	on which the [bld].[DeployScripts] are dependent, the code of the full set will be returned
-	
+    This view is a helper for the `bld.DeployScripts` views. It detects changes in the `bld` tables ([bld].[Markers], [bld].[DatasetTemplates], or [bld].[Template]) on which the `bld.DeployScripts` are dependent. When a change is detected, the code of the full set will be returned.
+
+Columns:
+    - BK_DATASET: The business key of the dataset.
+    - MTA_CREATEDATE: The creation date of the marker, dataset template, or template.
+    - SOURCE: The source view from which the creation date is derived.
+
+Example Usage:
+    SELECT * FROM [bld].[tr_800_DeployScriptsSmartLoad_010_Sources]
+
+Logic:
+    1. Retrieves the creation date from the `bld.vw_Markers` view.
+    2. Retrieves the creation date from the `bld.vw_DatasetTemplates` view.
+    3. Retrieves the creation date from the `bld.vw_Template` view.
+    4. Combines the results into a single view.
+
+Source Data:
+    - [bld].[vw_Markers]: Contains marker definitions.
+    - [bld].[vw_DatasetTemplates]: Contains dataset template definitions.
+    - [bld].[vw_Template]: Contains template definitions.
 	
 Changelog:
 Date		time		Author					Description

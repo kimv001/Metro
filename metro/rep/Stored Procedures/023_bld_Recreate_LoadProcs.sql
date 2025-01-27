@@ -2,15 +2,68 @@
 AS
 /*
 Developed by:			metro
-Description:			(Re)Create Stored Procedures to load data into [generated] 
 
+Description:
+    This stored procedure (re)creates stored procedures to load data into [bld] tables.
 
-	examples:
-	exec  [rep].[023_bld_Recreate_LoadProcs]
+Parameters:
+    @tgt_table_name VARCHAR(255) = NULL  -- Target table name to filter the creation process. If null, all procedures will be recreated.
 
-	exec  [rep].[023_bld_Recreate_LoadProcs] @tgt_table_name = 'Schema'
-						
+Example Usage:
+    exec [rep].[023_bld_Recreate_LoadProcs]
+    exec [rep].[023_bld_Recreate_LoadProcs] @tgt_table_name = 'Schema'
 
+Procedure Logic:
+    1. Initializes variables for logging, schema names, and SQL statements.
+    2. Drops the temporary table #BuildProcs if it exists.
+    3. Creates a temporary table #BuildProcs with row numbers.
+    4. Iterates through the rows in the temporary table and processes each table to recreate stored procedures.
+    5. Logs the progress and any errors encountered during the execution.
+
+AST:
+Procedure: [rep].[023_bld_Recreate_LoadProcs]
+  Parameters:
+    - @tgt_table_name: VARCHAR(255) = NULL
+  Variables:
+    - @LogProcName: VARCHAR(MAX)
+    - @LogNote: VARCHAR(MAX)
+    - @LogSQL: VARCHAR(MAX)
+    - @SrcSchema: VARCHAR(MAX)
+    - @TgtSchema: VARCHAR(MAX)
+    - @SmartLoad: VARCHAR(MAX)
+    - @LB: VARCHAR(MAX)
+    - @CounterNr: INT
+    - @MaxNr: INT
+    - @sql1: VARCHAR(MAX)
+    - @sql2: VARCHAR(MAX)
+    - @sql2a: VARCHAR(MAX)
+    - @sql2b: VARCHAR(MAX)
+    - @sql2c: VARCHAR(MAX)
+    - @LongSql: VARCHAR(MAX)
+    - @SrcDataset: VARCHAR(MAX)
+    - @TableName: VARCHAR(MAX)
+    - @RoutineNameFull: VARCHAR(MAX)
+    - @RoutineNameShort: VARCHAR(MAX)
+    - @Msg: VARCHAR(MAX)
+  Logic:
+    - Try Block:
+      - Drop temporary table if it exists
+      - Create temporary table with row numbers
+      - Additional logic to recreate stored procedures
+    - Catch Block:
+      - Error handling logic
+
+Mermaid Diagram:
+graph TD
+    A[Start] --> B[Initialize Variables]
+    B --> C{Drop #BuildProcs if exists}
+    C --> D[Create #BuildProcs with row numbers]
+    D --> E{Iterate through rows}
+    E --> F[Process each table to recreate stored procedures]
+    F --> G[Log progress and errors]
+    G --> H[End]
+    C --> I[Error Handling] --> H
+	
 Change log:
 Date					Author				Description
 20220915 00:00			K. Vermeij			Initial version

@@ -6,7 +6,37 @@ CREATE VIEW [bld].[tr_110_FileProperties_010_DatasetSrc] AS
 === Comments =========================================
 
 Description:
-	Get all defined fileproperties and fileformats
+    This view retrieves all defined file properties and file formats. 
+	It includes various attributes related to the files, such as file masks, file systems, and expected file characteristics.
+
+Columns:
+    - BK: The business key of the file property.
+    - Code: The code of the file property.
+    - Description: The description of the file property.
+    - FileMask: The file mask used to identify files.
+    - Filename: The name of the file.
+    - FileSystem: The file system where the file is located.
+    - Folder: The folder where the file is located.
+    - IsPGP: Indicates if the file is PGP encrypted.
+    - ExpectedFileCount: The expected number of files.
+    - ExpectedFileSize: The expected size of the file.
+    - BK_Schedule_FileExpected: The business key of the schedule for expected files.
+    - DateInFilenameFormat: The format of the date in the filename.
+    - DateInFilenameLength: The length of the date in the filename.
+    - DateInFilenameStartPos: The start position of the date in the filename.
+    - DateInFilenameExpression: The expression used to extract the date from the filename.
+
+Example Usage:
+    SELECT * FROM [bld].[tr_110_FileProperties_010_DatasetSrc]
+
+Logic:
+    1. Selects file property definitions from the [rep].[vw_FileProperties] view.
+    2. Joins with other relevant views to get additional file property attributes.
+
+Source Data:
+    - [rep].[vw_FileProperties]: Contains definitions for file properties.
+    - [rep].[vw_FileFormats]: Contains definitions for file formats.
+    - [rep].[vw_Schedule]: Contains schedule information for monitoring purposes.
 	
 Changelog:
 Date		time		Author					Description

@@ -8,7 +8,43 @@ CREATE VIEW [bld].[tr_100_Dataset_020_DatasetTrn] AS
 === Comments =========================================
 
 Description:
-	All Defined Transformation Datasets are selected. 
+    This view selects all defined transformation datasets and includes various attributes related to the datasets. 
+	It is used to prepare the transformation datasets for further processing and deployment.
+
+Columns:
+    - BK: The business key of the dataset.
+    - Code: The code of the dataset.
+    - DatasetName: The name of the dataset.
+    - SchemaName: The name of the schema.
+    - DataSource: The data source of the dataset.
+    - BK_Schema: The business key of the schema.
+    - BK_Group: The business key of the group.
+    - BK_Segment: The business key of the segment.
+    - BK_Bucket: The business key of the bucket.
+    - ShortName: The short name of the dataset.
+    - dwhTargetShortName: The target short name of the dataset in the data warehouse.
+    - Prefix: The prefix of the dataset.
+    - PostFix: The postfix of the dataset.
+    - Description: The description of the dataset.
+    - BK_ContactGroup: The business key of the contact group.
+    - ViewDefinitionContainsBusinessLogic: Indicates if the view definition contains business logic.
+    - ViewDefinition: The definition of the view.
+
+Example Usage:
+    SELECT * FROM [bld].[tr_100_Dataset_020_DatasetTrn]
+
+Logic:
+    1. Selects dataset definitions from the [stg].[DWH_ObjectDefinitions] view.
+    2. Prepares the base dataset information.
+    3. Joins with other relevant views to get additional dataset attributes.
+
+Source Data:
+    - [stg].[DWH_ObjectDefinitions]: Contains object definitions for datasets.
+    - [rep].[vw_Schema]: Defines the schema for datasets, acting as a layer between the dataset and data source.
+    - [rep].[vw_DataSource]: Contains information about data sources.
+    - [rep].[vw_Group]: Grouping sets of datasets, mandatory for defining source and transformation datasets.
+    - [rep].[vw_Segment]: Organizational grouping of publication tables.
+    - [rep].[vw_Bucket]: Defines buckets for organizing datasets.
 	
 Changelog:
 Date		time		Author					Description

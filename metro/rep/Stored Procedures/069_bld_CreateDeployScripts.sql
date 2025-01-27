@@ -1,6 +1,66 @@
 ﻿
 CREATE PROCEDURE [rep].[069_bld_CreateDeployScripts]
 AS
+/*
+Description:
+    This stored procedure creates deployment scripts by checking for errors in the repository definition and generating the necessary scripts if no errors are found.
+
+Parameters:
+    None
+
+Example Usage:
+    exec [rep].[069_bld_CreateDeployScripts]
+
+Procedure Logic:
+    1. Logs the start of the procedure.
+    2. Disables ANSI warnings and sets NOCOUNT ON.
+    3. Checks for errors in the repository definition using the view [bld].[vw_BuildCheck].
+    4. If errors are found, prints the number of errors and selects the error details.
+    5. If no errors are found, prints a message indicating no errors.
+    6. Initializes the current date and prepares for script generation.
+    7. Drops the temporary table #OrderedMarkers if it exists.
+    8. Generates deployment scripts using the defined templates and markers.
+
+AST:
+Procedure: [rep].[069_bld_CreateDeployScripts]
+  Parameters:
+    - None
+  Variables:
+    - @CheckErrorsCount: INT
+    - @CurrentDate: DATETIME2
+    - @CurrentDateVarchar: VARCHAR(16)
+  Logic:
+    - Log the start of the procedure
+    - Disable ANSI warnings and set NOCOUNT ON
+    - Check for errors in the repository definition
+      - If errors are found
+        - Print the number of errors
+        - Select error details
+      - If no errors are found
+        - Print a message indicating no errors
+    - Initialize the current date
+    - Drop temporary table #OrderedMarkers if it exists
+    - Generate deployment scripts using templates and markers
+
+Mermaid Diagram:
+graph TD
+    A[Start] --> B[Log the start of the procedure]
+    B --> C[Disable ANSI warnings and set NOCOUNT ON]
+    C --> D[Check for errors in the repository definition]
+    D --> E{Errors found?}
+    E --> F[Print the number of errors]
+    F --> G[Select error details]
+    E --> H[Print a message indicating no errors]
+    D --> I[Initialize the current date]
+    I --> J{Drop temporary table #OrderedMarkers if it exists}
+    J --> K[Generate deployment scripts using templates and markers]
+    K --> L[End]
+
+Change log:
+Date                    Author              Description
+20220915 00:00          K. Vermeij          Initial version
+*/
+
 EXEC [aud].[proc_Log_Procedure] @LogAction = 'INFO'
 	,@LogNote = 'Build DeployScripts'
 	,@LogProcedure = 'rep.[300_bld_CreateDeployScripts]'

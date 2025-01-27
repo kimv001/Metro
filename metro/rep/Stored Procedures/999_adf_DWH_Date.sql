@@ -4,13 +4,50 @@ CREATE PROCEDURE [rep].[999_adf_DWH_Date] AS
 === Comments =========================================
 
 Description:
-	creates a date table
+    This stored procedure creates a date table with various date-related calculations, including workdays and Easter days.
 
-Copy Paste:
-	Calculate Easter Days
-	Author: Jeffrey Williams
-	https://www.sqlservercentral.com/scripts/calculating-easter-in-sql
-	
+Parameters:
+    None
+
+Example Usage:
+    exec [rep].[999_adf_DWH_Date]
+
+Procedure Logic:
+    1. Sets date and language settings to prevent regional settings from interfering with date interpretation.
+    2. Initializes variables for the start date, number of years, and cutoff date.
+    3. Drops the existing date table [adf].[DWH_Date] if it exists.
+    4. Drops the temporary table ##Easter if it exists.
+    5. Creates a temporary table ##Easter to calculate Easter days.
+    6. Populates the date table [adf].[DWH_Date] with date-related calculations.
+
+AST:
+Procedure: [rep].[999_adf_DWH_Date]
+  Parameters:
+    - None
+  Variables:
+    - @StartDate: DATE
+    - @Years: INT
+    - @CutoffDate: DATE
+    - @startYear: INT
+    - @endYear: INT
+  Logic:
+    - Set date and language settings
+    - Initialize variables
+    - Drop existing date table if it exists
+    - Drop temporary table ##Easter if it exists
+    - Create temporary table ##Easter
+    - Populate date table with date-related calculations
+
+Mermaid Diagram:
+graph TD
+    A[Start] --> B[Set date and language settings]
+    B --> C[Initialize variables]
+    C --> D{Drop existing date table if it exists}
+    D --> E{Drop temporary table ##Easter if it exists}
+    E --> F[Create temporary table ##Easter]
+    F --> G[Populate date table with date-related calculations]
+    G --> H[End]
+
 Changelog:
 Date		time		Author					Description
 20220804	0000		K. Vermeij				Initial
@@ -31,7 +68,7 @@ DECLARE @CutoffDate DATE	= DATEADD(DAY, -1, DATEADD(YEAR, @Years, @StartDate));	
 DECLARE @startYear	INT		= DATEPART(YEAR, @StartDate)
 DECLARE @endYear	INT		= DATEPART(YEAR, @CutoffDate)
 
-
+-- Drop existing date table if it exists
 IF OBJECT_ID('adf.DWH_date', 'U') IS NOT NULL
 Drop Table [adf].[DWH_Date]
 				-- 

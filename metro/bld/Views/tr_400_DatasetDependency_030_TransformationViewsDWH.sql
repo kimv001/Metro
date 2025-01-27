@@ -7,7 +7,30 @@ CREATE VIEW [bld].[tr_400_DatasetDependency_030_TransformationViewsDWH] AS
 === Comments =========================================
 
 Description:
-	Dependencies gathered from the transaformation views in the Data Warehouse will be added to the DatasetDependencies.
+    Dependencies gathered from the transformation views in the Data Warehouse will be added to the DatasetDependencies. This view builds up dataset dependencies from source system information schema dependencies.
+
+Columns:
+    - BK: The business key of the dependency.
+    - BK_PARENT: The business key of the parent dataset.
+    - BK_CHILD: The business key of the child dataset.
+    - CODE: The code of the dataset.
+    - TABLETYPEPARENT: The type of the parent dataset.
+    - TABLETYPECHILD: The type of the child dataset.
+    - DEPENDENCYTYPE: The type of the dependency (SrcToTgt).
+
+Example Usage:
+    SELECT * FROM [bld].[tr_400_DatasetDependency_030_TransformationViewsDWH]
+
+Logic:
+    1. Selects dependencies from the [stg].[DWH_ReferencingObjects] view.
+    2. Joins with the [bld].[vw_Dataset] view to get dataset information.
+    3. Left joins with the [bld].[vw_DatasetDependency] view to exclude existing dependencies.
+    4. Selects and formats the final dataset dependencies.
+
+Source Data:
+    - [stg].[DWH_ReferencingObjects]: Contains information about referencing objects in the data warehouse.
+    - [bld].[vw_Dataset]: Contains dataset definitions.
+    - [bld].[vw_DatasetDependency]: Contains existing dataset dependencies.
 	
 	
 Changelog:

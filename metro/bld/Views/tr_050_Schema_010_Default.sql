@@ -5,7 +5,51 @@ CREATE VIEW [bld].[tr_050_Schema_010_Default] AS
 === Comments =========================================
 
 Description:
-	Get all unique properties of a Schema
+    This view provides a list of schemas and their associated metadata from various source views. It includes information about the schema, data source, linked service, and other related attributes. This view is used to get all unique properties of a schema.
+
+Columns:
+    - BK: The business key of the schema.
+    - Code: The code of the schema.
+    - Name: The name of the schema.
+    - BK_Schema: The business key of the schema.
+    - BK_Layer: The business key of the layer.
+    - BK_DataSource: The business key of the data source.
+    - BK_LinkedService: The business key of the linked service.
+    - SchemaCode: The code of the schema.
+    - SchemaName: The name of the schema.
+    - DataSourceCode: The code of the data source.
+    - DataSourceName: The name of the data source.
+    - BK_DataSourceType: The business key of the data source type.
+    - DataSourceTypeCode: The code of the data source type.
+    - DataSourceTypeName: The name of the data source type.
+    - LayerCode: The code of the layer.
+    - LayerName: The name of the layer.
+    - LayerOrder: The order of the layer.
+    - ProcessOrderLayer: The process order of the layer.
+    - ProcessParallel: Indicates if the process is parallel.
+    - isDWH: Indicates if the schema is part of the data warehouse.
+    - isSRC: Indicates if the schema is a source.
+    - isTGT: Indicates if the schema is a target.
+    - IsREP: Indicates if the schema is a repository.
+    - CreateDummies: Indicates if dummy data should be created.
+    - LinkedServiceCode: The code of the linked service.
+    - LinkedServiceName: The name of the linked service.
+
+Example Usage:
+    SELECT * FROM [bld].[tr_050_Schema_010_Default]
+
+Logic:
+    1. Selects schema data from the base view.
+    2. Joins with the reference type view to get data source type information.
+    3. Joins with the linked service view to get linked service information.
+    4. Filters and selects the required columns.
+
+Source Data:
+    - [rep].[vw_RefType]: Contains reference types used in the data warehouse.
+    - [rep].[vw_LinkedService]: Contains information about linked services required for connecting to source or target systems.
+    - [rep].[vw_Schema]: Defines the schema for datasets, acting as a layer between the dataset and data source.
+    - [rep].[vw_DataSource]: Contains information about data sources.
+    - [rep].[vw_Layer]: Defines the purpose of a data source schema (source, DWH, target system).
 	
 Changelog:
 Date		time		Author					Description

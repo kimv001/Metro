@@ -1,13 +1,28 @@
 ﻿
 CREATE PROCEDURE [rep].[010_rep_Recreate_RepViews] AS
 BEGIN
-    /*
-    Developed by:            metro
-    Description:             (Re)Create views on the [stg_rep] tables with meta columns: 
-                             - mta_BK        (Stores the Businesskey of the table)
-                             - mta_BKH       (Stores the hash of the Businesskey of the table)
-                             - mta_RH        (Stores the hash of the full row)
-                             - mta_RowNum    actually only needed for the view [rep].[vw_XlsTabsToLoad] so i could make an easy loop in this procedure
+/*
+Developed by:            metro
+
+Description:
+    This stored procedure (re)creates views on the [stg_rep] tables with meta columns:
+    - mta_BK: Stores the Businesskey of the table
+    - mta_BKH: Stores the hash of the Businesskey of the table
+    - mta_RH: Stores the hash of the full row
+    - mta_RowNum: Actually only needed for the view [rep].[vw_XlsTabsToLoad] to facilitate an easy loop in this procedure
+
+Parameters:
+    None
+
+Example Usage:
+    exec [rep].[010_rep_Recreate_RepViews]
+
+Procedure Logic:
+    1. Initializes variables for logging, schema names, and SQL statements.
+    2. Drops the temporary table #XlsTabsToLoad if it exists.
+    3. Creates a temporary table #XlsTabsToLoad with row numbers.
+    4. Iterates through the rows in the temporary table and processes each table to create views with meta columns.
+    5. Logs the progress and any errors encountered during the execution.
 
     Change log:
     Date                    Author              Description

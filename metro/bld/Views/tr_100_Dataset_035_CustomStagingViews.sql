@@ -1,21 +1,47 @@
-﻿
-
-
-
-
-
-
-
-
-
-
-CREATE VIEW [bld].[tr_100_Dataset_035_CustomStagingViews] AS 
+﻿CREATE VIEW [bld].[tr_100_Dataset_035_CustomStagingViews] AS 
 
 /* 
 === Comments =========================================
 
 Description:
-	Custom views are added to the repositry build to determine dependencies
+    Custom views are added to the repository build to determine dependencies.
+
+Columns:
+    - BK: The business key of the dataset.
+    - Code: The code of the dataset.
+    - DatasetName: The name of the dataset.
+    - SchemaName: The name of the schema.
+    - LayerName: The name of the layer.
+    - LayerOrder: The order of the layer.
+    - DataSource: The data source of the dataset.
+    - BK_Schema: The business key of the schema.
+    - BK_Group: The business key of the group.
+    - ShortName: The short name of the dataset.
+    - dwhTargetShortName: The target short name of the dataset in the data warehouse.
+    - Description: The description of the dataset.
+    - BK_Flow: The business key of the flow.
+    - Timestamp: The timestamp of the dataset.
+    - BusinessDate: The business date of the dataset.
+    - WhereFilter: The where filter for the dataset.
+
+Example Usage:
+    SELECT * FROM [bld].[tr_100_Dataset_035_CustomStagingViews]
+
+Logic:
+    1. Selects dataset definitions from the [stg].[DWH_ObjectDefinitions] view.
+    2. Prepares the base dataset information.
+    3. Joins with other relevant views to get additional dataset attributes.
+    4. Generates custom staging views based on the defined flows.
+
+Source Data:
+    - [stg].[DWH_ObjectDefinitions]: Contains object definitions for datasets.
+    - [rep].[vw_Schema]: Defines the schema for datasets, acting as a layer between the dataset and data source.
+    - [rep].[vw_DataSource]: Contains information about data sources.
+    - [rep].[vw_Group]: Grouping sets of datasets, mandatory for defining source and transformation datasets.
+    - [rep].[vw_Segment]: Organizational grouping of publication tables.
+    - [rep].[vw_Bucket]: Defines buckets for organizing datasets.
+    - [rep].[vw_Flow]: Defines the flows used in the data warehouse.
+    - [rep].[vw_FlowLayer]: Defines the actual flow steps (load pattern).
 	
 Changelog:
 Date		time		Author					Description

@@ -13,8 +13,31 @@ CREATE VIEW [bld].[tr_230_Attribute_030_AddMtaAttributes] AS
 === Comments =========================================
 
 Description:
-	creates mta_attributes for all datasets
-	
+    Creates MTA attributes for all datasets.
+
+Columns:
+    - BK_Dataset: The business key of the dataset.
+    - DatasetName: The name of the dataset.
+    - Code: The code of the dataset.
+    - BK_Schema: The business key of the schema.
+    - FlowOrder: The order of the flow.
+    - BK_RefType_ObjectType: The business key of the reference type object type.
+    - BK_RefType_RepositoryStatus: The business key of the repository status.
+    - Max_Ordinal: The maximum ordinal position of the attribute.
+
+Example Usage:
+    SELECT * FROM [bld].[tr_230_Attribute_030_AddMtaAttributes]
+
+Logic:
+    1. Selects the maximum ordinal position for each dataset.
+    2. Joins with other relevant views to get additional dataset attributes.
+    3. Creates MTA attributes for all datasets.
+
+Source Data:
+    - [bld].[vw_Attribute]: Contains attribute definitions for datasets.
+    - [bld].[vw_Dataset]: Contains dataset definitions.
+    - [bld].[vw_Schema]: Defines the schema for datasets, acting as a layer between the dataset and data source.
+    - [bld].[vw_RefType]: Contains reference types used in the data warehouse.
 	
 Changelog:
 Date		time		Author					Description

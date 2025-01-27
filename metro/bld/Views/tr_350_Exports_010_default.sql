@@ -6,7 +6,52 @@ CREATE VIEW [bld].[tr_350_Exports_010_default] AS
 === Comments =========================================
 
 Description:
-	build up export definitions
+    Build up export definitions.
+
+Columns:
+    - bk: The business key of the export.
+    - code: The code of the export.
+    - export_name: The name of the export.
+    - bk_contactgroup: The business key of the contact group.
+    - bk_dataset: The business key of the dataset.
+    - src_datasetname: The name of the source dataset.
+    - src_schema: The schema of the source dataset.
+    - src_dataset: The source dataset.
+    - src_shortname: The short name of the source dataset.
+    - src_group: The group of the source dataset.
+    - src_layer: The layer of the source dataset.
+    - src_datasettype: The type of the source dataset.
+    - bk_schedule: The business key of the schedule.
+    - bk_schema: The business key of the schema.
+    - container: The container for the export.
+    - folder: The folder for the export.
+    - filename: The filename for the export.
+    - datetime: The datetime for the export.
+    - bk_fileformat: The business key of the file format.
+    - where_filter: The where filter for the export.
+    - order_by: The order by clause for the export.
+    - split_by: The split by clause for the export.
+    - ff_name: The name of the file format.
+    - ff_fileformat: The file format.
+    - ff_columndelimiter: The column delimiter for the file format.
+    - ff_rowdelimiter: The row delimiter for the file format.
+    - ff_quotecharacter: The quote character for the file format.
+    - ff_compressionlevel: The compression level for the file format.
+
+Example Usage:
+    SELECT * FROM [bld].[tr_350_Exports_010_default]
+
+Logic:
+    1. Selects export definitions from the [rep].[vw_Export] view.
+    2. Joins with the [rep].[vw_Dataset] view to get dataset information.
+    3. Joins with the [rep].[vw_Schema] view to get schema information.
+    4. Joins with the [rep].[vw_FileFormat] view to get file format information.
+
+Source Data:
+    - [rep].[vw_Export]: Contains definitions for exports.
+    - [rep].[vw_Dataset]: Contains dataset definitions.
+    - [rep].[vw_Schema]: Defines the schema for datasets, acting as a layer between the dataset and data source.
+    - [rep].[vw_FileFormat]: Contains definitions for file formats.
 	
 Changelog:
 Date		time		Author					Description

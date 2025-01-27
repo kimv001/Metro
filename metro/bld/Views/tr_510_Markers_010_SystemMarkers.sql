@@ -9,8 +9,34 @@ CREATE VIEW [bld].[tr_510_Markers_010_SystemMarkers] AS
 === Comments =========================================
 
 Description:
-	creates all system markers per dataset
-	
+    This view generates system markers for all datasets. These markers are used to dynamically replace values in templates based on the dataset and system configurations.
+
+Columns:
+    - BK: The business key of the marker.
+    - BK_DATASET: The business key of the dataset.
+    - CODE: The code of the dataset.
+    - MARKERTYPE: The type of the marker (System).
+    - MARKERDESCRIPTION: The description of the marker.
+    - MARKER: The marker placeholder.
+    - MARKERVALUE: The value of the marker.
+    - Pre: Indicates if the marker is a pre-processing marker.
+    - Post: Indicates if the marker is a post-processing marker.
+    - MTA_RECTYPE: The record type for the marker.
+    - MARKERVERSION: The version of the marker.
+
+Example Usage:
+    SELECT * FROM [bld].[tr_510_Markers_010_SystemMarkers]
+
+Logic:
+    1. Selects marker definitions from the [rep].[vw_Marker] view.
+    2. Cross joins with the [bld].[vw_Dataset] view to apply markers to all datasets.
+    3. Joins with the [bld].[vw_MarkersSmartLoad] view to filter markers based on changes in the source records.
+
+Source Data:
+    - [rep].[vw_Marker]: Contains definitions for markers.
+    - [bld].[vw_Dataset]: Contains dataset definitions.
+    - [bld].[vw_MarkersSmartLoad]: Contains information about changes in source records for smart loading.
+
 	
 Changelog:
 Date		time		Author					Description
