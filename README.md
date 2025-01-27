@@ -99,6 +99,8 @@ All ADF tables and views are used to copy the metadata to the Data Warehouse tar
 
 ## Transformation Views
 
+Transformation views play a crucial role in the Metro Data Warehouse Generator by preparing and transforming the raw metadata into a structured format that can be used to generate scripts and build tables. These views are defined on the staging views in the [bld] schema and contain the logic necessary to process and organize the data.
+
 ### tr_010_RefType_010_Default
 - **Description:** Provides default reference type definitions used across the data warehouse.
 - **Source Data:** 
