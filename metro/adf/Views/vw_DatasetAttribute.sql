@@ -1,6 +1,8 @@
-﻿ CREATE VIEW adf.vw_DatasetAttribute AS 
+﻿
 
-SELECT
+CREATE view [adf].[vw_DatasetAttribute] as 
+
+select
 	 [attribute_id]					= src.[AttributeId]
 	,[bk_attribute]					= src.[BK]
 	,[code]							= src.[Code]
@@ -54,9 +56,8 @@ SELECT
 	--,[FixedSchemaDataType]
 	--,[OrgMappedDataType]
 
-FROM [bld].[vw_Attribute] src
-JOIN bld.vw_RefType rt ON rt.bk = src.[BK_RefType_RepositoryStatus]
-CROSS JOIN [adf].[vw_SDTAP]  env
-WHERE 1=1
---   and isnull(src.[Expression],'') != ''
---  and src.[SrcName] != [attributename]
+from [bld].[vw_Attribute] src
+join bld.vw_RefType rt on rt.bk = src.[BK_RefType_RepositoryStatus]
+ join [adf].[vw_SDTAP]  env  on src.[BK_RefType_RepositoryStatus] >= env.[BK_RepositoryStatus]
+
+  where env.RepositoryStatusCode > -2

@@ -7,6 +7,8 @@
 
 
 
+
+
 CREATE VIEW [bld].[tr_210_AttributeSmartLoad_010_Default] AS 
 /* 
 === Comments =========================================
@@ -39,7 +41,7 @@ WITH CREATEDATESRC AS (
 	--order by 2 desc
 	UNION ALL
 
-	SELECT A.CODE, A.MTA_CREATEDATE , 'vw_Attribute' AS SOURCE
+	SELECT  A.CODE, A.MTA_CREATEDATE , 'vw_Attribute' AS SOURCE
 	FROM [bld].[vw_Attribute] A
 	WHERE A.MTA_SOURCE != '[bld].[tr_230_Attribute_030_AddMtaAttributes]'
 
@@ -59,6 +61,7 @@ WITH CREATEDATESRC AS (
 	WHERE M.MTA_SOURCE = '[bld].[tr_230_Attribute_030_AddMtaAttributes]'
 	GROUP BY M.CODE
 )
+, final as (
 -- List of Codes that are possibly changed
 SELECT DISTINCT 
 	BK					= COALESCE(S.CODE, T.CODE)
@@ -76,3 +79,6 @@ SELECT DISTINCT
 FROM MAXCREATEDATESRC S
 --left join CreateDateTgt T on S.Code = T.Code and S.mta_CreateDate> T.mta_CreateDate
 FULL OUTER JOIN CREATEDATETGT T ON T.CODE = S.CODE
+)
+select * from final
+--where RECTYPE > -99

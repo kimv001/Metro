@@ -1,144 +1,87 @@
 ﻿
-CREATE PROCEDURE [rep].[069_bld_CreateDeployScripts]
-AS
-/*
-Description:
-    This stored procedure creates deployment scripts by checking for errors in the repository definition and generating the necessary scripts if no errors are found.
-
-Parameters:
-    None
-
-Example Usage:
-    exec [rep].[069_bld_CreateDeployScripts]
-
-Procedure Logic:
-    1. Logs the start of the procedure.
-    2. Disables ANSI warnings and sets NOCOUNT ON.
-    3. Checks for errors in the repository definition using the view [bld].[vw_BuildCheck].
-    4. If errors are found, prints the number of errors and selects the error details.
-    5. If no errors are found, prints a message indicating no errors.
-    6. Initializes the current date and prepares for script generation.
-    7. Drops the temporary table #OrderedMarkers if it exists.
-    8. Generates deployment scripts using the defined templates and markers.
-
-AST:
-Procedure: [rep].[069_bld_CreateDeployScripts]
-  Parameters:
-    - None
-  Variables:
-    - @CheckErrorsCount: INT
-    - @CurrentDate: DATETIME2
-    - @CurrentDateVarchar: VARCHAR(16)
-  Logic:
-    - Log the start of the procedure
-    - Disable ANSI warnings and set NOCOUNT ON
-    - Check for errors in the repository definition
-      - If errors are found
-        - Print the number of errors
-        - Select error details
-      - If no errors are found
-        - Print a message indicating no errors
-    - Initialize the current date
-    - Drop temporary table #OrderedMarkers if it exists
-    - Generate deployment scripts using templates and markers
-
-Mermaid Diagram:
-graph TD
-    A[Start] --> B[Log the start of the procedure]
-    B --> C[Disable ANSI warnings and set NOCOUNT ON]
-    C --> D[Check for errors in the repository definition]
-    D --> E{Errors found?}
-    E --> F[Print the number of errors]
-    F --> G[Select error details]
-    E --> H[Print a message indicating no errors]
-    D --> I[Initialize the current date]
-    I --> J{Drop temporary table #OrderedMarkers if it exists}
-    J --> K[Generate deployment scripts using templates and markers]
-    K --> L[End]
-
-Change log:
-Date                    Author              Description
-20220915 00:00          K. Vermeij          Initial version
-*/
-
-EXEC [aud].[proc_Log_Procedure] @LogAction = 'INFO'
+CREATE procedure [rep].[069_bld_CreateDeployScripts]
+as
+exec [aud].[proc_Log_Procedure] @LogAction = 'INFO'
 	,@LogNote = 'Build DeployScripts'
-	,@LogProcedure = 'rep.[300_bld_CreateDeployScripts]'
+	,@LogProcedure = 'rep.[069_bld_CreateDeployScripts]'
 	,@LogSQL = 'Insert Into [bld].[DeployScripts]'
 	,@LogRowCount = null;
 
-SET ANSI_WARNINGS OFF;
-SET NOCOUNT ON;
+set ansi_warnings off;
+set nocount on;
 
-DECLARE @CheckErrorsCount int
+declare @CheckErrorsCount int
 
-SELECT @CheckErrorsCount = ISNULL(count(''), 0)
-FROM bld.vw_BuildCheck bc
+select @CheckErrorsCount = ISNULL(count(''), 0)
+from bld.vw_BuildCheck bc
 
-IF @CheckErrorsCount > 0
-BEGIN
-	PRINT '-- ' + CAST(@CheckErrorsCount AS varchar(5)) + ' errors found in repository definition, see Result set'
+if @CheckErrorsCount > 0
+begin
+	print '-- ' + cast(@CheckErrorsCount as varchar(5)) + ' errors found in repository definition, see Result set'
 
-	SELECT *
-	FROM bld.vw_BuildCheck bc
-END
+	select *
+	from bld.vw_BuildCheck bc
+end
 
-IF @CheckErrorsCount < 1
-BEGIN
-	PRINT '-- No errors found in repository definition'
-	PRINT '--'
-END
+if @CheckErrorsCount < 1
+begin
+	print '-- No errors found in repository definition'
+	print '--'
+end
 
-DECLARE @CurrentDate datetime2 = CAST(getutcdate() AS datetime2)
+--declare @CurrentDate datetime2 = cast(getutcdate() as datetime2)
+--declare @CurrentDateVarchar varchar(16) = cast(@CurrentDate as varchar(16))
+
+DECLARE @CurrentDate datetime2 = SYSUTCDATETIME() AT TIME ZONE 'UTC' AT TIME ZONE 'W. Europe Standard Time'
 DECLARE @CurrentDateVarchar varchar(16) = CAST(@CurrentDate AS varchar(16))
 
-IF OBJECT_ID('tempdb.dbo.#OrderedMarkers', 'U') IS NOT null
-	DROP TABLE #OrderedMarkers;;
+if OBJECT_ID('tempdb.dbo.#OrderedMarkers', 'U') is not null
+	drop table #OrderedMarkers;;
 
-WITH GeneratorMarkersPost
-AS (
-	SELECT BK_Template = t.bk
+with GeneratorMarkersPost
+as (
+	select BK_Template = t.bk
 		,Marker = '<!<TemplateName>>'
-		,MarkerValue = CAST(t.TemplateName AS varchar(MAX))
-	FROM bld.vw_Template t
+		,MarkerValue = cast(t.TemplateName as varchar(max))
+	from bld.vw_Template t
 	
-	UNION ALL
+	union all
 	
-	SELECT BK_Template = t.bk
+	select BK_Template = t.bk
 		,Marker = '<!<TemplateDesc>>'
-		,MarkerValue = CAST(isnull(t.TemplateDecription, 'No description available') AS varchar(MAX))
-	FROM bld.vw_Template t
+		,MarkerValue = cast(isnull(t.TemplateDecription, 'No description available') as varchar(max))
+	from bld.vw_Template t
 	
-	UNION ALL
+	union all
 	
-	SELECT BK_Template = t.bk
+	select BK_Template = t.bk
 		,Marker = '<!<TemplateVersionNum>>'
-		,MarkerValue = CAST(t.templateversion AS varchar(MAX))
-	FROM bld.vw_Template t
+		,MarkerValue = cast(t.templateversion as varchar(max))
+	from bld.vw_Template t
 	
-	UNION ALL
+	union all
 	
-	SELECT BK_Template = t.bk
+	select BK_Template = t.bk
 		,Marker = '<!<CurrentUser>>'
-		,MarkerValue = CAST(isnull(ORIGINAL_LOGIN(), 'metro automation') AS varchar(MAX))
-	FROM bld.vw_Template t
+		,MarkerValue = cast(isnull(ORIGINAL_LOGIN(), 'metro automation') as varchar(max))
+	from bld.vw_Template t
 	
-	UNION ALL
+	union all
 	
-	SELECT BK_Template = t.bk
+	select BK_Template = t.bk
 		,Marker = '<!<GeneratedAt>>'
-		,MarkerValue = CAST(@CurrentDateVarchar AS varchar(MAX))
-	FROM bld.vw_Template t
+		,MarkerValue = cast(@CurrentDateVarchar as varchar(max))
+	from bld.vw_Template t
 	)
 	,GeneratorMarkers
-AS (
-	SELECT DISTINCT src.bk
+as (
+	select distinct src.bk
 		,src.Code
 		,src.BK_Dataset
 		,gm.Marker
 		,gm.MarkerValue
-		,Script = CAST(t.Script AS varchar(MAX))
-		,TGT_ObjectName = CAST(t.ObjectName AS varchar(MAX))
+		,Script = cast(t.Script as varchar(max))
+		,TGT_ObjectName = cast(t.ObjectName as varchar(max))
 		,t.ObjectType
 		,t.ObjectTypeDeployOrder
 		,BK_Template = t.BK
@@ -149,19 +92,19 @@ AS (
 		,MarkerType = 'System'
 		,Pre = 0
 		,Post = 1
-	FROM bld.vw_DatasetTemplates src
-	JOIN bld.vw_Template t ON t.BK = src.BK_Template
-	JOIN GeneratorMarkersPost gm ON gm.BK_Template = t.bk
+	from bld.vw_DatasetTemplates src
+	join bld.vw_Template t on t.BK = src.BK_Template
+	join GeneratorMarkersPost gm on gm.BK_Template = t.bk
 	)
 	,AllMarkers
-AS (
-	SELECT src.BK
+as (
+	select src.BK
 		,m.Code
 		,m.BK_Dataset
-		,Marker = CAST(m.Marker AS varchar(MAX))
-		,MarkerValue = CAST(isnull(m.MarkerValue, '') AS varchar(MAX)) --, pre=cast(m.pre as int), post=cast(m.post as int)
-		,Script = CAST(t.Script AS varchar(MAX))
-		,TGT_ObjectName = CAST(t.ObjectName AS varchar(MAX))
+		,Marker = cast(m.Marker as varchar(max))
+		,MarkerValue = cast(isnull(m.MarkerValue, '') as varchar(max)) --, pre=cast(m.pre as int), post=cast(m.post as int)
+		,Script = cast(t.Script as varchar(max))
+		,TGT_ObjectName = cast(t.ObjectName as varchar(max))
 		,t.ObjectType
 		,t.ObjectTypeDeployOrder
 		,BK_Template = t.BK
@@ -172,14 +115,14 @@ AS (
 		,m.MarkerType
 		,m.Pre
 		,m.Post
-	FROM bld.vw_DatasetTemplates src
-	LEFT JOIN bld.vw_Markers m ON M.BK_Dataset = src.BK_Dataset
-	LEFT JOIN bld.vw_Template t ON t.BK = src.BK_Template
-	WHERE 1 = 1
+	from bld.vw_DatasetTemplates src
+	left join bld.vw_Markers m on M.BK_Dataset = src.BK_Dataset
+	left join bld.vw_Template t on t.BK = src.BK_Template
+	where 1 = 1
 	
-	UNION ALL
+	union all
 	
-	SELECT src.bk
+	select src.bk
 		,src.Code
 		,src.BK_Dataset
 		,src.Marker
@@ -196,14 +139,14 @@ AS (
 		,src.MarkerType
 		,src.Pre
 		,src.Post
-	FROM GeneratorMarkers src
+	from GeneratorMarkers src
 	)
-SELECT HNR = DENSE_RANK() OVER (
-		ORDER BY CAST(src.ObjectTypeDeployOrder AS int) ASC
-			,src.bk ASC
+select HNR = DENSE_RANK() over (
+		order by cast(src.ObjectTypeDeployOrder as int) asc
+			,src.bk asc
 		)
-	,NR = ROW_NUMBER() OVER (
-		PARTITION BY src.bk ORDER BY src.bk ASC
+	,NR = ROW_NUMBER() over (
+		partition by src.bk order by src.bk asc
 		)
 	,src.BK
 	,src.BK_Dataset
@@ -222,63 +165,65 @@ SELECT HNR = DENSE_RANK() OVER (
 	,src.MarkerType
 	,src.Pre
 	,src.Post
-	,RecType = CAST(sl.RecType AS int)
-INTO #OrderedMarkers
-FROM AllMarkers src
-JOIN bld.vw_DeployScriptsSmartLoad sl ON sl.BK = src.BK_Dataset
-	AND CAST(sl.RecType AS int) > - 1
-WHERE 1 = 1
+	,RecType = cast(sl.RecType as int)
+into #OrderedMarkers
+from AllMarkers src
+-- adjusted KV
+--join bld.vw_DeployScriptsSmartLoad sl on sl.BK = src.BK_Dataset
+join bld.vw_DeployScriptsSmartLoad sl on sl.code = src.code
+	and cast(sl.RecType as int) > - 1
+where 1 = 1
 
-CREATE CLUSTERED INDEX IDX_C_ID_OrderedMarkers ON #OrderedMarkers (
+create clustered index IDX_C_ID_OrderedMarkers on #OrderedMarkers (
 	HNR
 	,NR
 	,BK
 	,Code
 	);
 
-PRINT '--   Build DeployScripts: The Metro Magic ... Replace the markers in the templates ' + CONVERT(varchar(20), getdate(), 121)
+print '--   Build DeployScripts: The Metro Magic ... Replace the markers in the templates ' + convert(varchar(20), getdate(), 121)
 
 -- Here comes even more fun... fill in the marker value into the Template markers
-DECLARE @Script varchar(MAX)
-	,@PreScript varchar(MAX)
-	,@PostScript varchar(MAX)
-	,@BK_Object varchar(MAX)
-	,@Code varchar(MAX)
-	,@BK_Dataset varchar(MAX)
-	,@ObjectType varchar(MAX)
-	,@ObjectTypeDeployOrder varchar(MAX)
-	,@BK_Template varchar(MAX)
-	,@Marker varchar(MAX)
-	,@MarkerValue varchar(MAX)
-	,@TGT_ObjectName varchar(MAX)
-	,@RecType varchar(MAX)
-	,@TemplateName varchar(MAX)
-	,@TemplateType varchar(MAX)
-	,@ScriptLanguageCode varchar(MAX)
-	,@ScriptLanguage varchar(MAX)
+declare @Script varchar(max)
+	,@PreScript varchar(max)
+	,@PostScript varchar(max)
+	,@BK_Object varchar(max)
+	,@Code varchar(max)
+	,@BK_Dataset varchar(max)
+	,@ObjectType varchar(max)
+	,@ObjectTypeDeployOrder varchar(max)
+	,@BK_Template varchar(max)
+	,@Marker varchar(max)
+	,@MarkerValue varchar(max)
+	,@TGT_ObjectName varchar(max)
+	,@RecType varchar(max)
+	,@TemplateName varchar(max)
+	,@TemplateType varchar(max)
+	,@ScriptLanguageCode varchar(max)
+	,@ScriptLanguage varchar(max)
 --	@nl AS VARCHAR(max) = CHAR(13) + CHAR(10),	 -- To do: implement this in de Script replacement. The generated code wil be more readible.
 --	@GO AS VARCHAR(max) = CHAR(13) + CHAR(10)+';'+CHAR(13) + CHAR(10)+'GO'+CHAR(13) + CHAR(10)+';'+CHAR(13) + CHAR(10) --- Makes it more Synapse Proof
 -- Prepare the Loop (the total Selection list)
-DECLARE @MainCounter int
+declare @MainCounter int
 	,@MaxId int
 
-SELECT @MainCounter = min(HNR)
+select @MainCounter = min(HNR)
 	,@MaxId = max(HNR)
-FROM #OrderedMarkers
+from #OrderedMarkers
 
 -- Start the Main Loop (By Object, By Template)
-WHILE (
-		@MainCounter IS NOT null
-		AND @MainCounter <= @MaxId
+while (
+		@MainCounter is not null
+		and @MainCounter <= @MaxId
 		)
-BEGIN
+begin
 	-- Prepare the Loop in the Loop ( this one runs per DatasetId, per TemplateId and replaces all the markers )
-	DECLARE @PreMarkerCounterObj int
-	DECLARE @MarkerCounterObj int
-	DECLARE @PostMarkerCounterObj int
-	DECLARE @MaxObjId int
+	declare @PreMarkerCounterObj int
+	declare @MarkerCounterObj int
+	declare @PostMarkerCounterObj int
+	declare @MaxObjId int
 
-	SELECT @MarkerCounterObj = min(NR)
+	select @MarkerCounterObj = min(NR)
 		,@MaxObjId = max(NR)
 		,@BK_Dataset = om.BK_Dataset
 		,@BK_Object = om.BK
@@ -292,9 +237,9 @@ BEGIN
 		,@ObjectType = om.ObjectType
 		,@ObjectTypeDeployOrder = om.ObjectTypeDeployOrder
 		,@RecType = om.RecType
-	FROM #OrderedMarkers om
-	WHERE om.HNR = @MainCounter
-	GROUP BY om.BK
+	from #OrderedMarkers om
+	where om.HNR = @MainCounter
+	group by om.BK
 		,om.BK_Dataset
 		,om.Code
 		,om.TGT_ObjectName
@@ -307,66 +252,66 @@ BEGIN
 		,om.ObjectTypeDeployOrder
 		,om.RecType
 
-	SET @PreMarkerCounterObj = @MarkerCounterObj
-	SET @PostMarkerCounterObj = @MarkerCounterObj
+	set @PreMarkerCounterObj = @MarkerCounterObj
+	set @PostMarkerCounterObj = @MarkerCounterObj
 
 	-- Replace System Markers which are defined als [Pre]=1
-	WHILE (
-			@PreMarkerCounterObj IS NOT null
-			AND @PreMarkerCounterObj <= @MaxObjId
+	while (
+			@PreMarkerCounterObj is not null
+			and @PreMarkerCounterObj <= @MaxObjId
 			)
-	BEGIN
-		SELECT @PreScript = replace(CAST(@PreScript AS varchar(MAX)), CAST(om.marker AS varchar(MAX)), CAST(om.MarkerValue AS varchar(MAX)))
-		FROM #OrderedMarkers om
-		WHERE 1 = 1
-			AND om.MarkerType = 'System'
-			AND CAST(om.Pre AS int) = 1
-			AND om.HNR = @MainCounter
+	begin
+		select @PreScript = replace(cast(@PreScript as varchar(max)), cast(om.marker as varchar(max)), cast(om.MarkerValue as varchar(max)))
+		from #OrderedMarkers om
+		where 1 = 1
+			and om.MarkerType = 'System'
+			and cast(om.Pre as int) = 1
+			and om.HNR = @MainCounter
 
-		SET @PreMarkerCounterObj = @PreMarkerCounterObj + 1
-	END
+		set @PreMarkerCounterObj = @PreMarkerCounterObj + 1
+	end
 
-	SET @Script = @PreScript
+	set @Script = @PreScript
 
-	WHILE (
-			@MarkerCounterObj IS NOT null
-			AND @MarkerCounterObj <= @MaxObjId
+	while (
+			@MarkerCounterObj is not null
+			and @MarkerCounterObj <= @MaxObjId
 			)
-	BEGIN
-		SELECT @Script = replace(CAST(@Script AS varchar(MAX)), CAST(om.marker AS varchar(MAX)), CAST(om.MarkerValue AS varchar(MAX)))
-			,@TGT_ObjectName = replace(CAST(@TGT_ObjectName AS varchar(MAX)), CAST(om.marker AS varchar(MAX)), CAST(om.MarkerValue AS varchar(MAX)))
-		FROM #OrderedMarkers om
-		WHERE 1 = 1
-			AND om.MarkerType != 'System'
-			AND om.HNR = @MainCounter
+	begin
+		select @Script = replace(cast(@Script as varchar(max)), cast(om.marker as varchar(max)), cast(om.MarkerValue as varchar(max)))
+			,@TGT_ObjectName = replace(cast(@TGT_ObjectName as varchar(max)), cast(om.marker as varchar(max)), cast(om.MarkerValue as varchar(max)))
+		from #OrderedMarkers om
+		where 1 = 1
+			and om.MarkerType != 'System'
+			and om.HNR = @MainCounter
 
-		SET @MarkerCounterObj = @MarkerCounterObj + 1
-	END
+		set @MarkerCounterObj = @MarkerCounterObj + 1
+	end
 
-	SET @PostScript = @Script
+	set @PostScript = @Script
 
-	WHILE (
-			@PostMarkerCounterObj IS NOT null
-			AND @PostMarkerCounterObj <= @MaxObjId
+	while (
+			@PostMarkerCounterObj is not null
+			and @PostMarkerCounterObj <= @MaxObjId
 			)
-	BEGIN
-		SELECT @PostScript = replace(CAST(@PostScript AS varchar(MAX)), CAST(om.marker AS varchar(MAX)), CAST(om.MarkerValue AS varchar(MAX)))
-		FROM #OrderedMarkers om
-		WHERE 1 = 1
-			AND CAST(om.Post AS int) = 1
-			AND om.HNR = @MainCounter
+	begin
+		select @PostScript = replace(cast(@PostScript as varchar(max)), cast(om.marker as varchar(max)), cast(om.MarkerValue as varchar(max)))
+		from #OrderedMarkers om
+		where 1 = 1
+			and cast(om.Post as int) = 1
+			and om.HNR = @MainCounter
 
-		SET @PostMarkerCounterObj = @PostMarkerCounterObj + 1
-	END
+		set @PostMarkerCounterObj = @PostMarkerCounterObj + 1
+	end
 
 	--Set @Script = @PreScript
-	PRINT '--' + @TGT_ObjectName
+	print '--' + @TGT_ObjectName
 
 	--exec [rep].[Helper_LongPrint] @String = @PostScript
 
 	--insert into #bld_Done (TGT_ObjectName, Script,mta_CreateDate )
 	--select @TGT_ObjectName as TGT_ObjectName, @PostScript as Script , @CurrentDate
-	INSERT INTO [bld].[DeployScripts] (
+	insert into [bld].[DeployScripts] (
 		[BK]
 		,[Code]
 		,[BK_Template]
@@ -387,7 +332,7 @@ BEGIN
 		,[mta_RH]
 		,[mta_Source]
 		)
-	VALUES (
+	values (
 		@BK_Object -- BK
 		,@Code -- Code
 		,@BK_Template -- BK_Template
@@ -404,52 +349,10 @@ BEGIN
 		,@CurrentDate -- mta_Createdate
 		,@RecType -- mta_RecType
 		,@BK_Object + '|' + @BK_Template -- mta_BK
-		,CONVERT(char(64), (Hashbytes('sha2_512', upper(@BK_Object + '|' + @BK_Template))), 2) -- mta_BKH
-		,CONVERT(char(64), (Hashbytes('sha2_512', upper(@TGT_ObjectName + '|' + @ObjectType + '|' + @ObjectTypeDeployOrder + '|' + @PostScript))), 2) -- mta_RH
-		,'rep.[300_bld_CreateDeployScripts]' -- mta_Source
+		,Convert(char(64), (Hashbytes('sha2_512', upper(@BK_Object + '|' + @BK_Template))), 2) -- mta_BKH
+		,Convert(char(64), (Hashbytes('sha2_512', upper(@TGT_ObjectName + '|' + @ObjectType + '|' + @ObjectTypeDeployOrder + '|' + @PostScript))), 2) -- mta_RH
+		,'rep.[069_bld_CreateDeployScripts]' -- mta_Source
 		)
 
-	SET @MainCounter = @MainCounter + 1
-END
-
---select * from #bld_Done
--- delete DeployScripts if not active anymore:
-INSERT INTO [bld].[DeployScripts] (
-	[BK]
-	,[Code]
-	,[BK_Template]
-	,[BK_Dataset]
-	,[TGT_ObjectName]
-	,[ObjectType]
-	,[ObjectTypeDeployOrder]
-	,[TemplateType]
-	,[TemplateSource]
-	,[TemplateName]
-	,[TemplateScript]
-	,[mta_Createdate]
-	,[mta_RecType]
-	,[mta_BK]
-	,[mta_BKH]
-	,[mta_RH]
-	,[mta_Source]
-	)
-SELECT src.[BK]
-	,src.[Code]
-	,src.[BK_Template]
-	,src.[BK_Dataset]
-	,src.[TGT_ObjectName]
-	,src.[ObjectType]
-	,src.[ObjectTypeDeployOrder]
-	,src.[TemplateType]
-	,src.[TemplateSource]
-	,src.[TemplateName]
-	,src.[TemplateScript]
-	,@CurrentDate
-	,sl.RecType
-	,src.[mta_BK]
-	,src.[mta_BKH]
-	,src.[mta_RH]
-	,src.[mta_Source]
-FROM bld.vw_DeployScriptsSmartLoad sl
-JOIN bld.vw_DeployScripts src ON sl.bk = src.BK_Dataset
-WHERE CAST(sl.RecType AS int) = - 1
+	set @MainCounter = @MainCounter + 1
+end

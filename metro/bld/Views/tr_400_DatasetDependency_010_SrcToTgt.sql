@@ -1,4 +1,6 @@
 ﻿
+
+
 CREATE VIEW [bld].[tr_400_DatasetDependency_010_SrcToTgt] AS
 /* 
 === Comments =========================================
@@ -88,15 +90,16 @@ WITH base AS
 	)
 	--select * from Hierarchie
 SELECT 
-	bk			= h.bk_child+'|'+bk_parent
+	bk			= h.bk_child+'|'+h.bk_parent
 	
 	, bk_parent	 = bk_child
 	, bk_child	 = bk_parent
-	, [Code]
-	, tabletypeparent = tabletypechild
-	, tabletypechild = tabletypeparent
+	, h.[Code]
+	, tabletypeparent = h.tabletypechild
+	, tabletypechild = h.tabletypeparent
 
 	
 	, dependencytype = 'SrcToTgt'
-
+	--, mta_rectype		= diff.rectype
 FROM hierarchie h
+ --LEFT JOIN [bld].[vw_AttributeSmartLoad] diff ON h.code = diff.code

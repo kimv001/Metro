@@ -8,6 +8,7 @@
 
 
 
+
 /****** Object:  View [adf].[Connections_Sto_Table]    Script Date: 11/1/2022 1:28:28 PM ******/
 CREATE VIEW [adf].[vw_Connections_Sto_Table] AS
 WITH LinkedServiceProperties
@@ -36,7 +37,7 @@ SELECT
 	, LinkedServiceName							= dsl.[Name]
 	, [DWHGroupnameShortname]					= src.[GroupShortName]
 	--replace(replace(replace(replace(src.DatasetName,src.SchemaName,''),'.',''),'[',''),']','')
-	, [Prefix_Groupname_Shortname]				= concat(ds.prefix,'_',ds.bk_group,'_',ds.shortname)
+	, [Prefix_Groupname_Shortname]				= concat(coalesce(ds.prefix+'_',''),ds.bk_group,'_',ds.shortname)
 	, [DWHGroupname]							= src.GroupName
 	-- SRC	
 	, [SRC_BK_Dataset]							= src.BK_Dataset

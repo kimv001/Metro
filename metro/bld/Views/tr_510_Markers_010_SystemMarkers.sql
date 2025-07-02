@@ -4,6 +4,7 @@
 
 
 
+
 CREATE VIEW [bld].[tr_510_Markers_010_SystemMarkers] AS 
 /* 
 === Comments =========================================
@@ -42,6 +43,7 @@ Changelog:
 Date		time		Author					Description
 20220804	0000		K. Vermeij				Initial
 20230226	1400		K. Vermeij				Added column [mta_rectype] to Activate SmartLoad
+20250214	1130		K. Vermeij				 replace(SRC.[DefaultValue],'"','')
 =======================================================
 */
 
@@ -54,7 +56,7 @@ SELECT
 	, MARKERTYPE		= 'System'
 	, MARKERDESCRIPTION = SRC.[Description]
 	, MARKER			= '<!<'+SRC.[Name]+'>>'
-	, MARKERVALUE		= SRC.[DefaultValue]
+	, MARKERVALUE		= replace(SRC.[DefaultValue],'"','')
 	, [Pre]				= Isnull(SRC.[Pre],0)
 	, [Post]			= Isnull(SRC.[Post],0)
 	, MTA_RECTYPE		= DIFF.RECTYPE
@@ -62,3 +64,4 @@ SELECT
   FROM [rep].[vw_Marker] SRC
   CROSS JOIN BLD.VW_DATASET D
   JOIN [bld].[vw_MarkersSmartLoad] DIFF ON D.CODE = DIFF.CODE  AND DIFF.MTA_RECTYPE> -99
+  --where  SRC.[DefaultValue] like '%"%'

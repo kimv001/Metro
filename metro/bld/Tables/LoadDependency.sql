@@ -16,7 +16,8 @@
     [SRC_ShortName]     VARCHAR (255) NULL,
     [SRC_Code]          VARCHAR (255) NULL,
     [SRC_DatasetName]   VARCHAR (255) NULL,
-    [DependencyType]    VARCHAR (255) NULL,
+    [lvl]               VARCHAR (255) NULL,
+    [dependencytype]    VARCHAR (255) NULL,
     [Generation_Number] VARCHAR (255) NULL,
     [mta_Createdate]    DATETIME2 (7) DEFAULT (getdate()) NULL,
     [mta_RecType]       SMALLINT      DEFAULT ((1)) NULL,
@@ -25,6 +26,8 @@
     [mta_RH]            CHAR (128)    NULL,
     [mta_Source]        VARCHAR (255) NULL
 );
+
+
 
 
 GO

@@ -1,8 +1,4 @@
 ﻿
-
-
-
-
 CREATE VIEW [bld].[tr_100_Dataset_020_DatasetTrn] AS 
 /* 
 === Comments =========================================
@@ -61,6 +57,14 @@ SELECT
 FROM [stg].[DWH_ObjectDefinitions] src 
 )
 
+, trn_attributes as (
+select  code, count(1) as attrib_count
+from [rep].[vw_DatasetTrnAttribute]
+where 1=1
+--and code  = 'DWH|dim|trvs|Mobile|Topup|'
+group by code
+)
+
 , Base AS (
 	
 		SELECT  
@@ -83,6 +87,7 @@ FROM [stg].[DWH_ObjectDefinitions] src
 			
 		, trn.[BK_Flow]
 		, trn.[TimeStamp]
+		, trn.[TimeStamp_Group]
 		, trn.[BusinessDate]
 		, trn.[WhereFilter]
 		, trn.[PartitionStatement]
@@ -103,7 +108,11 @@ FROM [stg].[DWH_ObjectDefinitions] src
 		, trn.[mta_Source]
 		, trn.[mta_Loaddate]
 	FROM [rep].[vw_DatasetTrn]	trn
+	inner join trn_attributes trn_a on trn.BK = trn_a.code
 	LEFT JOIN bld.vw_RefType			SCD ON trn.BK_RefType_SCD = SCD.BK
+	where 1=1
+	--and trn.bk = 'DWH|cds|trvs|Common|Geography_PC6|'
+	 --and trn.[BK]  = 'DWH|dim|trvs|Mobile|Topup|' --like '%Topup%'
 	)
 SELECT 
 	  src.BK
@@ -118,8 +127,8 @@ SELECT
 	, ss.BK_Layer
 	, src.BK_Schema
 	, src.BK_Group
-	, src.[BK_Segment]					
-	, src.[BK_Bucket]					
+	, src.BK_Segment
+	, src.BK_Bucket					
 	, src.ShortName
 	, src.dwhTargetShortName
 	, src.Prefix
@@ -129,6 +138,7 @@ SELECT
 	, src.BK_Flow
 	, FlowOrder							= CAST(isnull(ss.LayerOrder,0) AS int) + CAST(isnull(fl.SortOrder,0) AS int)
 	, src.[TimeStamp]
+	, src.TimeStamp_Group
 	, src.BusinessDate
 	, src.SCD
 	, src.WhereFilter

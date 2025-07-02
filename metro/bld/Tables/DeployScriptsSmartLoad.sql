@@ -1,7 +1,6 @@
 ﻿CREATE TABLE [bld].[DeployScriptsSmartLoad] (
     [DeployScriptsSmartLoadId] INT           IDENTITY (1, 1) NOT NULL,
     [BK]                       VARCHAR (255) NULL,
-    [BK_Dataset]               VARCHAR (255) NULL,
     [Code]                     VARCHAR (255) NULL,
     [SrcCreateDate]            VARCHAR (255) NULL,
     [TgtCreateDate]            VARCHAR (255) NULL,
@@ -14,6 +13,8 @@
     [mta_RH]                   CHAR (128)    NULL,
     [mta_Source]               VARCHAR (255) NULL
 );
+
+
 
 
 GO

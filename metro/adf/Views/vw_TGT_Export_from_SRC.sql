@@ -1,12 +1,13 @@
 ﻿
 
 
-CREATE VIEW [adf].[vw_TGT_Export_from_SRC] AS
 
-SELECT 
+CREATE view [adf].[vw_TGT_Export_from_SRC] as
+
+select 
 	TGT							= e.[export_name],	 
 	SRC_BK_DataSet				= e.bk_dataset,
-	[SRC_DataSet]				= e.[export_name], --e.src_dataset,
+	[SRC_DataSet]				= e.[filename], --e.[export_name], --e.src_dataset,
 	[SRC_ShortName]				= e.SRC_ShortName,
 	SRC_SourceName				= e.[export_name], --e.SRC_Group + '_' +  e.SRC_ShortName,
 	SRC_DatasetType				= e.SRC_DatasetType,
@@ -19,4 +20,4 @@ SELECT
 	[RepositoryStatusName]		= e.RepositoryStatusName,
 	[RepositoryStatusCode]		= e.RepositoryStatusCode
 	-- select *
-FROM bld.vw_Exports e
+from bld.vw_Exports e

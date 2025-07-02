@@ -6,6 +6,7 @@
     [TabsToLoad]   NVARCHAR (MAX) NULL,
     [TableName]    NVARCHAR (MAX) NULL,
     [Active]       NVARCHAR (MAX) NULL,
+    [MinimalRun]   NVARCHAR (MAX) NULL,
     [mta_Source]   NVARCHAR (MAX) NULL,
     [mta_LoadDate] NVARCHAR (MAX) NULL
 );

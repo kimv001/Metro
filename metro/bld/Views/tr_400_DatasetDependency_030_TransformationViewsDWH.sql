@@ -2,6 +2,8 @@
 
 
 
+
+
 CREATE VIEW [bld].[tr_400_DatasetDependency_030_TransformationViewsDWH] AS 
 /* 
 === Comments =========================================
@@ -41,12 +43,14 @@ Date		time		Author					Description
 */
 
 
-
+with final as (
 
 SELECT  DISTINCT
 	  BK				= Concat(D_SRC.BK,'|',D_TGT.BK)
 	, BK_PARENT			= D_SRC.BK
 	, BK_CHILD			= D_TGT.BK
+	--, BK_PARENT			= D_SRC.BK
+	--, BK_CHILD			= D_TGT.BK
 	
 	, CODE				= D_SRC.CODE
 	, TABLETYPEPARENT	= D_SRC.[BK_RefType_ObjectType]
@@ -63,3 +67,10 @@ ON DD.BK_PARENT = D_SRC.BK AND DD.BK_CHILD = D_TGT.BK AND DD.DEPENDENCYTYPE	= 'S
 --left join [bld].[tr_400_DatasetDependency_010_SrcToTgt] DD on DD.BK_Parent = D_SRC.BK and DD.BK_Child = D_TGT.BK and DD.DependencyType	= 'SrcToTgt'
 WHERE 1=1
 AND DD.BK IS null
+and D_SRC.BK != D_TGT.BK
+)
+select 
+	f.*
+	--, mta_rectype		= diff.rectype
+from final f
+-- LEFT JOIN [bld].[vw_AttributeSmartLoad] diff ON f.code = diff.code

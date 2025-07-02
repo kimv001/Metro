@@ -1,0 +1,26 @@
+﻿CREATE TABLE [dbo].[dim_geography] (
+    [geography_key]     VARCHAR (100) NOT NULL,
+    [geography_type]    VARCHAR (20)  NOT NULL,
+    [continent_name]    VARCHAR (50)  NULL,
+    [continent_name_nl] VARCHAR (50)  NULL,
+    [country_code]      VARCHAR (2)   NULL,
+    [country_name]      VARCHAR (100) NULL,
+    [country_name_nl]   VARCHAR (100) NULL,
+    [region_name]       VARCHAR (100) NULL,
+    [department]        VARCHAR (20)  NULL,
+    [postal_code]       VARCHAR (20)  NULL,
+    [pc10]              VARCHAR (20)  NULL,
+    [city_pop]          VARCHAR (20)  NULL,
+    [area_pop]          VARCHAR (20)  NULL,
+    [mcc]               VARCHAR (5)   NULL,
+    [dialing_code]      VARCHAR (5)   NULL,
+    [timezone_name]     VARCHAR (40)  NULL,
+    [currency_code]     VARCHAR (5)   NULL,
+    [is_in_eu]          BIT           NULL,
+    [is_in_eea]         BIT           NULL,
+    [is_in_eu_roaming]  BIT           NULL,
+    [gdpr_applicable]   BIT           NULL,
+    [parent_key]        VARCHAR (100) NULL,
+    PRIMARY KEY CLUSTERED ([geography_key] ASC)
+);
+

@@ -96,7 +96,7 @@ Date                    Author              Description
         ) ON [PRIMARY];
 
         CREATE UNIQUE INDEX Uix_{TgtSchema}_{tgt_table_name}
-        ON [{TgtSchema}].[{tgt_table_name}] ([mta_BKH] DESC, [mta_RH] DESC, [mta_Createdate] DESC);
+        ON [{TgtSchema}].[{tgt_table_name}] (  [mta_BKH] DESC, [mta_RH] DESC, [mta_Createdate] DESC);
 
         CREATE CLUSTERED INDEX Cix_{TgtSchema}_{tgt_table_name}
         ON [{TgtSchema}].[{tgt_table_name}] ([BK] ASC, [mta_BKH] ASC, [Code] ASC, [mta_RH] ASC, [mta_Createdate] DESC);

@@ -6,6 +6,7 @@
     [Description_nl]           NVARCHAR (MAX) NULL,
     [BK_SrcDataset]            NVARCHAR (MAX) NULL,
     [Active]                   NVARCHAR (MAX) NULL,
+    [ParenActive]              NVARCHAR (MAX) NULL,
     [BK_FileFormat]            NVARCHAR (MAX) NULL,
     [FileSystem]               NVARCHAR (MAX) NULL,
     [Folder]                   NVARCHAR (MAX) NULL,

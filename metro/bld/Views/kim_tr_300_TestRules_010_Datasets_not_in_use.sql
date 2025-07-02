@@ -1,8 +1,5 @@
 ﻿
-
-
-
-CREATE VIEW [bld].[tr_300_TestRules_010_Datasets] AS 
+CREATE VIEW [bld].[kim_tr_300_TestRules_010_Datasets_not_in_use] AS 
 
 /* 
 === Comments =========================================
@@ -208,7 +205,8 @@ FROM all_datasets src
 WHERE src.test  = 'column Mismatch 1st'
 
 )
-SELECT code=bk, * FROM final
+-- not in active use anymore
+SELECT  code=bk, * FROM final
 WHERE 1=1
 --and bk_dataset = 'SA_DWH|src_file||Billing|CareContracts|'
 --and BK_Dataset = 'SA_DWH|src_file||Grafana|LWAP|'

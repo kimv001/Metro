@@ -1,125 +1,118 @@
 ﻿
+
+
+
+
 CREATE VIEW [bld].[tr_420_LoadDependency_010_SrcToTgt] AS
-/* 
+/*
 === Comments =========================================
 
 Description:
-    Get all source dependencies for one target.
+    Get all source dependencies for one target, starting from changed tables.
 
-Columns:
-    - bk_source: The business key of the source dataset.
-    - bk_target: The business key of the target dataset.
-    - bk_targetclean: The cleaned business key of the target dataset.
-    - bk_sourceclean: The cleaned business key of the source dataset.
-    - dependencytype: The type of the dependency (SrcToTgt).
-
-Example Usage:
-    SELECT * FROM [bld].[tr_420_LoadDependency_010_SrcToTgt]
-
-Logic:
-    1. Retrieves the full list of dependencies.
-    2. Cleans the business keys to make views look like tables.
-    3. Joins the cleaned business keys to get the final dependencies.
-
-Source Data:
-    - [bld].[vw_DatasetDependency]: Contains dataset dependencies.
-    - [bld].[vw_Dataset]: Contains dataset definitions.
-	
 Changelog:
-Date		time		Author					Description
-20220804	0000		K. Vermeij				Initial
-20240424	1430		K. Vermeij				Added DependencyType
-20240424	1730		K. Vermeij				Removed filter "and src.LayerName != 'src'"
+20220804    0000    K. Vermeij              Initial
+20240424    1430    K. Vermeij              Added DependencyType
+20240608    1200    Copilot                 Refactored to use starting_points for full tree expansion
 =======================================================
 */
-  WITH base AS (
-	 -- get the full list of dependencies
-	SELECT --top 0
-			   bk_source		= dd.bk_parent
-			 , bk_target		= dd.bk_child
 
-			 -- make the views look like tables (remove prefix and postfix)
-			 , bk_targetclean	= concat(tgt.bk_schema,'||',tgt.bk_group, '|', tgt.shortname, '|')
-			 , bk_sourceclean	= concat(src.bk_schema,'||',src.bk_group, '|', src.shortname, '|')
-			 , dependencytype	= dd.dependencytype
-	FROM bld.vw_datasetdependency dd
-	JOIN bld.vw_dataset src ON src.bk = dd.bk_child
-	JOIN bld.vw_dataset tgt ON tgt.bk = dd.bk_parent
-	WHERE 1=1
-	AND dependencytype = 'SrcToTgt'
-	)
-, rebase AS (
-	-- join the "cleaned" businesskeys
-	SELECT 
-		  bk_target			= tgt.bk
-		, bk_source			= src.bk
-		, dependencytype	= b.dependencytype
-	FROM base b
-	JOIN bld.vw_dataset src ON src.bk = b.bk_sourceclean
-	JOIN bld.vw_dataset tgt ON tgt.bk = b.bk_targetclean
-	WHERE src.bk <> tgt.bk
+-- Step 1: Identify changed datasets based on rectype
+with code_changes as (
+    select distinct code, rectype
+    from [bld].[vw_LoadDependencySmartLoad]
+    where isnull(rectype, 0) > -99
+),
 
-	)
+-- Step 2: Map changed codes to business keys and generate cleaned keys
+changed_bks as (
+    select 
+        bk,
+        CleanKey = concat(bk_schema, '||', bk_group, '|', shortname, '|')
+    from bld.vw_Dataset
+    where code in (select code from code_changes)
+),
 
-, tgtfromsrc
+-- Step 3: Build base dependency list with cleaned keys
+base as (
+    select 
+        BK_Source = dd.BK_Parent,
+        BK_Target = dd.BK_Child,
+        BK_TargetClean = concat(tgt.BK_Schema, '||', tgt.BK_Group, '|', tgt.ShortName, '|'),
+        BK_SourceClean = concat(src.BK_Schema, '||', src.BK_Group, '|', src.ShortName, '|')
+    from bld.vw_DatasetDependency dd
+    join bld.vw_Dataset src on src.bk = dd.BK_Child
+    join bld.vw_Dataset tgt on tgt.bk = dd.BK_Parent
+    where DependencyType = 'SrcToTgt'
+),
 
-AS
-  ( 
-	SELECT bk_target bk_target, bk_source, 1 AS lvl, dependencytype
-	FROM rebase
+-- Step 4: Rejoin cleaned keys to actual BKs
+rebase as (
+    select 
+        BK_Target = tgt.bk,
+        BK_Source = src.bk
+    from base b
+    join bld.vw_Dataset src on src.bk = b.BK_SourceClean
+    join bld.vw_Dataset tgt on tgt.bk = b.BK_TargetClean
+    where src.bk <> tgt.bk
+),
 
-	UNION ALL
-    
-	SELECT d.bk_target, s.bk_source, d.lvl + 1 AS lvl, d.dependencytype
-    FROM tgtfromsrc d
-    JOIN rebase		s ON d.bk_source = s.bk_target
-  ) 
+-- Step 5: Recursive CTE to walk the dependency tree from changed sources
+TgtFromSrc as (
+    select BK_Target, BK_Source, 1 as lvl
+    from rebase
+    where BK_Source in (select bk from changed_bks)
 
-, uniquetgtfromsrc AS (
-	SELECT  
-		bk_target, bk_source, max(lvl) lvl, dependencytype
-	FROM tgtfromsrc 
-	GROUP BY bk_target, bk_source, dependencytype
-	
-	-- add parents as source
-	UNION ALL
-	SELECT DISTINCT src.bk_target bk_target, src.bk_target bk_source, -100 AS lvl, dependencytype
-	FROM tgtfromsrc src
-	WHERE 1=1 AND src.lvl = 1
+    union all
 
-	
+    select d.BK_Target, s.BK_Source, d.lvl + 1
+    from TgtFromSrc d
+    join rebase s on d.BK_Source = s.BK_Target
+),
 
-), final AS (
-SELECT
-	  bk				= b.dependencytype+'|'+tgt.bk+'|'+src.bk
-	, code				= tgt.code
-	, bk_target			= tgt.bk
-	, tgt_layer			= tgt.layername	
-	, tgt_schema		= tgt.schemaname
-	, tgt_group			= tgt.bk_group
-	, tgt_shortname		= tgt.shortname
-	, tgt_code			= tgt.code
-	, tgt_datasetname	= tgt.datasetname
+-- Step 6: Deduplicate and add self-dependencies
+UniqueTgtFromSrc as (
+    select BK_Target, BK_Source, max(lvl) lvl
+    from TgtFromSrc
+    group by BK_Target, BK_Source
 
-	, bk_source			= src.bk
-	, src_layer			= src.layername	
-	, src_schema		= src.schemaname
-	, src_group			= src.bk_group
-	, src_shortname		= src.shortname
-	, src_code			= src.code
-	, src_datasetname	= src.datasetname
-	, dependencytype	= b.dependencytype
-	, generation_number	= ROW_NUMBER() OVER (PARTITION BY  tgt.bk ORDER BY b.lvl ASC) 
-FROM uniquetgtfromsrc b
-JOIN bld.vw_dataset src ON src.bk = b.bk_source
-JOIN bld.vw_dataset tgt ON tgt.bk = b.bk_target
+    union all
 
- WHERE 1=1
+    select distinct src.BK_Target, src.BK_Target, -100
+    from TgtFromSrc src
+    where src.lvl = 1
+)
+
+-- Step 7: Final output with all required metadata
+select
+      BK                = 'SrcFromTgt' + '|' + tgt.BK + '|' + src.BK
+    , Code              = tgt.Code
+    , BK_Target         = tgt.BK
+    , TGT_Layer         = tgt.LayerName    
+    , TGT_Schema        = tgt.SchemaName
+    , TGT_Group         = tgt.BK_Group
+    , TGT_ShortName     = tgt.ShortName
+    , TGT_Code          = tgt.Code
+    , TGT_DatasetName   = tgt.DatasetName
+
+    , BK_Source         = src.BK
+    , SRC_Layer         = src.LayerName    
+    , SRC_Schema        = src.SchemaName
+    , SRC_Group         = src.BK_Group
+    , SRC_ShortName     = src.ShortName
+    , SRC_Code          = src.Code
+    , SRC_DatasetName   = src.DatasetName
+
+    , lvl               = b.lvl
+    , dependencytype    = 'SrcFromTgt'
+    , mta_rectype       = coalesce(cc.rectype, 0)
+    , Generation_Number = ROW_NUMBER() over (partition by tgt.BK order by b.lvl asc) 
+from UniqueTgtFromSrc b
+join bld.vw_Dataset src on src.bk = b.BK_Source
+join bld.vw_Dataset tgt on tgt.bk = b.BK_Target
+left join code_changes cc on cc.code = tgt.Code
+where 1=1
 -- and src.LayerName != 'src'
- --and src.DatasetName != tgt.DatasetName
- --and tgt.BK+'|'+src.BK = 'DWH|fct||IB|EUA||DWH|fct||IB|EUA|'
- --  and tgt.DatasetName= '[dim].[Common_Address]'
- -- and tgt.BK+'|'+src.BK  = 'DWH|fct||Wes|WeasEuaIb||SA_DWH|src_file||Wes|EUA|'
- --and tgt.BK='DWH|pst||IB|AggregatedPc4|'
- )
- SELECT * FROM final
+-- Optional filters for debugging:
+-- and tgt.code = 'DWH|sto|trvs|SF_Customers|Leaf|'
+-- and tgt.code = 'SF|SF_API||SF|Product2|'

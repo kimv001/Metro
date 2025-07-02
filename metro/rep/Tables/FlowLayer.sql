@@ -5,6 +5,7 @@
     [Description]        NVARCHAR (MAX) NULL,
     [Description_nl]     NVARCHAR (MAX) NULL,
     [Active]             NVARCHAR (MAX) NULL,
+    [ParentActive]       NVARCHAR (MAX) NULL,
     [BK_Flow]            NVARCHAR (MAX) NULL,
     [BK_Layer]           NVARCHAR (MAX) NULL,
     [BK_Schema]          NVARCHAR (MAX) NULL,

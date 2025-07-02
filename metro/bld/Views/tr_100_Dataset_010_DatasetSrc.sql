@@ -4,7 +4,6 @@
 
 
 
-
 CREATE VIEW [bld].[tr_100_Dataset_010_DatasetSrc] AS 
 
 /* 
@@ -87,9 +86,12 @@ FROM [stg].[DWH_ObjectDefinitions] src
 		, [Data_Supplier_Info]				= src.[Data_Supplier_Info]
 		, [BK_Flow]							= src.[BK_Flow]
 		, [TimeStamp]						= src.[TimeStamp]
+		, [TimeStamp_Group]					= src.[TimeStamp_Group]
 		, [BusinessDate]					= src.[BusinessDate]
 		, [RecordSrcDate]					= src.[RecordSrcDate]
 		, [WhereFilter]						= src.[WhereFilter]
+		, [WhereFilterHistory]				= src.[WhereFilterHistory]
+		, [NrFullLoadPeriods]				= src.NrFullLoadPeriods
 		, [PartitionStatement]				= src.[PartitionStatement]
 		, [BK_RefType_ObjectType]			= src.[BK_RefType_ObjectType]
 		, [FullLoad]						= isnull(src.[FullLoad],'0')
@@ -119,7 +121,7 @@ SELECT
 	, [BK_Group]								= src.[BK_Group]
 	, [BK_Segment]								= src.[BK_Segment]
 	, [BK_Bucket]								= src.[BK_Bucket]
-	, [ShortName]								= src.[ShortName]
+	, [ShortName]								= case when ss.[BK_Layer] = 'src' then src.[SRC_ShortName] else coalesce(src.[dwhTargetShortName], src.[SRC_ShortName]) end
 	, [SRC_ShortName]							= src.[SRC_ShortName]
 	, [dwhTargetShortName]						= src.[dwhTargetShortName]
 	, [ReplaceAttributeNames]					= src.[ReplaceAttributeNames]
@@ -133,9 +135,12 @@ SELECT
 	, [Data_Supplier_Info]						= src.[Data_Supplier_Info]
 	, [BK_Flow]									= src.[BK_Flow]
 	, [TimeStamp]								= src.[TimeStamp]
+	, [TimeStamp_Group]							= src.[TimeStamp_Group]
 	, [BusinessDate]							= src.[BusinessDate]
 	, [RecordSrcDate]							= src.[RecordSrcDate]
 	, [WhereFilter]								= src.[WhereFilter]
+	, [WhereFilterHistory]						= src.[WhereFilterHistory]
+	, [NrFullLoadPeriods]						= src.[NrFullLoadPeriods]
 	, [SCD]										= src.[SCD]
 	, [DistinctValues]							= src.[DistinctValues]
 	, [PartitionStatement]						= src.[PartitionStatement]

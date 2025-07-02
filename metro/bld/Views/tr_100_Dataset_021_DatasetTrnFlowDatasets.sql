@@ -2,6 +2,7 @@
 
 
 
+
 CREATE VIEW [bld].[tr_100_Dataset_021_DatasetTrnFlowDatasets] AS 
 /* 
 === Comments =========================================
@@ -93,6 +94,7 @@ SELECT
 	, FlowOrder						= CAST(isnull(ts.LayerOrder,0) AS int) + (fl.SortOrder * 10)
 
 	, TimeStamp						= d.TimeStamp
+	, [TimeStamp_Group]				= d.[TimeStamp_Group]
 	, BusinessDate					= d.BusinessDate
 	, SCD							= d.SCD
 	, WhereFilter					= d.WhereFilter
@@ -156,6 +158,7 @@ SELECT
 
 	, src.FlowOrder
 	, src.[TimeStamp]
+	, src.[TimeStamp_Group]
 	, src.[BusinessDate]
 	, SRC.SCD
 	, src.[WhereFilter]

@@ -23,9 +23,12 @@
     [Data_Supplier_Info]                     VARCHAR (255) NULL,
     [BK_Flow]                                VARCHAR (255) NULL,
     [TimeStamp]                              VARCHAR (255) NULL,
+    [TimeStamp_Group]                        VARCHAR (255) NULL,
     [BusinessDate]                           VARCHAR (MAX) NULL,
     [RecordSrcDate]                          VARCHAR (MAX) NULL,
     [WhereFilter]                            VARCHAR (255) NULL,
+    [WhereFilterHistory]                     VARCHAR (255) NULL,
+    [NrFullLoadPeriods]                      VARCHAR (255) NULL,
     [SCD]                                    VARCHAR (255) NULL,
     [DistinctValues]                         VARCHAR (255) NULL,
     [PartitionStatement]                     VARCHAR (255) NULL,
@@ -68,6 +71,8 @@
     [mta_RH]                                 CHAR (128)    NULL,
     [mta_Source]                             VARCHAR (255) NULL
 );
+
+
 
 
 GO

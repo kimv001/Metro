@@ -2,6 +2,7 @@
 
 
 
+
 CREATE VIEW [bld].[tr_600_Template_010_Default] AS
 /*
 Description:
@@ -48,7 +49,15 @@ SELECT
 	, templatedecription	= t.[Description]
 	, objecttype			= rt.[Name]
 	, objecttypedeployorder	= rt.sortorder
-	, script				= t.script
+	, script				= --t.script
+							-- sometimes while copying from excel to notepad and back again you get extra " at the ends
+							  CASE 
+									WHEN LEFT(t.script, 1) = '"' AND RIGHT(t.script, 1) = '"' THEN SUBSTRING(t.script, 2, LEN(t.script) - 2)
+									WHEN LEFT(t.script, 1) = '"' THEN SUBSTRING(t.script, 2, LEN(t.script) - 1)
+									WHEN RIGHT(t.script, 1) = '"' THEN LEFT(t.script, LEN(t.script) - 1)
+									ELSE t.script
+								  END
+
 	, scriptlanguagecode	= t.scriptlanguage	
 	, scriptlanguage		= sl.[Description]
 	

@@ -1,0 +1,10 @@
+﻿CREATE TABLE [stg].[SRC__tables] (
+    [TABLE_CATALOG] NVARCHAR (128) NULL,
+    [TABLE_SCHEMA]  NVARCHAR (128) NULL,
+    [TABLE_NAME]    NVARCHAR (128) NULL,
+    [TABLE_TYPE]    VARCHAR (10)   NULL,
+    [mta_Source]    NVARCHAR (MAX) NULL,
+    [mta_LoadDate]  NVARCHAR (MAX) NULL,
+    [BK_DataSource] NVARCHAR (MAX) NULL
+);
+

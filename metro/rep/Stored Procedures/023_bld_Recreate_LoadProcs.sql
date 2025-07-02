@@ -211,7 +211,8 @@ BEGIN
 					+ @LB 
 					+ @LB + 'Print ''-- new records:''' 
 					+ @LB 
-					+ @LB + 'set @StartDateTime = getdate()' 
+					+ @LB + 'set @StartDateTime = SYSUTCDATETIME() AT TIME ZONE ''UTC'' AT TIME ZONE ''W. Europe Standard Time''' 
+
 					+ @LB 
 					+ @LB + 'Insert Into [' + @TgtSchema + '].[' + src.tgt_table_name + ']' 
 					+ @LB + '( ' 
@@ -234,7 +235,7 @@ BEGIN
 					+ @LB + 'Where 1=1 and cast(h.mta_RecType as int) = 1 and tgt.[mta_BKH] is null' 
 					+ @LB
 					+ @LB 
-					+ @LB + 'set @EndDateTime = getutcdate()'
+					+ @LB + 'set @EndDateTime =SYSUTCDATETIME() AT TIME ZONE ''UTC'' AT TIME ZONE ''W. Europe Standard Time'''
 					+ @LB +
 							'exec [aud].[proc_Log_Procedure]  
 							@LogAction		= ''INSERT - NEW'', 
@@ -246,7 +247,7 @@ BEGIN
 							@Log_TimeEnd    = @EndDateTime;' 
 					+ @LB 
 					+ @LB + 'Print ''-- changed records:''' 
-					+ @LB + 'set @StartDateTime = getdate()' 
+					+ @LB + 'set @StartDateTime = SYSUTCDATETIME() AT TIME ZONE ''UTC'' AT TIME ZONE ''W. Europe Standard Time'''
 					+ @LB 
 					+ @LB + char(9) + 'Insert Into [' + @TgtSchema + '].[' + src.tgt_table_name + ']' 
 					+ @LB + '( ' 
@@ -280,7 +281,7 @@ BEGIN
 												+ @LB 
 												+ @LB + 'Print ''-- deleted records:''' 
 												+ @LB 
-												+ @LB +'set @StartDateTime = getdate()' 
+												+ @LB +'set @StartDateTime = SYSUTCDATETIME() AT TIME ZONE ''UTC'' AT TIME ZONE ''W. Europe Standard Time''' 
 												+ @LB 
 												+ @LB + 'Insert Into [' + @TgtSchema + '].[' + src.tgt_table_name + ']' 
 												+ @LB 
@@ -305,7 +306,7 @@ BEGIN
 											+ @LB + iif(@SmartLoad = 1, 'and  h.mta_RecType =-1', '') 
 											+ @LB 
 											+ @LB +
-											'set @EndDateTime = getutcdate()'
+											'set @EndDateTime = SYSUTCDATETIME() AT TIME ZONE ''UTC'' AT TIME ZONE ''W. Europe Standard Time'''
 											+ @LB +
 												'exec [aud].[proc_Log_Procedure]  
 												@LogAction		= ''INSERT - DEL'', 

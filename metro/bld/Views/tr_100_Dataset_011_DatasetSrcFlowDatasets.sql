@@ -3,7 +3,6 @@
 
 
 
-
 CREATE VIEW [bld].[tr_100_Dataset_011_DatasetSrcFlowDatasets] AS 
 /* 
 === Comments =========================================
@@ -91,10 +90,13 @@ SELECT
 -- If correct configured, it should be ("LayerOrder" + ("FlowOrder" * "10")) 
 	, floworder						= CAST(isnull(ts.layerorder,0) AS int) + (fl.sortorder * 10)
 	, timestamp						= d.timestamp
+	, [TimeStamp_Group]				= d.[TimeStamp_Group]
 	, businessdate					= d.businessdate
 	, recordsrcdate					= d.recordsrcdate
 	, distinctvalues				= isnull(d.distinctvalues,0)
 	, wherefilter					= d.wherefilter
+	, [WhereFilterHistory]			= d.[WhereFilterHistory]
+	, [NrFullLoadPeriods]			= d.[NrFullLoadPeriods]
 	, partitionstatement			= d.partitionstatement
 	, [BK_RefType_ObjectType]			= (SELECT bk FROM rep.vw_reftype WHERE reftype='ObjectType' AND [Name] = 'Table')
 	, fullload						= d.fullload
@@ -119,7 +121,8 @@ SELECT
 		JOIN rep.vw_layer	l					ON l.bk			= fl.bk_layer 
 		-- Get target Schema
 		LEFT JOIN bld.vw_schema			ts		ON ts.bk		= fl.bk_schema
-
+	--	where d.code =  'DWH|adf||rep|vw_DWH_Geography|'
+		--where d.code = 'EDDB_CPI|MST||EDDBMST|MST_ORDER_ZTV|'
 			)
 SELECT 
 	  src.bk
@@ -133,7 +136,8 @@ SELECT
 	, src.bk_layer
 	, src.bk_schema
 	, src.bk_group
-	, src.shortname
+	, [ShortName]								= case when src.bk_layer in ('src', 'rep') then src.[SRC_ShortName] else coalesce(src.[dwhTargetShortName], src.[SRC_ShortName]) end
+	--, src.shortname
 	, src.src_shortname
 	, src.src_objecttype
 	, src.dwhtargetshortname
@@ -149,10 +153,13 @@ SELECT
 	, src.floworder
 	, floworderdesc								= ROW_NUMBER() OVER (PARTITION BY src.code ORDER BY src.floworder DESC)
 	, src.[TimeStamp]
+	, src.[TimeStamp_Group]
 	, src.businessdate
 	, src.recordsrcdate
 	, src.distinctvalues
 	, src.wherefilter
+	, src.[WhereFilterHistory]
+	, src.[NrFullLoadPeriods]
 	, src.partitionstatement
 	, src.bk_reftype_objecttype
 	, src.fullload

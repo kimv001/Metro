@@ -2,6 +2,9 @@
 
 
 
+
+
+
 CREATE VIEW [bld].[tr_510_Markers_020_DatasetTarget] AS 
 /* 
 === Comments =========================================
@@ -54,6 +57,7 @@ Date		time		Author					Description
 20230616	1554		K. Vermeij				Added marker <!<tgt_timestamp>>
 20230701	0818		K. Vermeij				Added marker <!<tgt_recordsrcdate>>
 20230727	1704		K. Vermeij				added marker <!<tgt_PartitionStatement>>
+20250214	0830		K. Vermeij				added marker <!<WhereFilterHistory>>
 =======================================================
 */
 
@@ -79,7 +83,10 @@ WITH base AS (
 			, tgt_insertonly			= CAST(base.insertonly					AS varchar(MAX))
 			, tgt_insertnocheck			= CAST(base.insertnocheck				AS varchar(MAX))
 			, tgt_wherefilter			= CAST(base.wherefilter					AS varchar(MAX))
+			, tgt_WhereFilterHistory	= CAST(base.WhereFilterHistory			AS varchar(MAX))
+			, tgt_NrFullLoadPeriods		= cast(base.NrFullLoadPeriods			AS varchar(MAX))
 			, tgt_timestampexpression	= CAST(base.[timestamp]					AS varchar(MAX))
+			, tgt_timestamp_group		= CAST(base.[timestamp_group]			AS varchar(MAX))
 			, tgt_partitionstatement	= CAST(base.partitionstatement			AS varchar(MAX))
 			, distinctvalues			= CAST(iif(isnull(base.distinctvalues,0) = 0,'', 'Distinct') AS varchar(MAX))
 			, scd						= CAST(base.scd							AS varchar(MAX))
@@ -231,6 +238,26 @@ WITH base AS (
 	SELECT
 		  src.bk		
 		, src.code
+		, marker				= '<!<tgt_WhereFilterHistory>>'
+		, markervalue			= 'and '+src.tgt_WhereFilterHistory
+		, markerdescription		= ''
+	FROM base src
+
+	UNION ALL
+
+	SELECT
+		  src.bk		
+		, src.code
+		, marker				= '<!<tgt_NrFullLoadPeriods>>'
+		, markervalue			= coalesce(src.tgt_NrFullLoadPeriods,'0')
+		, markerdescription		= ''
+	FROM base src
+
+	UNION ALL
+
+	SELECT
+		  src.bk		
+		, src.code
 		, marker				= '<!<tgt_PartitionStatement>>'
 		, markervalue			=  CASE WHEN isnull(ltrim(rtrim(src.tgt_partitionstatement)),'')='' THEN '' ELSE  ',PARTITION('+src.tgt_partitionstatement+')' END
 		, markerdescription		= ''
@@ -244,6 +271,17 @@ WITH base AS (
 		, src.code
 		, marker				= '<!<tgt_TimestampExpression>>'
 		, markervalue			= isnull(src.tgt_timestampexpression,'null')
+		, markerdescription		= ''
+	FROM base src
+	--where src.DatasetWhereFilter is not null
+
+		UNION ALL
+
+	SELECT
+		  src.bk		
+		, src.code
+		, marker				= '<!<tgt_timestamp_group>>'
+		, markervalue			= isnull(src.tgt_timestamp_group,'null')
 		, markerdescription		= ''
 	FROM base src
 	--where src.DatasetWhereFilter is not null
@@ -299,3 +337,4 @@ FROM markerbuild mb
 LEFT JOIN [bld].[vw_MarkersSmartLoad] diff ON diff.code  =  mb.code AND diff.bk = mb.bk
 WHERE 1=1
 --and marker = '<!<tgt_PartitionStatement>>'
+--and mb.code = 'TeradataMobile|Teradata||Teradata|v_active_imsis_per_month_prm|'

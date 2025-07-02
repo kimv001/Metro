@@ -8,6 +8,8 @@
 
 
 
+
+
 CREATE VIEW [bld].[tr_510_Markers_040_DatasetColumnlistsByCode] AS 
 /* 
 === Comments =========================================
@@ -80,6 +82,96 @@ WITH base AS (
 
 )
 , MarkerBuild AS (
+
+	SELECT
+		src.BK_Dataset		
+		, src.Code
+		, Marker				= '<!<TGT_BKH_TryCast>>'
+		, markervalue			=  'convert(char(128), hashbytes(''SHA2_512'',upper(concat('''','+
+									STRING_AGG(
+										'try_cast('
+											+ CONVERT(VARCHAR(MAX), ISNULL(CAST(A.Expression AS VARCHAR(MAX)), QUOTENAME(A.AttributeName)))
+											+ ' '
+											+ A.[DDL_Type3]
+											+ ')'
+											
+											
+									,',''|'',' ) WITHIN GROUP (ORDER BY  CAST(a.BusinessKey AS int))
+									+ '))'
+									+'), 2)'
+		
+		, MarkerDescription		= ''
+	FROM Base src
+	JOIN bld.vw_Attribute a ON src.BK_Dataset = a.bk_dataset
+	WHERE 1=1
+	AND CAST(isnull(a.BusinessKey,0) AS int) > 0
+		
+	GROUP BY 
+		src.BK_Dataset		
+		, src.Code
+ union all
+
+ 
+	SELECT
+		src.BK_Dataset		
+		, src.Code
+		, Marker				= '<!<TGT_BK_TryCast>>'
+		, markervalue			=  'upper(concat('''','+
+									STRING_AGG(
+										'try_cast('
+											+ CONVERT(VARCHAR(MAX), ISNULL(CAST(A.Expression AS VARCHAR(MAX)), QUOTENAME(A.AttributeName)))
+											+ ' '
+											+ A.[DDL_Type3]
+											+ ')'
+											
+											
+									,',''|'',' ) WITHIN GROUP (ORDER BY  CAST(a.BusinessKey AS int))
+									+ '))'
+		
+
+		
+		, MarkerDescription		= ''
+	FROM Base src
+	JOIN bld.vw_Attribute a ON src.BK_Dataset = a.bk_dataset
+	WHERE 1=1
+	AND CAST(isnull(a.BusinessKey,0) AS int) > 0
+		
+	GROUP BY 
+		src.BK_Dataset		
+		, src.Code
+
+ union all
+
+ 
+	SELECT
+		src.BK_Dataset		
+		, src.Code
+		, Marker				= '<!<TGT_RH_TryCast>>'
+		, markervalue			=  'convert(char(128), hashbytes(''SHA2_512'',upper(concat('''','+
+									STRING_AGG(
+										'try_cast('
+											+ CONVERT(VARCHAR(MAX), ISNULL(CAST(A.Expression AS VARCHAR(MAX)), QUOTENAME(A.AttributeName)))
+											+ ' '
+											+ A.[DDL_Type3]
+											+ ')'
+											
+											
+									,',''|'',' ) WITHIN GROUP (ORDER BY  CAST(a.BusinessKey AS int))
+									+ '))'
+									+'), 2)'
+
+		
+		, MarkerDescription		= ''
+	FROM Base src
+	left JOIN bld.vw_Attribute a ON src.BK_Dataset = a.bk_dataset AND CAST(isnull(A.BusinessKey,0) AS int) = 0 AND isnull(a.IsMta,0) = 0 AND CAST(isnull(a.NotInRH,0) AS int)=0
+	WHERE 1=1
+
+		
+	GROUP BY 
+		src.BK_Dataset		
+		, src.Code
+
+	UNION ALL
 
 	SELECT
 		src.BK_Dataset		
@@ -446,6 +538,26 @@ UNION ALL
 	JOIN bld.vw_Attribute a ON src.BK_Dataset = a.bk_dataset
 	WHERE 1=1
 		AND CAST(isnull(a.BusinessKey,0) AS int) > 0
+	GROUP BY 
+		src.BK_Dataset		
+		, src.Code
+
+	UNION ALL
+
+	SELECT
+		  src.BK_Dataset		
+		, src.Code
+		, Marker				= '<!<SRC_BKSCD>>'
+		, MarkerValue			= STRING_AGG(
+											CONVERT(VARCHAR(MAX), QUOTENAME(A.AttributeName)),
+											+ ',' 
+										) WITHIN GROUP (ORDER BY CAST(A.OrdinalPosition AS INT)) + CHAR(13) + CHAR(10)
+		, MarkerDescription		= ''
+	FROM Base src
+	-- select * from
+	JOIN bld.vw_Attribute a ON src.BK_Dataset = a.bk_dataset
+	WHERE 1=1
+		AND (CAST(isnull(a.BusinessKey,0) AS int) > 0 OR CAST(isnull(a.[SCDDate],0) AS int) > 0)
 	GROUP BY 
 		src.BK_Dataset		
 		, src.Code

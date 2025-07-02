@@ -77,6 +77,9 @@
     <Folder Include="aud\Stored Procedures\" />
     <Folder Include="adf\Stored Procedures\" />
     <Folder Include="Security\" />
+    <Folder Include="dbo\" />
+    <Folder Include="dbo\Tables\" />
+    <Folder Include="stg\Stored Procedures\" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="bld\Tables\TestRules.sql" />
@@ -85,7 +88,6 @@
     <Build Include="bld\Tables\Schema.sql" />
     <Build Include="bld\Tables\Schedules.sql" />
     <Build Include="bld\Tables\RefType.sql" />
-    <Build Include="bld\Tables\AttributeDependency.sql" />
     <Build Include="bld\Tables\MarkersSmartLoad.sql" />
     <Build Include="bld\Tables\Markers.sql" />
     <Build Include="bld\Tables\LoadDependency.sql" />
@@ -167,7 +169,6 @@
     <Build Include="bld\Views\tr_350_Exports_010_default.sql" />
     <Build Include="bld\Views\tr_510_Markers_030_DatasetColumnlistsByDataset.sql" />
     <Build Include="bld\Views\tr_510_Markers_040_DatasetColumnlistsByCode.sql" />
-    <Build Include="bld\Views\tr_300_TestRules_010_Datasets.sql" />
     <Build Include="bld\Views\tr_400_DatasetDependency_030_TransformationViewsDWH.sql" />
     <Build Include="bld\Stored Procedures\load_010_RefType_010_Default.sql" />
     <Build Include="bld\Stored Procedures\load_900_DeployScripts_010_MetroProcedure.sql" />
@@ -491,6 +492,53 @@
     <Build Include="Security\bld.sql" />
     <Build Include="Security\aud.sql" />
     <Build Include="Security\adf.sql" />
+    <Build Include="stg\Tables\SRC__tables.sql" />
+    <Build Include="stg\Tables\SRC__columns.sql" />
+    <Build Include="stg\Tables\fixed_countrylist.sql" />
+    <Build Include="stg\Tables\fixed_countrycurrencylist.sql" />
+    <Build Include="stg\Tables\adf_NL_Postcode4_OpenData.sql" />
+    <Build Include="stg\Tables\adf_countries.sql" />
+    <Build Include="rep\Tables\TGT_ToLoad.sql" />
+    <Build Include="dbo\Tables\dim_geography.sql" />
+    <Build Include="bld\Tables\test2_450_LoadDependency_010_TgtFromSrc.sql" />
+    <Build Include="bld\Tables\test_450_LoadDependency_010_TgtFromSrc.sql" />
+    <Build Include="bld\Tables\LoadDependencySmartLoad.sql" />
+    <Build Include="bld\Tables\DatasetDependencySmartLoad.sql" />
+    <Build Include="adf\Tables\DWH_geography.sql" />
+    <Build Include="rep\Views\vw_TGT_ToLoad.sql" />
+    <Build Include="bld\Views\vw_LoadDependencySmartLoad.sql" />
+    <Build Include="bld\Views\vw_DatasetDependencySmartLoad.sql" />
+    <Build Include="bld\Views\tr_410_LoadDependencySmartLoad_010_Default.sql" />
+    <Build Include="bld\Views\tr_400_DatasetDependencySmartLoad_000_Default.sql" />
+    <Build Include="bld\Views\kim_tr_450_LoadDependency_010_TgtFromSrc202506091822.sql" />
+    <Build Include="bld\Views\kim_tr_450_LoadDependency_010_TgtFromSrc_202506081705.sql" />
+    <Build Include="bld\Views\kim_tr_420_LoadDependency_010_SrcToTgt_202506081653.sql" />
+    <Build Include="bld\Views\kim_tr_300_TestRules_010_Datasets_not_in_use.sql" />
+    <Build Include="adf\Views\vw_TGT_from_SRC_schedules_old.sql" />
+    <Build Include="adf\Views\vw_TGT_from_SRC_schedules less_old.sql" />
+    <Build Include="adf\Views\vw_Markers.sql" />
+    <Build Include="adf\Views\vw_DWH_Geography.sql" />
+    <Build Include="adf\Views\vw_Dataset_Documentation_tgt_from_src.sql" />
+    <Build Include="adf\Views\vw_Dataset_Documentation_src_to_tgt.sql" />
+    <Build Include="adf\Views\vw_Dataset_Documentation.sql" />
+    <Build Include="stg\Stored Procedures\Proc_LoadTable_MDS_RefMetricReportingAudience.sql" />
+    <Build Include="stg\Stored Procedures\Proc_LoadTable_MDS_RapportageKlant.sql" />
+    <Build Include="stg\Stored Procedures\Proc_LoadTable_Boost_IbDwdm.sql" />
+    <Build Include="rep\Stored Procedures\kim100_Publish_DeployScriptsToScreen202506092000.sql" />
+    <Build Include="rep\Stored Procedures\kim_069_bld_CreateDeployScripts20250609.sql" />
+    <Build Include="rep\Stored Procedures\kim_069_bld_CreateDeployScripts_20250609_2200.sql" />
+    <Build Include="rep\Stored Procedures\999_fixed_countrylist.sql" />
+    <Build Include="rep\Stored Procedures\999_adf_DWH_geography.sql" />
+    <Build Include="rep\Stored Procedures\999_adf_DWH_fixed_countrylist.sql" />
+    <Build Include="rep\Stored Procedures\999_adf_DWH_fixed_countrycurrencylist.sql" />
+    <Build Include="rep\Stored Procedures\999_adf_DWH_countrylist.sql" />
+    <Build Include="rep\Stored Procedures\999_adf_DWH_countrycurrencylist.sql" />
+    <Build Include="rep\Stored Procedures\999_adf_countrycurrencylist.sql" />
+    <Build Include="bld\Stored Procedures\load_410_LoadDependencySmartLoad_010_Default.sql" />
+    <Build Include="bld\Stored Procedures\load_400_DatasetDependencySmartLoad_000_Default.sql" />
+    <Build Include="aud\Stored Procedures\Proc_log_CheckIfSrcDatasetContainsData.sql" />
+    <Build Include="aud\Stored Procedures\Proc_log_CheckIfDatasetConatinsData.sql" />
+    <Build Include="aud\Stored Procedures\Proc_log_backup_dataset.sql" />
   </ItemGroup>
   <ItemGroup>
     <ArtifactReference Include="$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\AzureV12\SqlSchemas\master.dacpac">

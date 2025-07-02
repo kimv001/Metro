@@ -10,6 +10,8 @@
     [ExcludeFromAllLevel]          VARCHAR (255) NULL,
     [ExcludeFromAllOther]          VARCHAR (255) NULL,
     [ProcessSourceDependencies]    VARCHAR (255) NULL,
+    [RepositoryStatusName]         VARCHAR (255) NULL,
+    [RepositoryStatusCode]         VARCHAR (255) NULL,
     [mta_Createdate]               DATETIME2 (7) DEFAULT (getdate()) NULL,
     [mta_RecType]                  SMALLINT      DEFAULT ((1)) NULL,
     [mta_BK]                       CHAR (255)    NULL,
@@ -17,6 +19,8 @@
     [mta_RH]                       CHAR (128)    NULL,
     [mta_Source]                   VARCHAR (255) NULL
 );
+
+
 
 
 GO

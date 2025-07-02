@@ -1,7 +1,5 @@
 ﻿
 
-
-
 CREATE VIEW [bld].[tr_560_Schedules_010_default] AS 
 /*
 Description:
@@ -32,267 +30,297 @@ Source Data:
 Changelog:
 Date        Time        Author              Description
 20220804    00:00       K. Vermeij          Initial version
+20250416	1130		K. Vermeij			added: [RepositoryStatusName] and [RepositoryStatusCode]
 */
 
-WITH ALLSCHEDULES AS (
+with schedules_base as (
+select s.* 
+	, [RepositoryStatusName]					= rt.[Name]
+	, [RepositoryStatusCode]					= rt.code
+from rep.vw_Schedules s
+join bld.vw_RefType rt on rt.bk = s.[BK_RefType_RepositoryStatus]
+)
+
+, allSchedules as (
 
 	-- Process all tables
-	SELECT
-		  BK						= concat(S.BK,'|','All')
-		, SCHEDULES_GROUP
-		, DEPENDEND_ON_SCHEDULES_GROUP
-		, BK_SCHEDULE				= S.BK_SCHEDULE
-		, TARGETTOLOAD				= 'All'
-		, SCHEDULETYPE				= 'DWH'
-		, EXCLUDEFROMALLLEVEL		= isnull(S.EXCLUDEFROMALLLEVEL,0)
-		, EXCLUDEFROMALLOTHER		= isnull(S.EXCLUDEFROMALLOTHER,0)
-		, PROCESSSOURCEDEPENDENCIES = isnull(S.PROCESSSOURCEDEPENDENCIES,0)
-	FROM REP.VW_SCHEDULES S
-	WHERE 1=1
-	AND S.PROCESSALL = 1
+	select
+		  BK						= concat(s.BK,'|','All')
+		, schedules_group
+		, dependend_on_schedules_group
+		, BK_Schedule				= s.BK_Schedule
+		, TargetToLoad				= 'All'
+		, ScheduleType				= 'DWH'
+		, ExcludeFromAllLevel		= isnull(s.ExcludeFromAllLevel,0)
+		, ExcludeFromAllOther		= isnull(s.ExcludeFromAllOther,0)
+		, ProcessSourceDependencies = isnull(s.ProcessSourceDependencies,1)
+		, s.[RepositoryStatusName]	
+		, s.[RepositoryStatusCode]
+	from schedules_base s
+	where 1=1
+	and s.ProcessAll = 1
 
-	UNION ALL
+	union All
 
 
 	-- TRN datasets
-	SELECT
-		  BK						= concat(S.BK,'|', S.BK_TRNDATASET)
-		, SCHEDULES_GROUP
-		, DEPENDEND_ON_SCHEDULES_GROUP
-		, BK_SCHEDULE				= S.BK_SCHEDULE
-		, TARGETTOLOAD				= S.BK_TRNDATASET
-		, SCHEDULETYPE				= 'Dataset'
-		, EXCLUDEFROMALLLEVEL		= isnull(S.EXCLUDEFROMALLLEVEL,0)
-		, EXCLUDEFROMALLOTHER		= isnull(S.EXCLUDEFROMALLOTHER,0)
-		, PROCESSSOURCEDEPENDENCIES = isnull(S.PROCESSSOURCEDEPENDENCIES,0)
-	FROM REP.VW_SCHEDULES S
-	WHERE 1=1
-	AND ISNULL(S.[BK_SRCDataset],'') = ''
-	AND ISNULL(S.[SRC_Shortname],'') = ''
-	AND ISNULL(S.[BK_TrnDataset],'') != ''
-	AND ISNULL(S.[BK_Group]	  ,'') = ''
-	AND ISNULL(S.[BK_Schema]	  ,'') = ''
-	AND ISNULL(S.[BK_Layer]	  ,'') = ''
-	AND ISNULL(S.[BK_SRC_layer] ,'') = ''
+	select
+		  BK						= concat(s.BK,'|', s.BK_TrnDataset)
+		, schedules_group
+		, dependend_on_schedules_group
+		, BK_Schedule				= s.BK_Schedule
+		, TargetToLoad				= s.BK_TrnDataset
+		, ScheduleType				= 'Dataset'
+		, ExcludeFromAllLevel		= isnull(s.ExcludeFromAllLevel,0)
+		, ExcludeFromAllOther		= isnull(s.ExcludeFromAllOther,0)
+		, ProcessSourceDependencies = isnull(s.ProcessSourceDependencies,1)
+		, s.[RepositoryStatusName]	
+		, s.[RepositoryStatusCode]
+	from schedules_base s
+	where 1=1
+	and ISNULL(s.[BK_SRCDataset],'') = ''
+	and ISNULL(s.[SRC_Shortname],'') = ''
+	and ISNULL(s.[BK_TrnDataset],'') != ''
+	and ISNULL(s.[BK_Group]	  ,'') = ''
+	and ISNULL(s.[BK_Schema]	  ,'') = ''
+	and ISNULL(s.[BK_Layer]	  ,'') = ''
+	--and ISNULL(s.[BK_SRC_layer] ,'') = ''
 
-	UNION ALL
+	union All
 
 
 	-- SRC datasets
-	SELECT
-		  BK						= concat(S.BK,'|',DT.BK)
-		, SCHEDULES_GROUP
-		, DEPENDEND_ON_SCHEDULES_GROUP
-		, BK_SCHEDULE				= S.BK_SCHEDULE
-		, TARGETTOLOAD				= DT.BK
-		, SCHEDULETYPE				= 'Dataset'
-		, EXCLUDEFROMALLLEVEL		= isnull(S.EXCLUDEFROMALLLEVEL,0)
-		, EXCLUDEFROMALLOTHER		= isnull(S.EXCLUDEFROMALLOTHER,0)
-		, PROCESSSOURCEDEPENDENCIES = isnull(S.PROCESSSOURCEDEPENDENCIES,0)
-	FROM REP.VW_SCHEDULES S
-	LEFT JOIN BLD.VW_DATASET D ON S.BK_SRCDATASET = D.BK
-	LEFT JOIN BLD.VW_DATASET DT ON D.CODE = DT.CODE AND DT.FLOWORDERDESC = 1
-	WHERE 1=1
-	AND ISNULL(S.[BK_SRCDataset],'') != ''
-	AND ISNULL(S.[SRC_Shortname],'') = ''
-	AND ISNULL(S.[BK_TrnDataset],'') = ''
-	AND ISNULL(S.[BK_Group]	  ,'') = ''
-	AND ISNULL(S.[BK_Schema]	  ,'') = ''
-	AND ISNULL(S.[BK_Layer]	  ,'') = ''
-	AND ISNULL(S.[BK_SRC_layer] ,'') = ''
+	select
+		  BK						= concat(s.BK,'|',dt.bk)
+		, schedules_group
+		, dependend_on_schedules_group
+		, BK_Schedule				= s.BK_Schedule
+		, TargetToLoad				= dt.bk
+		, ScheduleType				= 'Dataset'
+		, ExcludeFromAllLevel		= isnull(s.ExcludeFromAllLevel,0)
+		, ExcludeFromAllOther		= isnull(s.ExcludeFromAllOther,0)
+		, ProcessSourceDependencies = isnull(s.ProcessSourceDependencies,1)
+		, s.[RepositoryStatusName]	
+		, s.[RepositoryStatusCode]
+	from schedules_base s
+	left join bld.vw_Dataset d on s.BK_SRCDataset = d.BK
+	left join bld.vw_Dataset dt on d.Code = dt.code and dt.FlowOrderDesc = 1
+	where 1=1
+	and ISNULL(s.[BK_SRCDataset],'') != ''
+	and ISNULL(s.[SRC_Shortname],'') = ''
+	and ISNULL(s.[BK_TrnDataset],'') = ''
+	and ISNULL(s.[BK_Group]	  ,'') = ''
+	and ISNULL(s.[BK_Schema]	  ,'') = ''
+	and ISNULL(s.[BK_Layer]	  ,'') = ''
+	--and ISNULL(s.[BK_SRC_layer] ,'') = ''
 
-	UNION ALL
+	union all
 
 
 	-- Load Groups
-	SELECT
-		  BK						= concat(S.BK,'|',S.BK_GROUP)
-		, SCHEDULES_GROUP
-		, DEPENDEND_ON_SCHEDULES_GROUP
-		, BK_SCHEDULE				= S.BK_SCHEDULE
-		, TARGETTOLOAD				= S.BK_GROUP
-		, SCHEDULETYPE				= 'Group'
-		, EXCLUDEFROMALLLEVEL		= isnull(S.EXCLUDEFROMALLLEVEL,0)
-		, EXCLUDEFROMALLOTHER		= isnull(S.EXCLUDEFROMALLOTHER,0)
-		, PROCESSSOURCEDEPENDENCIES = isnull(S.PROCESSSOURCEDEPENDENCIES,0)
-	FROM REP.VW_SCHEDULES S
-	WHERE 1=1
-	AND S.[BK_SRCDataset] IS  null
-	AND S.[SRC_Shortname] IS  null
-	AND S.[BK_TrnDataset] IS  null
-	AND S.[BK_Group]	  IS NOT null
-	AND S.[BK_Schema]	  IS  null
-	AND S.[BK_Layer]	  IS  null
-	AND S.[BK_SRC_layer]  IS  null
+	select
+		  BK						= concat(s.BK,'|',s.BK_Group)
+		, schedules_group
+		, dependend_on_schedules_group
+		, BK_Schedule				= s.BK_Schedule
+		, TargetToLoad				= s.BK_Group
+		, ScheduleType				= 'Group'
+		, ExcludeFromAllLevel		= isnull(s.ExcludeFromAllLevel,0)
+		, ExcludeFromAllOther		= isnull(s.ExcludeFromAllOther,0)
+		, ProcessSourceDependencies = isnull(s.ProcessSourceDependencies,1)
+		, s.[RepositoryStatusName]	
+		, s.[RepositoryStatusCode]
+	from schedules_base s
+	where 1=1
+	and s.[BK_SRCDataset] is  null
+	and s.[SRC_Shortname] is  null
+	and s.[BK_TrnDataset] is  null
+	and s.[BK_Group]	  is not null
+	and s.[BK_Schema]	  is  null
+	and s.[BK_Layer]	  is  null
+	--and s.[BK_SRC_layer]  is  null
 
-	UNION ALL
+	union all
 
 
 	-- Load Schema
-	SELECT
-		  BK						=  concat(S.BK,'|',S.BK_SCHEMA)
-		, SCHEDULES_GROUP
-		, DEPENDEND_ON_SCHEDULES_GROUP
-		, BK_SCHEDULE				= S.BK_SCHEDULE
-		, TARGETTOLOAD				= S.BK_SCHEMA
-		, SCHEDULETYPE				= 'Schema'
-		, EXCLUDEFROMALLLEVEL		= isnull(S.EXCLUDEFROMALLLEVEL,0)
-		, EXCLUDEFROMALLOTHER		= isnull(S.EXCLUDEFROMALLOTHER,0)
-		, PROCESSSOURCEDEPENDENCIES = isnull(S.PROCESSSOURCEDEPENDENCIES,0)
-	FROM REP.VW_SCHEDULES S
-	WHERE 1=1
-	AND ISNULL(S.[BK_SRCDataset],'') = ''
-	AND ISNULL(S.[SRC_Shortname],'') = ''
-	AND ISNULL(S.[BK_TrnDataset],'') = ''
-	AND ISNULL(S.[BK_Group]		,'') = ''
-	AND ISNULL(S.[BK_Schema]	,'') != ''
-	AND ISNULL(S.[BK_Layer]		,'') = ''
-	AND ISNULL(S.[BK_SRC_layer] ,'') = ''
+	select
+		  BK						=  concat(s.BK,'|',s.BK_Schema)
+		, schedules_group
+		, dependend_on_schedules_group
+		, BK_Schedule				= s.BK_Schedule
+		, TargetToLoad				= s.BK_Schema
+		, ScheduleType				= 'Schema'
+		, ExcludeFromAllLevel		= isnull(s.ExcludeFromAllLevel,0)
+		, ExcludeFromAllOther		= isnull(s.ExcludeFromAllOther,0)
+		, ProcessSourceDependencies = isnull(s.ProcessSourceDependencies,1)
+		, s.[RepositoryStatusName]	
+		, s.[RepositoryStatusCode]
+	from schedules_base s
+	where 1=1
+	and ISNULL(s.[BK_SRCDataset],'') = ''
+	and ISNULL(s.[SRC_Shortname],'') = ''
+	and ISNULL(s.[BK_TrnDataset],'') = ''
+	and ISNULL(s.[BK_Group]		,'') = ''
+	and ISNULL(s.[BK_Schema]	,'') != ''
+	and ISNULL(s.[BK_Layer]		,'') = ''
+	--and ISNULL(s.[BK_SRC_layer] ,'') = ''
 
-	UNION ALL
+	union all
 
 
 	-- Load Layer
-	SELECT
-		  BK						= concat(S.BK,'|',S.BK_LAYER)
-		, SCHEDULES_GROUP
-		, DEPENDEND_ON_SCHEDULES_GROUP
-		, BK_SCHEDULE				= S.BK_SCHEDULE
-		, TARGETTOLOAD				= S.BK_LAYER
-		, SCHEDULETYPE				= 'Layer'
-		, EXCLUDEFROMALLLEVEL		= isnull(S.EXCLUDEFROMALLLEVEL,0)
-		, EXCLUDEFROMALLOTHER		= isnull(S.EXCLUDEFROMALLOTHER,0)
-		, PROCESSSOURCEDEPENDENCIES = isnull(S.PROCESSSOURCEDEPENDENCIES,0)
-	FROM REP.VW_SCHEDULES S
+	select
+		  BK						= concat(s.BK,'|',s.BK_Layer)
+		, schedules_group
+		, dependend_on_schedules_group
+		, BK_Schedule				= s.BK_Schedule
+		, TargetToLoad				= s.BK_Layer
+		, ScheduleType				= 'Layer'
+		, ExcludeFromAllLevel		= isnull(s.ExcludeFromAllLevel,0)
+		, ExcludeFromAllOther		= isnull(s.ExcludeFromAllOther,0)
+		, ProcessSourceDependencies = isnull(s.ProcessSourceDependencies,1)
+		, s.[RepositoryStatusName]	
+		, s.[RepositoryStatusCode]
+	from schedules_base s
 	
-	WHERE 1=1
-	AND ISNULL(S.[BK_SRCDataset],'') = ''
-	AND ISNULL(S.[SRC_Shortname],'') = ''
-	AND ISNULL(S.[BK_TrnDataset],'') = ''
-	AND ISNULL(S.[BK_Group]		,'') = ''
-	AND ISNULL(S.[BK_Schema]	,'') = ''
-	AND ISNULL(S.[BK_Layer]		,'') != ''
-	AND ISNULL(S.[BK_SRC_layer] ,'') = ''
+	where 1=1
+	and ISNULL(s.[BK_SRCDataset],'') = ''
+	and ISNULL(s.[SRC_Shortname],'') = ''
+	and ISNULL(s.[BK_TrnDataset],'') = ''
+	and ISNULL(s.[BK_Group]		,'') = ''
+	and ISNULL(s.[BK_Schema]	,'') = ''
+	and ISNULL(s.[BK_Layer]		,'') != ''
+	--and ISNULL(s.[BK_SRC_layer] ,'') = ''
 
-	UNION ALL
+	union all
 	-- Load GroupLayers
-	SELECT
-		  BK						= concat(S.BK,'|',S.BK_LAYER+'-'+S.BK_GROUP)
-		, SCHEDULES_GROUP
-		, DEPENDEND_ON_SCHEDULES_GROUP
-		, BK_SCHEDULE				= S.BK_SCHEDULE
-		, TARGETTOLOAD				= S.BK_LAYER+'-'+S.BK_GROUP
-		, SCHEDULETYPE				= 'LayerGroup'
-		, EXCLUDEFROMALLLEVEL		= isnull(S.EXCLUDEFROMALLLEVEL,0)
-		, EXCLUDEFROMALLOTHER		= isnull(S.EXCLUDEFROMALLOTHER,0)
-		, PROCESSSOURCEDEPENDENCIES = isnull(S.PROCESSSOURCEDEPENDENCIES,0)
-	FROM REP.VW_SCHEDULES S
-	WHERE 1=1
-	AND ISNULL(S.[BK_SRCDataset],'') = ''
-	AND ISNULL(S.[SRC_Shortname],'') = ''
-	AND ISNULL(S.[BK_TrnDataset],'') = ''
-	AND ISNULL(S.[BK_Group]		,'') != ''
-	AND ISNULL(S.[BK_Schema]	,'') = ''
-	AND ISNULL(S.[BK_Layer]		,'') != ''
-	AND ISNULL(S.[BK_SRC_layer] ,'') = ''
+	select
+		  BK						= concat(s.BK,'|',s.BK_Layer+'-'+s.BK_Group)
+		, schedules_group
+		, dependend_on_schedules_group
+		, BK_Schedule				= s.BK_Schedule
+		, TargetToLoad				= s.BK_Layer+'-'+s.BK_Group
+		, ScheduleType				= 'LayerGroup'
+		, ExcludeFromAllLevel		= isnull(s.ExcludeFromAllLevel,0)
+		, ExcludeFromAllOther		= isnull(s.ExcludeFromAllOther,0)
+		, ProcessSourceDependencies = isnull(s.ProcessSourceDependencies,1)
+		, s.[RepositoryStatusName]	
+		, s.[RepositoryStatusCode]
+	from schedules_base s
+	where 1=1
+	and ISNULL(s.[BK_SRCDataset],'') = ''
+	and ISNULL(s.[SRC_Shortname],'') = ''
+	and ISNULL(s.[BK_TrnDataset],'') = ''
+	and ISNULL(s.[BK_Group]		,'') != ''
+	and ISNULL(s.[BK_Schema]	,'') = ''
+	and ISNULL(s.[BK_Layer]		,'') != ''
+	--and ISNULL(s.[BK_SRC_layer] ,'') = ''
 
-	UNION ALL
-	-- Load GroupLayers
-	SELECT
-		  BK						= concat(S.BK,'|',S.BK_GROUP+'-'+S.BK_SRC_LAYER)
-		, SCHEDULES_GROUP
-		, DEPENDEND_ON_SCHEDULES_GROUP
-		, BK_SCHEDULE				= S.BK_SCHEDULE
-		, TARGETTOLOAD				= S.BK_GROUP+'-'+S.BK_SRC_LAYER
-		, SCHEDULETYPE				= 'GroupSRCLayer'
-		, EXCLUDEFROMALLLEVEL		= isnull(S.EXCLUDEFROMALLLEVEL,0)
-		, EXCLUDEFROMALLOTHER		= isnull(S.EXCLUDEFROMALLOTHER,0)
-		, PROCESSSOURCEDEPENDENCIES = isnull(S.PROCESSSOURCEDEPENDENCIES,0)
-	FROM REP.VW_SCHEDULES S
-	WHERE 1=1
-	AND ISNULL(S.[BK_SRCDataset],'') = ''
-	AND ISNULL(S.[SRC_Shortname],'') = ''
-	AND ISNULL(S.[BK_TrnDataset],'') = ''
-	AND ISNULL(S.[BK_Group]		,'') != ''
-	AND ISNULL(S.[BK_Schema]	,'') = ''
-	AND ISNULL(S.[BK_Layer]		,'') = ''
-	AND ISNULL(S.[BK_SRC_layer] ,'') != ''
+	--union all
+	---- Load GroupLayers
+	--select
+	--	  BK						= concat(s.BK,'|',s.BK_Group+'-'+s.BK_SRC_layer)
+	--	, schedules_group
+	--	, dependend_on_schedules_group
+	--	, BK_Schedule				= s.BK_Schedule
+	--	, TargetToLoad				= s.BK_Group+'-'+s.BK_SRC_layer
+	--	, ScheduleType				= 'GroupSRCLayer'
+	--	, ExcludeFromAllLevel		= isnull(s.ExcludeFromAllLevel,0)
+	--	, ExcludeFromAllOther		= isnull(s.ExcludeFromAllOther,0)
+	--	, ProcessSourceDependencies = isnull(s.ProcessSourceDependencies,1)
+	--from rep.vw_Schedules s
+	--where 1=1
+	--and ISNULL(s.[BK_SRCDataset],'') = ''
+	--and ISNULL(s.[SRC_Shortname],'') = ''
+	--and ISNULL(s.[BK_TrnDataset],'') = ''
+	--and ISNULL(s.[BK_Group]		,'') != ''
+	--and ISNULL(s.[BK_Schema]	,'') = ''
+	--and ISNULL(s.[BK_Layer]		,'') = ''
+	--and ISNULL(s.[BK_SRC_layer] ,'') != ''
 
-	UNION ALL
+	union all
 	-- Load ShortNameGroup
-	SELECT
-		  BK						= concat(S.BK,'|',S.SRC_SHORTNAME+'-'+S.[BK_Layer])
-		, SCHEDULES_GROUP
-		, DEPENDEND_ON_SCHEDULES_GROUP
-		, BK_SCHEDULE				= S.BK_SCHEDULE
-		, TARGETTOLOAD				= S.SRC_SHORTNAME+'-'+S.[BK_Layer]
-		, SCHEDULETYPE				= 'ShortNameGroup'
-		, EXCLUDEFROMALLLEVEL		= isnull(S.EXCLUDEFROMALLLEVEL,0)
-		, EXCLUDEFROMALLOTHER		= isnull(S.EXCLUDEFROMALLOTHER,0)
-		, PROCESSSOURCEDEPENDENCIES = isnull(S.PROCESSSOURCEDEPENDENCIES,0)
-	FROM REP.VW_SCHEDULES S
-	WHERE 1=1
-	AND ISNULL(S.[BK_SRCDataset],'') = ''
-	AND ISNULL(S.[SRC_Shortname],'') != ''
-	AND ISNULL(S.[BK_TrnDataset],'') = ''
-	AND ISNULL(S.[BK_Group]		,'') = ''
-	AND ISNULL(S.[BK_Schema]	,'') = ''
-	AND ISNULL(S.[BK_Layer]		,'') != ''
-	AND ISNULL(S.[BK_SRC_layer] ,'') = ''
+	select
+		  BK						= concat(s.BK,'|',s.SRC_Shortname+'-'+s.[BK_Layer])
+		, schedules_group
+		, dependend_on_schedules_group
+		, BK_Schedule				= s.BK_Schedule
+		, TargetToLoad				= s.SRC_Shortname+'-'+s.[BK_Layer]
+		, ScheduleType				= 'ShortNameGroup'
+		, ExcludeFromAllLevel		= isnull(s.ExcludeFromAllLevel,0)
+		, ExcludeFromAllOther		= isnull(s.ExcludeFromAllOther,0)
+		, ProcessSourceDependencies = isnull(s.ProcessSourceDependencies,1)
+		, s.[RepositoryStatusName]	
+		, s.[RepositoryStatusCode]
+	from schedules_base s
+	where 1=1
+	and ISNULL(s.[BK_SRCDataset],'') = ''
+	and ISNULL(s.[SRC_Shortname],'') != ''
+	and ISNULL(s.[BK_TrnDataset],'') = ''
+	and ISNULL(s.[BK_Group]		,'') = ''
+	and ISNULL(s.[BK_Schema]	,'') = ''
+	and ISNULL(s.[BK_Layer]		,'') != ''
+	--and ISNULL(s.[BK_SRC_layer] ,'') = ''
 
-	UNION ALL
+	union all
 	-- Load ShortNameGroup
-	SELECT
-		  BK						= concat(S.BK,'|',S.SRC_SHORTNAME+'-'+S.BK_GROUP+'-'+S.[BK_Layer])
-		, SCHEDULES_GROUP
-		, DEPENDEND_ON_SCHEDULES_GROUP
-		, BK_SCHEDULE				= S.BK_SCHEDULE
-		, TARGETTOLOAD				= S.SRC_SHORTNAME+'-'+S.BK_GROUP+'-'+S.[BK_Layer]
-		, SCHEDULETYPE				= 'ShortNameGroupLayer'
-		, EXCLUDEFROMALLLEVEL		= isnull(S.EXCLUDEFROMALLLEVEL,0)
-		, EXCLUDEFROMALLOTHER		= isnull(S.EXCLUDEFROMALLOTHER,0)
-		, PROCESSSOURCEDEPENDENCIES = isnull(S.PROCESSSOURCEDEPENDENCIES,0)
-	FROM REP.VW_SCHEDULES S
-	WHERE 1=1
-	AND ISNULL(S.[BK_SRCDataset],'') = ''
-	AND ISNULL(S.[SRC_Shortname],'')!= ''
-	AND ISNULL(S.[BK_TrnDataset],'') = ''
-	AND ISNULL(S.[BK_Group]		,'')!= ''
-	AND ISNULL(S.[BK_Schema]	,'') = ''
-	AND ISNULL(S.[BK_Layer]		,'')!= ''
-	AND ISNULL(S.[BK_SRC_layer] ,'') = ''
+	select
+		  BK						= concat(s.BK,'|',s.SRC_Shortname+'-'+s.BK_Group+'-'+s.[BK_Layer])
+		, schedules_group
+		, dependend_on_schedules_group
+		, BK_Schedule				= s.BK_Schedule
+		, TargetToLoad				= s.SRC_Shortname+'-'+s.BK_Group+'-'+s.[BK_Layer]
+		, ScheduleType				= 'ShortNameGroupLayer'
+		, ExcludeFromAllLevel		= isnull(s.ExcludeFromAllLevel,0)
+		, ExcludeFromAllOther		= isnull(s.ExcludeFromAllOther,0)
+		, ProcessSourceDependencies = isnull(s.ProcessSourceDependencies,1)
+		, s.[RepositoryStatusName]	
+		, s.[RepositoryStatusCode]
+	from schedules_base s
+	where 1=1
+	and ISNULL(s.[BK_SRCDataset],'') = ''
+	and ISNULL(s.[SRC_Shortname],'')!= ''
+	and ISNULL(s.[BK_TrnDataset],'') = ''
+	and ISNULL(s.[BK_Group]		,'')!= ''
+	and ISNULL(s.[BK_Schema]	,'') = ''
+	and ISNULL(s.[BK_Layer]		,'')!= ''
+	--and ISNULL(s.[BK_SRC_layer] ,'') = ''
 
 
-	UNION ALL
+	union all
 	-- export to file
-	SELECT
-		  BK						= concat(S.BK,'|',S.BK_EXPORT)
-		, SCHEDULES_GROUP
-		, DEPENDEND_ON_SCHEDULES_GROUP
-		, BK_SCHEDULE				= S.BK_SCHEDULE
-		, TARGETTOLOAD				= S.BK_EXPORT
-		, SCHEDULETYPE				= 'export-file'
-		, EXCLUDEFROMALLLEVEL		= isnull(S.EXCLUDEFROMALLLEVEL,0)
-		, EXCLUDEFROMALLOTHER		= isnull(S.EXCLUDEFROMALLOTHER,0)
-		, PROCESSSOURCEDEPENDENCIES = isnull(S.PROCESSSOURCEDEPENDENCIES,0)
-	FROM REP.VW_SCHEDULES S
-	WHERE 1=1
-	AND ISNULL(S.[BK_export],'')!= ''
+	select
+		  BK						= concat(s.BK,'|',s.BK_export)
+		, schedules_group
+		, dependend_on_schedules_group
+		, BK_Schedule				= s.BK_Schedule
+		, TargetToLoad				= s.BK_export
+		, ScheduleType				= 'export-file'
+		, ExcludeFromAllLevel		= isnull(s.ExcludeFromAllLevel,0)
+		, ExcludeFromAllOther		= isnull(s.ExcludeFromAllOther,0)
+		, ProcessSourceDependencies = isnull(s.ProcessSourceDependencies,1)
+		, s.[RepositoryStatusName]	
+		, s.[RepositoryStatusCode]
+	from schedules_base s
+	where 1=1
+	and ISNULL(s.[BK_export],'')!= ''
 	
 
 )
-SELECT
-	  BK						= SRC.BK
-	, SCHEDULES_GROUP			= SRC.SCHEDULES_GROUP
-	, DEPENDEND_ON_SCHEDULES_GROUP = SRC.DEPENDEND_ON_SCHEDULES_GROUP
-	, CODE						= SRC.BK
-	, BK_SCHEDULE				= SRC.BK_SCHEDULE
-	, TARGETTOLOAD				= SRC.TARGETTOLOAD
-	, SCHEDULETYPE				= SRC.SCHEDULETYPE
-	, EXCLUDEFROMALLLEVEL		= SRC.EXCLUDEFROMALLLEVEL
-	, EXCLUDEFROMALLOTHER		= SRC.EXCLUDEFROMALLOTHER
-	, PROCESSSOURCEDEPENDENCIES = SRC.PROCESSSOURCEDEPENDENCIES
-
-FROM ALLSCHEDULES SRC
-WHERE 1=1
+Select
+	  BK						= src.BK
+	, schedules_group			= src.schedules_group
+	, dependend_on_schedules_group = src.dependend_on_schedules_group
+	, Code						= src.BK
+	, BK_Schedule				= src.BK_Schedule
+	, TargetToLoad				= src.TargetToLoad
+	, ScheduleType				= src.ScheduleType
+	, ExcludeFromAllLevel		= src.ExcludeFromAllLevel
+	, ExcludeFromAllOther		= src.ExcludeFromAllOther
+	, ProcessSourceDependencies = src.ProcessSourceDependencies
+	, [RepositoryStatusName]	
+	, [RepositoryStatusCode]
+from allSchedules src
+where 1=1
 --and BK = 'pl_customer_ws.csv.gz'

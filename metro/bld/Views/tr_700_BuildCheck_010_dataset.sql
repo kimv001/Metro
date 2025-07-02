@@ -1,6 +1,6 @@
 ﻿
 
--- noqa
+
 
 
 CREATE VIEW [bld].[tr_700_BuildCheck_010_dataset] AS
@@ -64,11 +64,39 @@ WITH ErrorCodes AS (
 					,(1, 'U7', 'DataType not defined')
 					,(1, 'U8', 'Datatype Length is not defined')
 					,(1, 'U9', 'Datatype Scale AND/or Precesion is not set correct')
+					,(3, 'C2', 'Ordinal Postions are not defined correct')
+					,(3, 'C3', 'Dataset Description is not provided or lacks sufficient detail')
 
 					)  list (Severity, Code, Error)
 
 )
+, prep_check_ordinal as (
+select code ,attributename , ordinalPosition, new_o = row_number() over (partition by code order by try_cast(ordinalPosition as bigint))  
+from rep.vw_DatasetTrnAttribute
+)
+, prep_check_dataset_description as (
+select distinct code, description from bld.vw_Dataset src where description is null or len(description)<15
+)
+
 , All_Checks AS (
+select 
+	 BK_Dataset		= o.code
+	, Code				= o.code
+	, CheckMessage		= 'Dataset Description is not provided or lacks sufficient detail' -- U1
+from prep_check_dataset_description  o
+
+
+UNION ALL
+
+select 
+	 BK_Dataset		= o.code
+	, Code				= o.code
+	, CheckMessage		= 'Ordinal Postions are not defined correct' -- U1
+from prep_check_ordinal  o
+where 1=1 and cast(o.ordinalPosition as varchar(5))!= cast(o.new_o as varchar(5))
+group by o.code
+
+UNION ALL
 SELECT
 	  BK_Dataset		= a.bk_dataset
 	, Code				= a.code
@@ -76,9 +104,9 @@ SELECT
 
 	
 FROM bld.vw_Attribute		a
-LEFT JOIN bld.vw_Dataset	d ON a.bk_dataset	= d.bk
+JOIN bld.vw_Dataset	d ON a.bk_dataset	= d.bk
 WHERE 1=1
-AND d.BK_Layer = 'src'
+--AND d.BK_Layer = 'src'
 GROUP BY a.bk_dataset, a.code
 HAVING SUM(ISNULL(CAST(a.businesskey AS int),0)) = 0
 
@@ -167,7 +195,7 @@ SELECT
 	d.bk, d.code
 	, CheckMessage				= CASE 
 										WHEN ISNULL(a.datatype,'') = ''		THEN a.AttributeName + ' :DataType not defined'	-- U7
-										WHEN a.datatype IN ('char', 'varchar', 'nchar', 'nvarchar') AND ISNULL(a.MaximumLength, 0) = 0 
+										WHEN a.datatype IN ('char', 'varchar', 'nchar', 'nvarchar') AND ISNULL(a.MaximumLength, '0') = '0'
 											THEN a.AttributeName + ' :Datatype Length is nog defined'  -- U8
 										WHEN a.datatype IN ('numeric', 'decimal') AND ( ISNULL(a.scale, -1) = -1 OR ISNULL(a.Precision, -1) = -1) 
 											THEN a.AttributeName + ' :Datatype Scale AND/or Precesion is not set correct'  -- U9
@@ -181,7 +209,7 @@ WHERE 1=1
 AND (
 		d.SchemaName = 'src_file' 
 		OR
-		d.prefix = 'trv'
+		d.prefix = 'trvs'
 	)
 )
 SELECT 
